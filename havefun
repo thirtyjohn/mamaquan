@@ -1,0 +1,182 @@
+评价
+
+http://rate.taobao.com/feedRateList.htm?callback=jsonp_reviews_list&userNumId=316207020&auctionNumId=15060948013&siteID=4&currentPageNum=1&rateType=&orderType=sort_weight&showContent=1&attribute=
+
+销售量
+http://ajax.tbcdn.cn/json/ifq.htm?id=15060948013&sid=316207020&p=1&al=false&ap=1&ss=0&free=0&q=1&ex=0&exs=0&shid=&at=b&ct=1&callback=DT.mods.SKU.GetItemInfo.fire
+
+价格(in pagesource and need refrer)
+http://ajax.tbcdn.cn/json/umpStock.htm?itemId=15060948013&p=1&rcid=16&sts=408516608,1179947655113998404,72339069048225920,1157495477275593731&chnl=pc&price=28300&sellerId=316207020&shopId=&cna=0aFgCC9xDiACAfKdm7SSm46y&ref=http%3A%2F%2F127.0.0.1%2F&buyerId=0&nick=&tg=&tg2=&tg3=&tg4=
+valLimitPromInfo: {limitCount  : 10000,                   discount    : 629,                 timeLeft    : 38712             },
+
+
+
+http://ajax.tbcdn.cn/json/umpStock.htm?itemId=15060948013&p=1&rcid=16&sts=408516608,1179947655113998404,72339069048225920,1157495477275593731&chnl=pc&price=28300&sellerId=316207020&shopId=&cna=0aFgCC9xDiACAfKdm7SSm46y&ref=http%3A%2F%2F127.0.0.1%2F&buyerId=0&nick=&tg=&tg2=&tg3=&tg4=
+
+浏览数（in page source）
+http://count.tbcdn.cn/counter3?inc=ICVT_7_15060948013&sign=683961634f715f60641b29acc6fabef3767b9&keys=DFX_200_1_15060948013,ICVT_7_15060948013,ICCP_1_15060948013,SCCP_2_59475775&callback=DT.mods.SKU.CountCenter.saveCounts
+
+评价数
+http://count.tbcdn.cn/counter3?keys=SM_368_sm-316207020,ICE_3_feedcount-15060948013&callback=DT.mods.SKU.CountCenter.setReviewCount
+
+
+
+通用：
+isprepay=1
+viewIndex=1
+yp4p_page=0
+commend=all
+atype=b
+style=grid
+tid=0
+olu=yes
+isnew=2
+user_type=0
+random=false
+smc=1
+json=on
+module=page
+_input_charset=utf-8
+&data-key=s
+data-value=0
+same_info=1
+zkFlag=1
+zk=dzms
+as=0
+
+
+promoted_service4=4
+7天退换
+
+
+
+
+**类目拓展
+*女装**
+nvzhuang2011a.htm
+cat=16
+fl=Shangpml
+
+
+*女鞋：通用**
+nvxieshichang2011a.htm
+cat=50006843
+mSelect=false
+fl=nx_shangpml
+
+*文胸：通用：较次, 目前获得的产品较少。
+neiyi2011a.htm
+cat=50016870
+fl=1625
+mSelect=false
+
+*睡衣：通用：较次
+neiyi2011a.htm
+cat=50026786
+fl=1625
+msp=1&&
+mSelect=false
+
+*塑身：通用：较次
+neiyi2011a.htm
+cat=50026787
+
+
+*单肩包：通用 ok**
+nvbao2011a.htm
+cat=50072721
+fl=danjianx
+mSelect=false
+
+*手提包：通用 包的价格差距不大貌似 目前产品数较少，可优化
+nvbao2011a.htm
+cat=50072765
+fl=xiekuabaox
+mSelect=false
+
+*斜挎包：通用 ok**
+nvbao2011a.htm
+cat=50072769
+fl=xiekuabaox
+mSelect=false
+
+*钱包：通用 较次
+nvbao2011a.htm
+cat=50072766
+fl=qianbaox
+mSelect=false
+
+手拿包：通用 较次 **
+nvbao2011a.htm
+cat=50072770
+fl=shounabaox
+mSelect=false
+
+儿童玩具：通用，量比较少。玩具主要还是目录
+baby.htm
+cat=50005998
+gobaby=1
+sd=0
+mSelect=false
+
+童装：可以，但是与年龄相关程度高，需要根据用户特征进行筛选。宝贝的丰富度是够的。 **
+baby.htm?
+promoted_service4=4
+cat=50008165
+spercent=9gobaby=1&&&&&&&&&#!promoted_service4=4&cat=50008165&spercent=95&&&gobaby=1&&&&&&&&&&&&&
+
+床上用品：
+market/jiaju.htm
+cat=50065205
+sd=0
+
+家居饰品：同款比较少，但东西都很讨巧，值得做比价过滤 *
+market/jiaju.htm
+cat=50065206
+sd=0
+
+
+饰品 **
+shipinshichang.htm
+cat=1705
+
+毛绒玩具 较次
+wanju.htm
+cat=50034017
+sort=coefp
+
+
+惠氏
+
+
+http://search.jd.com/search?keyword=%BB%DD%CA%CF&qr=&qrst=UNEXPAND&et=&rt=1&ev=exbrand_%E6%83%A0%E6%B0%8F%EF%BC%88wyeth%EF%BC%89%40&area=1&wtype=1
+
+多美滋
+
+
+
+
+美赞成 没找到
+
+雅培
+http://abbott.tmall.com
+
+亨氏
+http://heinz.tmall.com/  全是米粉
+
+雀巢
+http://nestlemy.tmall.com/  货还不多
+
+明治
+http://meijimilk.tmall.com/ 全是澳洲的
+
+美素 还没开
+
+可瑞康
+http://nutricia.tmall.com/ 还比较少
+
+喜宝
+http://detail.tmall.com 卖脱销了
+
+
+

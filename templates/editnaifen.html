@@ -1,0 +1,27 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/static/jquery_min.js" ></script>
+</head>
+<body>
+
+<div>${nf.name}</div>
+
+<form action="/editnaifen" method="post">
+<input type="text" name="weight" value="${nf.weight}" />g
+<input type="text" name="duan" value="${nf.duan}" />段
+<input type="text" name="series" value="${nf.series}" />系列
+<input type="text" name="tag" value="${nf.tag}" />
+<input type="hidden" name="id" value="${nf.ID}" />
+<input type="submit" value="更新" />
+
+</form>
+
+</body>
+</html>
+
+
+

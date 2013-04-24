@@ -1,0 +1,45 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/static/jquery_min.js" ></script>
+</head>
+<body>
+<script>
+    $(function(){
+            $(".item_img").mouseover(function(){
+                $(this).parent().find("ul").show()
+            }).mouseout(function(){
+                $(this).parent().find("ul").hide()
+            })
+    })
+</script>
+
+
+
+    % for product in productlist:
+    <div style="width:350px;float:left;">
+        <%
+            gooditem = product["gooditem"]
+            famitems = product["famitems"]
+        %>
+        <dt class="item_img"><img style="width:180px;height:180px;" src="${gooditem.originalImage}" /></dt>
+        <dt><a href="http://item.taobao.com/item.htm?id=${gooditem.itemId}">${gooditem.fullTitle}</a></dt>
+        <dt>￥${gooditem.currentPrice}</dt>
+        <dt>${gooditem.tradeNum}</dt>
+        <ul style="display:none;">
+        % for famitem in famitems:
+            <li>
+                <dt><img src="${famitem.image}" /></dt>
+                <dt><a href="http://item.taobao.com/item.htm?id=${famitem.itemId}">${famitem.fullTitle}</a></dt>
+                <dt>￥${famitem.currentPrice}</dt>
+                <dt>${famitem.tradeNum}</dt>
+            </li>
+        % endfor
+        </ul>
+    </div>
+    % endfor
+</body>
+</html>

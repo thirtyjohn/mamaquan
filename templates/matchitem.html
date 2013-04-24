@@ -1,0 +1,73 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/static/jquery_min.js" ></script>
+</head>
+<body>
+<script>
+    $(function(){
+        $(".disimg").click(function(){
+            $(this).next("img").show()
+        })
+    })
+</script>
+<form action="/match" method="get">
+    <select name="brand">
+        %for brand in brandlist:
+        <option value ="${brand.brand}">${brand.brand}</option>
+        %endfor
+    </select>
+    <select name="market">
+        %for market in marketlist:
+        <option value ="${market.market}">${market.market}</option>
+        %endfor
+    </select>
+    <input type="submit" value="提交" />
+</form>
+<style>
+    .nf{overflow:hidden;zoom:1;background-color:#FFFFCC;font-size:13px;line-height:1.3;color:#333;}
+    .nf dt{float:left;}
+    .nf dd{float:left;}
+
+    .fam{overflow:hidden;zoom:1;background-color:#CCFFFF;font-size:13px;line-height:1.3;color:#333;}
+    .fam dt{float:left;}
+    .fam dd{float:left;}
+
+</style>
+<%
+    import urllib
+    from analyscript import genItemUrl
+%>
+
+    % for nf,fams in famlist:
+        <div class="nf">
+        <dt>${nf.name}</dt>
+        <dd>${nf.price}</dd>
+        <dd><a href="${genItemUrl(nf.itemid,nf.market)}">前往</a></dd>
+        % if nf.img:
+        <dd><span class="disimg">显示图片</span><img style="display:none;" src="${nf.img}"/></dd>
+        % endif
+        <dd><a href="/match?act=new&itemid=${nf.itemid}&market=${nf.market}&brand=${nf.brand}">新增</a></dd>
+        <dd><a href="/match?act=later&itemid=${nf.itemid}&market=${nf.market}&brand=${nf.brand}">放弃</a></dd>
+        </div>
+       % for fam in fams:
+            <div class="fam">
+            <dt>${fam.name}</dt>
+            <dd>${fam.price}</dd>
+            <dd><a href="/mmredict?naifenid=${fam.ID}">前往</a></dd>
+            % if fam.img:
+            <dd><span class="disimg">显示图片</span><img style="display:none;" src="${fam.img}"/></dd>
+            % endif
+            <dd><a href="/match?act=match&itemid=${nf.itemid}&market=${nf.market}&naifenid=${fam.ID}&brand=${nf.brand}">匹配</a></dd>
+            </div>
+        % endfor 
+
+    <br/>
+    <br/>
+    % endfor
+</body>
+</html>
+

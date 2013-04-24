@@ -1,0 +1,48 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/static/jquery_min.js" ></script>
+</head>
+<body>
+<script>
+</script>
+
+<style>
+
+</style>
+<%   
+    from analyscript import genItemUrl
+%>
+
+<h1>${nf.name}</h1>
+<div style="overflow:hidden;">
+    <img style="float:left;width:160px;height:160px;" src="${nf.img}" />
+    <div style="overflow:hidden;">
+        <ul>
+            <li>品牌：${nf.brand}</li>
+            <li>系列：${nf.series}</li>
+            <li>阶段：${nf.duan}段</li>
+            <li>重量：${nf.weight}g</li>
+            <li>产地：${nf.place}</li>
+        </ul>
+    </div>
+</div>
+
+<div>
+    <h3>在以下商家购买</h3>
+    <h4>官方自营（可信）</h4>
+    %for n in nfs:
+        <dt>${n.market}</dt>
+        <dd>${n.price}</dd>
+        <dd><a href="${genItemUrl(n.itemid,n.market)}">前往购买</a></dd>
+    %endfor
+</div>
+</body>
+</html>
+
+
+
+
