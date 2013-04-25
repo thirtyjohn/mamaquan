@@ -1,13 +1,17 @@
 #coding:utf-8
-from settings import dbconn,render
-from analyscript import getExtra,insertmap,insertnaifen,deallater,getjiaoyan,getqueshi
-import web
-from analyscript import genItemUrl
+from settings import dbconn,render,static_leibie
+import web,json
+from webapp.models import shoppings,products
+from helpers.utils import _xsseccape
+
 
 class index:
     def GET(self):
-        productlist = list()
-        res = dbconn.query("select * from formalitem ")
+        itemlist = dbconn.query("select * from formalitem order by generalscore desc limit 20 ")
+        """
+        for r in res:
+            itemlist.append(r)
+        
         pid = 0
         product = None
         for r in res:
@@ -20,10 +24,129 @@ class index:
                 product["famitems"].append(r)
         print len(productlist)
         productlist = sorted(productlist,key=lambda product:product["gooditem"].generalscore ,reverse=True)
-        return render.index(productlist=productlist)
+        """
+        ##itemlist = sorted(itemlist,key=lambda item:item.generalscore ,reverse=True)
+        return render.index(itemlist=itemlist)
 
 
 
+class shoppingitem:
+    def GET(self,name):
+        spid = int(name)
+        data = web.input()
+        sp = shoppings.getsp(spid)
+        famsps = shoppings.getfamsp(sp.pid)
+        if data.has_key("type") and data["type"] == "json":
+            return json.dumps({"html":render.spjson(sp=sp,famsps=famsps)})
+
+
+
+class mulu:
+    def GET(self):
+        return render.muluindex()
+
+
+
+class productsearch:
+    def GET(self,tp):
+
+        
+        
+        qd= {
+            "naifen":
+                {
+                "d":"duan",
+                "s":"series",
+                "p":"place",
+                "b":"brand"
+                },
+             "niaobu":
+                {
+                "b":"brand"    
+                },
+            }
+
+        qs = list()
+        qdict = dict()
+        """
+        {"duan":u"1","series":u"fdf",}
+        """
+        data = web.input()
+        print data
+        if data.has_key("q"):
+            qs = data["q"].split(",")
+        print qs
+        for q in qs:
+            print q
+            nv = q.split(u":") if len(q.split(":"))==2 else None
+            if not nv:
+                continue
+            n = nv[0]
+            v = nv[1]
+            if n and n in qd[tp].keys() and _xsseccape(v):
+                qdict.update({qd[tp][n]:v})
+        print qdict
+        prlist = products.getprs(tp,qdict)
+
+        """
+        where = ""
+        for k,v in qdict.items():
+            if v:
+                where = where + " and "+k+"= "+v
+
+        
+        lbdict =dict()
+        for v in qd[tp].values():
+            lbdict.update({v:[]})
+
+        """
+        
+        """
+        prs =list()
+        for r in products.getprs(tp,where=where):
+            prs.append(r)
+            for col in lbdict.keys():
+                icount = 0
+                for d in lbdict[col]:
+                    if r[col] == d.key:
+                        d.update({d.key:d.v+1})
+                        icount = 1
+                        continue
+                if icount == 0:
+                    lbdict[col].append({r[col]:1})
+        """
+        """
+        有一个固定列表
+        如果总项数小于7，就不用重排序
+        如果总项数大于7，有的按数量排，没的原定排
+        """
+        lbvs = list()
+        for r in products.getlbs(tp,qdict):
+            print r.name
+            lbvs.append(r.name)
+        lblist = list()
+        for lb in static_leibie[tp]:
+            vlist = list()
+            for static_v in lb[2]:
+                if static_v in lbvs:
+                    vlist.append({"name":static_v,"checked":1 if static_v in qdict.values() else 0})
+            if len(vlist) > 0:
+                lblist.append((lb[0],lb[1],vlist))
+
+        """
+        [("duan","阶段",[{1段:4},{}]),]
+        """
+        
+        return render.products(prlist=prlist,lblist=lblist)
+
+class product:
+    def GET(self,tp,prid):
+        return tp + prid
+
+
+"""
+from analyscript import genItemUrl
+from analyscript import getExtra,insertmap,insertnaifen,deallater,getjiaoyan,getqueshi
 class matchitem:
     def GET(self):
         data = web.input()
@@ -53,12 +176,12 @@ class mmredict:
     def GET(self):
         data = web.input()
         naifenid = data.naifenid
-        r = web.listget(dbconn.query("""
+        r = web.listget(dbconn.query(
             select n.itemid,n.market from naifenmatch m
             join naifen n
             on m.itemid = n.itemid and m.market = n.market
             where m.naifenid = $naifenid
-        """,vars=dict(naifenid=naifenid)),0,None)
+        ,vars=dict(naifenid=naifenid)),0,None)
         if r:
             return web.seeother(genItemUrl(r.itemid,r.market))
         
@@ -100,14 +223,14 @@ class naifen:
         naifenid = int(name)
         nf = web.listget(dbconn.query("select * from formalnaifen where id = $naifenid",vars=dict(naifenid=naifenid)),0,None)
         
-        nfs = dbconn.query("""
+        nfs = dbconn.query(
                 select n.price,n.market,n.itemid from naifenmatch m
                 join formalnaifen f
                 on f.id = m.naifenid
                 join naifen n
                 on m.itemid = n.itemid and m.market = n.market
                 where f.id= $naifenid
-        """,vars=dict(naifenid=naifenid))
+        ,vars=dict(naifenid=naifenid))
         return render.naifen(nf=nf,nfs=nfs)
 
-
+"""

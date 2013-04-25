@@ -1,45 +1,48 @@
 ## -*- coding: utf-8 -*-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%inherit file="browse.html"/>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="text/javascript" src="/static/jquery_min.js" ></script>
-</head>
-<body>
-<script>
-    $(function(){
-            $(".item_img").mouseover(function(){
-                $(this).parent().find("ul").show()
-            }).mouseout(function(){
-                $(this).parent().find("ul").hide()
-            })
-    })
-</script>
+<%
+    from helpers.utils import secondtodatetxt
+%>
 
 
 
-    % for product in productlist:
-    <div style="width:350px;float:left;">
-        <%
-            gooditem = product["gooditem"]
-            famitems = product["famitems"]
-        %>
-        <dt class="item_img"><img style="width:180px;height:180px;" src="${gooditem.originalImage}" /></dt>
-        <dt><a href="http://item.taobao.com/item.htm?id=${gooditem.itemId}">${gooditem.fullTitle}</a></dt>
-        <dt>￥${gooditem.currentPrice}</dt>
-        <dt>${gooditem.tradeNum}</dt>
-        <ul style="display:none;">
-        % for famitem in famitems:
-            <li>
-                <dt><img src="${famitem.image}" /></dt>
-                <dt><a href="http://item.taobao.com/item.htm?id=${famitem.itemId}">${famitem.fullTitle}</a></dt>
-                <dt>￥${famitem.currentPrice}</dt>
-                <dt>${famitem.tradeNum}</dt>
-            </li>
-        % endfor
-        </ul>
+<div id="content">
+    <h2 style="color:#996600;font-size:20px;font-weight:bold;margin:20px 0 10px 0;">每天精选特惠优质商品</h2>
+
+    <div id="index_sp_list">
+    <%
+        count_img = 0
+    %>
+    %for item in itemlist:
+    <%
+        count_img = count_img + 1
+    %>
+        <div class="index_sp${" index_last_row" if count_img%3==0 else ""}" data-id="${item.ID}">
+           <div class="index_sp_img">
+            <div class="index_sp_discount">${round(item.currentPrice*1.0/item.price*10,1)}折</div>
+            <img src="${item.originalImage}" />
+           </div>
+           <div style="overflow:hidden;zoom:1;">
+           <div class="index_sp_name">${item.fullTitle}</div>
+           <div class="index_sp_promo"> 
+           % if item.promoteTimeLimit:
+                <div>还剩<br/>${secondtodatetxt(item.promoteTimeLimit)}</div>
+           % endif
+           </div>
+           <div class="index_sp_price">
+            <h5><del>￥${item.price}</del></h5>
+            <h4>${item.currentPrice}</h5>
+           </div>
+           </div>
+        </div>
+    %endfor
     </div>
-    % endfor
-</body>
-</html>
+
+
+
+
+</div>
+
+<div id="footer">
+</div>

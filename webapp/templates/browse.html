@@ -2,11 +2,29 @@
 <%inherit file="base.html"/>
 <%block name="css">
 ${parent.css()}
+<link href="/static/css/facebox.css" media="screen" rel="stylesheet" type="text/css"/>
 </%block>
 <%block name="js">
 <script type="text/javascript" src="/static/js/jquery_min.js"  ></script>
+<script type="text/javascript" src="/static/js/facebox.js"  ></script>
+<script type="text/javascript" src="/static/js/mmquan.js"  ></script>
 </%block>
 <%block name="header">
+<div id="header">
+    <div id="logo">
+        <h1>妈妈圈</h1>
+        <span>妈妈生活好帮手</span>
+    </div>
+    <div id="navigate">
+        <ul>
+            <li>妈妈淘</li>
+            <li>妈妈目录</li>
+            <li>妈妈知道</li>
+            <li>妈妈交流</li>
+            <li>妈妈娱乐</li>
+        </ul>
+    </div>
+</div>
 </%block>
 ${next.body()}
 <%block name="footer">

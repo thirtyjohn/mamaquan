@@ -1,0 +1,52 @@
+## -*- coding: utf-8 -*-
+<%inherit file="browse.html"/>
+
+
+<div id="content">
+    <h2>奶粉</h2>
+    <div class="mulu">
+        <div class="leibie">
+            <div class="lb_title">
+                品牌
+            </div>
+            <ul>
+                <li>Dumex/多美滋</li>
+                <li>Wyeth/惠氏</li>
+                <li>Abbott/雅培</li>
+            </ul>
+        </div>
+
+        <div class="leibie">
+            <div class="lb_title">
+                产地
+            </div>
+            <ul>
+                <li>新西兰</li>
+                <li>荷兰</li>
+                <li>爱尔兰</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div>
+        <h3>今日最惠</h3>
+        % for pr in products:
+            <div class="pr_alist">
+                <img src="${pr.img}" />
+                <h4>${pr.name}</h4>
+                <h5>官网最低：${pr.price} </h5>
+                <h6>可叠加：${pr.promote}</h6>
+                <h6>${pr.marketname}</h6>
+                <a href="#">${pr.b2ccount}家官网、${pr.c2ccount}家网络卖家提供报价</a>
+            </div>
+        % endfor
+        <div></div>
+    </div>
+
+</div>
+
+<div id="footer">
+</div>
+
+

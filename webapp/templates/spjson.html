@@ -1,0 +1,41 @@
+## -*- coding: utf-8 -*-
+
+<div class="json_sp">
+    <div class="json_sp_item">
+        <div style="float:left;margin-right:20px;">
+            <img style="width:180px;height:180px;" src="${sp.originalImage}" />
+        </div>
+        <div style="overflow:hidden;zoom:1;margin-bottom:20px;">
+            <h2 style="font-size:14px; margin-bottom:10px;">${sp.fullTitle}</h2>
+            <h3 style="color:#666;margin-bottom:40px;">卖家：${sp.nick}</h3>
+            <h4 style="font-size:20px;margin-bottom:10px;">￥${sp.currentPrice}</h4>
+            <a style="text-decoration:none;display:block;background-color:#996600;padding:10px 20px;color:#fff;font-size:16px;font-weight:bold;width:80px;" href="#">去淘宝购买</a>
+        </div>
+
+        <div>
+            <h5 style="font-size:14px;margin-bottom:10px;">同款比价</h5>
+            <%
+                count = 0
+            %>
+            % for famsp in famsps:
+                <%
+                    count=count+1
+                %>
+                %if count == 4:
+                    <span onclick="javascript:document.getElementById('morefams').style.display='block';">显示更多</span>
+                    <div id="morefams" style="display:none;">
+                %endif
+                <div style="overflow:hidden;zoom:1;margin-bottom:30px;">
+                    <img style="float:left;margin-right:10px;width:45px;height:45px;" src="${famsp.image}" />
+                    <h6 style="margin-bottom:5px;">${famsp.nick}</h6>
+                    <h6>${famsp.currentPrice}</h6>
+                </div>
+            % endfor
+                %if count > 3:
+                    </div>
+                %endif
+        </div>
+
+
+    </div>
+</div>

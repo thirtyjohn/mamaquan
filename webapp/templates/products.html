@@ -1,0 +1,44 @@
+## -*- coding: utf-8 -*-
+<%inherit file="browse.html"/>
+
+<div id="content">
+    <h2>奶粉</h2>
+    <div class="mulu">
+        % for lb in lblist:
+        <div class="leibie">
+            <div class="lb_title">
+                ${lb[1]}
+            </div>
+            <ul>
+                %for v in lb[2]:
+                <li class="${"checked" if v["checked"] == 1 else ''} data-value="${v["name"]}"}">${v["name"]}</li>
+                %endfor
+            </ul>
+        </div>
+        %endfor 
+    </div>
+
+    <div>
+        % for pr in prlist:
+            <div class="pr_xlist">
+                <img src="${pr.img}" />
+                <h4>${pr.name}</h4>
+                <%doc>
+                <div>最低：${pr.price}  
+                重量${pr.weight}
+                </div>
+                <h6>可叠加：${pr.promote}</h6>
+                <h6>${pr.marketname}</h6>
+                
+                <a href="#">${pr.b2ccount}家官网、${pr.c2ccount}家网络卖家提供报价</a>
+                </%doc>
+            </div>
+        % endfor
+        <div></div>
+    </div>
+
+</div>
+
+<div id="footer">
+</div>
+
