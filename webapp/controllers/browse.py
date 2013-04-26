@@ -53,16 +53,30 @@ class productsearch:
         
         
         qd= {
-            "naifen":
+            u"naifen":
                 {
-                "d":"duan",
-                "s":"series",
-                "p":"place",
-                "b":"brand"
+                u"d":u"duan",
+                u"s":u"series",
+                u"p":u"place",
+                u"b":u"brand"
                 },
-             "niaobu":
+             u"niaobu":
                 {
-                "b":"brand"    
+                u"b":u"brand"    
+                },
+            }
+
+        dq= {
+            u"naifen":
+                {
+                u"duan":u"d",
+                u"series":u"s",
+                u"place":u"p",
+                u"brand":u"b"
+                },
+             u"niaobu":
+                {
+                u"brand":u"b"    
                 },
             }
 
@@ -72,9 +86,11 @@ class productsearch:
         {"duan":u"1","series":u"fdf",}
         """
         data = web.input()
-        print data
+        data_q = None
         if data.has_key("q"):
+            data_q = data["q"]
             qs = data["q"].split(",")
+        print data_q
         print qs
         for q in qs:
             print q
@@ -129,15 +145,15 @@ class productsearch:
             vlist = list()
             for static_v in lb[2]:
                 if static_v in lbvs:
-                    vlist.append({"name":static_v,"checked":1 if static_v in qdict.values() else 0})
+                    vlist.append({"name":lb[3][static_v],"value":static_v,"checked":1 if static_v in qdict.values() else 0})
             if len(vlist) > 0:
-                lblist.append((lb[0],lb[1],vlist))
+                lblist.append((dq[tp][lb[0]],lb[1],vlist))
 
         """
         [("duan","阶段",[{1段:4},{}]),]
         """
         
-        return render.products(prlist=prlist,lblist=lblist)
+        return render.products(prlist=prlist,lblist=lblist,tp=tp,data_q=data_q)
 
 class product:
     def GET(self,tp,prid):

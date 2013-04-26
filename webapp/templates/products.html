@@ -1,8 +1,14 @@
 ## -*- coding: utf-8 -*-
 <%inherit file="browse.html"/>
+<%
+    from settings import static_title
+    from urllib import quote
+%>
 
 <div id="content">
-    <h2>奶粉</h2>
+    <div class="index_b_title">
+        <h2 class="b_title">${static_title[tp]}</h2>
+    </div>
     <div class="mulu">
         % for lb in lblist:
         <div class="leibie">
@@ -11,34 +17,58 @@
             </div>
             <ul>
                 %for v in lb[2]:
-                <li class="${"checked" if v["checked"] == 1 else ''} data-value="${v["name"]}"}">${v["name"]}</li>
+                    <%
+                        href= "/"+tp+"/s?q="
+                        if data_q:
+                            href = href + quote(data_q.encode('utf8') +","+lb[0].encode('utf8')+':'+v['value'].encode('utf8'))
+                        else:
+                            href = href + quote(lb[0].encode('utf8')+':'+v['value'].encode('utf8'))
+                    %>
+                <li class="${"checked" if v['checked']==1 else ''}" ><a href="${href}">${v["name"]}</a></li>
                 %endfor
             </ul>
         </div>
         %endfor 
     </div>
 
-    <div>
+    <div style="overflow:hidden;zoom:1;margin-top:20px;">
+    <%
+        pr_count = 0
+    %>
         % for pr in prlist:
-            <div class="pr_xlist">
-                <img src="${pr.img}" />
-                <h4>${pr.name}</h4>
-                <%doc>
-                <div>最低：${pr.price}  
-                重量${pr.weight}
+            %if pr_count%3 == 0:
+                <div style="overflow:hidden;zoom:1;">
+            %endif
+            <div class="pr_inlist">
+                <div class="clear">
+                    <img src="${pr.img}" />
                 </div>
-                <h6>可叠加：${pr.promote}</h6>
-                <h6>${pr.marketname}</h6>
-                
-                <a href="#">${pr.b2ccount}家官网、${pr.c2ccount}家网络卖家提供报价</a>
-                </%doc>
+                <a href="#">${pr.name}</a>
+                <div class="pr_inlist_price">
+                    <span class="small_t">最低</span> <span class="price">￥${pr.price}</span>  <span class="c6" style="margin-left:10px;">${pr.weight}g</span>
+                </div>
+                <div class="pr_inlist_promote"><span class="small_t">优惠</span> <span class="c6">满400减50<span></div>
+                <div class="pr_inlist_market">亚马逊直销</div>
+                <div class="pr_inlist_cp">
+                    <a href="#" class="blue_link">3家官网、12家网络卖家提供报价</a>
+                </div>
             </div>
+
+            %if (pr_count+1)%3 == 0:
+                </div>
+            %endif
+            <%
+                pr_count = pr_count + 1
+            %>
+
         % endfor
+        % if (pr_count+1)%3 <> 0:
+            </div>
+        % endif
         <div></div>
     </div>
 
 </div>
-
 <div id="footer">
 </div>
 
