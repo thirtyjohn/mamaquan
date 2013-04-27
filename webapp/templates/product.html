@@ -1,0 +1,84 @@
+## -*- coding: utf-8 -*-
+<%inherit file="browse.html"/>
+
+<%
+    from settings import static_tp,market_name
+%>
+
+<div id="content">
+    <div class="mbx">
+        <ul>
+            <li><a href="/mulu">妈妈目录</a><span class="gt">&gt;</span></li>
+            <li><a href="/${tp}">${static_tp[tp]["title"]}</a><span class="gt">&gt;</span></li>
+            <li>${pr.name}</li>
+        </ul> 
+    </div>
+    
+    <div id="pr_left">
+    <div id="pr_detail">
+        <div id="pr_detail_left">
+            <h1>${pr.name}</h1>
+            <div class="pr_img"><img src="${pr.img}"/></div>
+            <div>
+                <ul>
+                    <li>品牌：${pr.brand}</li>
+                    <li>系列：${pr.series}</li>
+                    <li>阶段：${pr.duan}段</li>
+                    <li>重量：${pr.weight}g</li>
+                    <li>产地：${pr.place}</li>
+                </ul>
+            </div>
+        </div>
+        <div id="pr_detail_right"></div>
+    </div>
+
+    <div id="pr_items">
+    <h4 class="m_title">在以下商家购买</h4>
+        <div id="b2c_detail">
+            <h5>官方自营（可信）</h5>
+            <table>
+                    <tr>
+                         <th style="width:140px;"></th>
+                         <th style="width:300px;"></th>
+                         <th></th>
+                    </tr>
+                %for pritem in pritems:
+                    <tr>
+                        <td><h3>${market_name[pritem.market]}</h3></td>
+                        <td>
+                            <h4 class="price">￥${pritem.price}</h4>
+                            <h6>可叠加优惠：满400减60</h6>
+                        </td>
+                        <td><a href="#">前往购买</a></td>
+                    </tr>
+                %endfor
+            </table>
+        </div>
+    </div>
+
+
+    <div id="pr_other">
+        <h4 class="m_title">其他购买方式</h4>
+        %for opr in otherprs:
+            <div class="pr_other_list">
+                <img src="${opr.img}"/>
+                <div class="clear">
+                <h3><a href="/${tp}/${opr.ID}">${opr.name}</a></h3>
+                <h5 class="price">￥${opr.price}</h5>
+                <h6>${round(opr.price/opr.weight,2)}元/克</h6>
+                </div>
+            </div>
+        %endfor
+    </div>
+
+
+    </div>
+
+       
+
+    <div id="pr_right">
+    </div>
+
+</div>
+
+

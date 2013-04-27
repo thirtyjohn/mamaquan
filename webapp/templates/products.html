@@ -1,13 +1,13 @@
 ## -*- coding: utf-8 -*-
 <%inherit file="browse.html"/>
 <%
-    from settings import static_title
+    from settings import static_tp
     from urllib import quote
 %>
 
 <div id="content">
     <div class="index_b_title">
-        <h2 class="b_title">${static_title[tp]}</h2>
+        <h2 class="b_title">${static_tp[tp]["title"]}</h2>
     </div>
     <div class="mulu">
         % for lb in lblist:
@@ -43,7 +43,7 @@
                 <div class="clear">
                     <img src="${pr.img}" />
                 </div>
-                <a href="#">${pr.name}</a>
+                <a href="/${tp}/${pr.ID}">${pr.name}</a>
                 <div class="pr_inlist_price">
                     <span class="small_t">最低</span> <span class="price">￥${pr.price}</span>  <span class="c6" style="margin-left:10px;">${pr.weight}g</span>
                 </div>
@@ -69,6 +69,5 @@
     </div>
 
 </div>
-<div id="footer">
-</div>
+
 

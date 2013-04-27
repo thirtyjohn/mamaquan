@@ -23,7 +23,19 @@ static_leibie = {
     "niaobu":[],
 }
 
-static_title = {
-    "naifen":u"奶粉",    
+static_tp = {
+    "naifen":{u"title":u"奶粉",u"tablename":"formalnaifen"},
+    "niaobu":None,
+}
+
+tp_same = {
+    "naifen":["series","duan","brand"],
+    "niaobu":[],
+}
+
+market_name = {
+    "amazon":u"亚马逊直销",
+    "jd":u"京东直销",
+    "tmall":u"天猫官方旗舰店",
 }
  

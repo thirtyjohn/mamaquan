@@ -1,5 +1,5 @@
 #coding:utf-8
-from settings import dbconn,render,static_leibie
+from settings import dbconn,render,static_leibie,static_tp
 import web,json
 from webapp.models import shoppings,products
 from helpers.utils import _xsseccape
@@ -157,7 +157,14 @@ class productsearch:
 
 class product:
     def GET(self,tp,prid):
-        return tp + prid
+        if tp not in static_tp.keys():
+            return web.notfound()
+        pr = products.getpr(tp,prid)
+        if not pr:
+            return web.notfound()
+        pritems = products.getpritems(tp,prid)
+        otherprs = products.getotherprs(tp,prid)
+        return render.product(tp=tp,pr=pr,pritems=pritems,otherprs=otherprs)
 
 
 """
