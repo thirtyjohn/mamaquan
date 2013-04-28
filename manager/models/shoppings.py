@@ -9,26 +9,31 @@ def getOkspitems(itemclass):
     return dbconn.query("""
         select * from shoppingitem
         where
-            process = 0
-            and pid in (select pid from shoppingitem where process = 0 group by pid having count(*)>1))
+            processed = 0
+            and pid in (select pid from shoppingitem where processed = 0 group by pid having count(*)>1)
             and itemclass = $itemclass
     """,vars=dict(itemclass=itemclass))
 
 def getPrePids(itemclass):
-    return dbconn.query("select distinct pid from preitem where itemclass = $itemclass and process=0", vars=dict(itemclass=itemclass))
+    return dbconn.query("select distinct pid from preshopping where itemclass = $itemclass and processed=0", vars=dict(itemclass=itemclass))
 
 
 def getPreShoppingsByPid(pid):
-    return dbconn.query("select * from preitem where pid = $pid and process=0", vars=dict(pid=pid))
+    return dbconn.query("select * from preshopping where pid = $pid and processed=0", vars=dict(pid=pid))
+
+def getFormaltoUpdate(itemclass):
+    return dbconn.query("select * from formalshopping where picked = 1 and itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
+
+def getFormaltoShopping(itemclass):
+    return dbconn.query("select * from formalshopping where itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
 
 
 def updateprocess(itemclass):
-    dbconn.update("shoppingtiem",where="itemclass=$itemclass and process=0",vars=dict(itemclass=itemclass),process=1)
-    dbconn.update("preshopping",where="itemclass=$itemclass and process=0",vars=dict(itemclass=itemclass),process=1)
+    dbconn.update("shoppingitem",where="itemclass=$itemclass and processed=0",vars=dict(itemclass=itemclass),processed=1)
+    dbconn.update("preshopping",where="itemclass=$itemclass and processed=0",vars=dict(itemclass=itemclass),processed=1)
 
-
-def getFormaltoUpdate(itemclass):
-    return dbconn.query("select * from formalitem where picked = 1 and itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
+def updateFormalprocess(itemclass):
+    dbconn.update("formalshopping",where="itemclass=$itemclass and processed=0",vars=dict(itemclass=itemclass),processed=1)
 
 def updateFormal(itemid,**values):
     dbconn.update("formalshopping",where="itemid=$itemid",vars=dict(itemid=itemid),**values)
@@ -37,6 +42,9 @@ def updateFormal(itemid,**values):
 def updateshoppingitem(itemid,**values):
     dbconn.update("shoppingitem",where="itemid=$itemid",vars=dict(itemid=itemid),**values)
 
+
+def updateGeneralscore(itemclass):
+    dbconn.query("update formalshopping set generalscore = (sharenum*1000 + favournum*100 + tradenum*100 + commend*100)*1.0/browsenum where itemclass=$itemclass and generalscore is null and processed=0",vars=dict(itemclass=itemclass))
 
 
 class Shoppingitem:
@@ -107,8 +115,8 @@ def insertshoppingitem(item):
         )
 
 
-def insertpreitem(item):
-    dbconn.insert("preitem",
+def insertpreshopping(item):
+    dbconn.insert("preshopping",
                     originalImage = item.originalImage,
                     image = item.image,
                     tip = item.tip,
@@ -142,7 +150,7 @@ def insertpreitem(item):
         )
 
 def insertformalitem(item,picked=None):
-    dbconn.insert("formalitem",
+    dbconn.insert("formalshopping",
                     originalImage = item.originalImage,
                     image = item.image,
                     tip = item.tip,
@@ -175,3 +183,28 @@ def insertformalitem(item,picked=None):
                     picked = picked
         )
 
+
+def insertShopping(item):
+    dbconn.insert("shopping",
+                    ID = item.ID,
+                    itemId = str(item.itemId),
+                    pid = str(item.pid),
+                    bigimg = item.originalImage,
+                    img = item.image,
+                    name = item.fullTitle,
+                    price = item.currentPrice,
+                    pricebefore = item.price,
+                    ship = item.ship,
+                    promotetype = 1 if item.isLimitPromotion==1 else None,
+                    promoteTimeLimit = item.promoteTimeLimit,
+                    tradeNum = item.tradeNum,
+                    commend = item.commend,
+                    sellername = item.nick,
+                    sellerid = item.sellerId,
+                    sellerloc = item.loc,
+                    sellerrank = item.ratesum,
+                    score = item.generalscore,
+                    itemclass = item.itemclass,
+                    picked = item.picked,
+                    udate = item.udate
+    )

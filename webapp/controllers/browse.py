@@ -1,5 +1,5 @@
 #coding:utf-8
-from settings import dbconn,render,static_leibie,static_tp
+from webapp.settings import render,static_leibie,static_tp
 import web,json
 from webapp.models import shoppings,products
 from helpers.utils import _xsseccape
@@ -7,7 +7,7 @@ from helpers.utils import _xsseccape
 
 class index:
     def GET(self):
-        itemlist = dbconn.query("select * from formalitem order by generalscore desc limit 20 ")
+        itemlist = shoppings.getindexsps() 
         """
         for r in res:
             itemlist.append(r)

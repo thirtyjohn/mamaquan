@@ -70,19 +70,19 @@
     %>
         <div class="index_sp${" index_last_row" if count_img%3==0 else ""}" data-id="${item.ID}">
            <div class="index_sp_img">
-            <div class="index_sp_discount">${round(item.currentPrice*1.0/item.price*10,1)}折</div>
-            <img src="${item.originalImage}" />
+            <div class="index_sp_discount">${round(item.price*1.0/item.pricebefore*10,1)}折</div>
+            <img src="${item.bigimg}" />
            </div>
            <div style="overflow:hidden;zoom:1;">
-           <div class="index_sp_name">${item.fullTitle}</div>
+           <div class="index_sp_name">${item.name}</div>
            <div class="index_sp_promo"> 
            % if item.promoteTimeLimit:
                 <div>还剩<br/>${secondtodatetxt(item.promoteTimeLimit)}</div>
            % endif
            </div>
            <div class="index_sp_price">
-            <h5><del>￥${item.price}</del></h5>
-            <h4>${item.currentPrice}</h5>
+            <h5><del>￥${item.pricebefore}</del></h5>
+            <h4>${item.price}</h5>
            </div>
            </div>
         </div>

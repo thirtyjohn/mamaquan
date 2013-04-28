@@ -8,7 +8,7 @@ render = render_mako(
         output_encoding='utf-8'
         )
 
-dbconn = web.database(dbn='mysql', user="root", host="127.0.0.1", db="interest")
+dbconn = web.database(dbn='mysql', user="root", host="127.0.0.1", db="mmquan")
 localdir = "/Users/macbookpro/workspace/interest/taobaoyouhui/"
 
 

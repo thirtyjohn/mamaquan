@@ -1,6 +1,5 @@
 #coding:utf8
 import re
-from settings import dbconn
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
 comp_weight = re.compile(u"(\d+)[g|克]")

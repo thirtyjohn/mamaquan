@@ -1,5 +1,5 @@
 #coding:utf8
-from settings import dbconn,static_leibie,static_tp,tp_same
+from webapp.settings import dbconn,static_leibie,static_tp,tp_same
 import web
 
 def getprs(tp,qdict):

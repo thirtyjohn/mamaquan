@@ -16,7 +16,7 @@ def collect(itemclass):
         item = analydata.filter1st(item) ##第一道过滤
         if item:
             item.itemclass = itemclass
-            item.insert()
+            shoppings.insertshoppingitem(item)
 
 def insertSameProduct(itemclass):
     sps = shoppings.getSpHasSameItem(itemclass)
@@ -45,7 +45,7 @@ def insertSameProduct(itemclass):
 def pickItemtoPre(itemclass):
     sps = shoppings.getOkspitems(itemclass)
     for sp in sps:
-        shoppings.insertpreitem(sp)
+        shoppings.insertpreshopping(sp)
 
 
 def pickGoodItem(pid):
@@ -77,18 +77,23 @@ def updateFormalDetail(itemclass):
         itemBFSHtml = origindata.getItemBFSHtml(pagesource)
         browsenum,sharenum,storenumun,favournum = getdata.getItemBFS(itemBFSHtml)
         promoteTimeLimit = getdata.getItemTimeLimit(pagesource)
-        tradenum30html = origindata.get30sellhtml(item)
-        tradenum30,tradenum30_interval = getdata.get30sell(tradenum30html)
+        ##tradenum30html = origindata.get30sellhtml(item)
+        ##tradenum30,tradenum30_interval = getdata.get30sell(tradenum30html)
         shoppings.updateFormal(item.itemId,
                         browsenum = browsenum,
                         sharenum = sharenum,
                         storenumun = storenumun,
                         favournum = favournum,
-                        promoteTimeLimit = promoteTimeLimit,
+                        promoteTimeLimit = promoteTimeLimit, 
                         udate = datetime.now()
         )
     
 
+
+def formaltoshopping(itemclass):
+    items = shoppings.getFormaltoShopping(itemclass)
+    for item in items:
+        shoppings.insertShopping(item)
 
 def startupdate(itemclass):
     collect(itemclass)
@@ -97,4 +102,7 @@ def startupdate(itemclass):
     pickPretoformal(itemclass)
     shoppings.updateprocess(itemclass)
     updateFormalDetail(itemclass)
+    shoppings.updateGeneralscore(itemclass)
+    formaltoshopping(itemclass)
+    shoppings.updateFormalprocess(itemclass)
 
