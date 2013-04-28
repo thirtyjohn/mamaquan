@@ -1,7 +1,7 @@
 #coding:utf8
 
 import json,re
-from items import Item
+from manager.models.shoppings import Shoppingitem
 
 comp_pid = re.compile("pid=([0-9-]+)")
 
@@ -14,7 +14,7 @@ def getItems(html):
     itemlist = list()
 
     for itemdata in itemdatalist:
-        item = Item()
+        item = Shoppingitem()
         item.originalImage = itemdata["originalImage"]
         item.image = itemdata["image"]
         item.tip = itemdata["tip"]

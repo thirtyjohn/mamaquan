@@ -2,7 +2,7 @@
 
 import urllib2,urllib,re
 import time
-from settings import localdir
+from manager.settings import localdir
 
 """
 采用条件：打折秒杀，默认排序
