@@ -1,6 +1,6 @@
 #coding:utf-8
 from manager.settings import dbconn
-
+import web
 
 def getSpHasSameItem(itemclass):
     return dbconn.query("select * from shoppingitem where sameiteminfocount > 1 and itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
@@ -28,12 +28,11 @@ def getFormaltoShopping(itemclass):
     return dbconn.query("select * from formalshopping where itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
 
 
-def updateprocess(itemclass):
+def updateShoppingProcess(itemclass):
     dbconn.update("shoppingitem",where="itemclass=$itemclass and processed=0",vars=dict(itemclass=itemclass),processed=1)
     dbconn.update("preshopping",where="itemclass=$itemclass and processed=0",vars=dict(itemclass=itemclass),processed=1)
-
-def updateFormalprocess(itemclass):
     dbconn.update("formalshopping",where="itemclass=$itemclass and processed=0",vars=dict(itemclass=itemclass),processed=1)
+
 
 def updateFormal(itemid,**values):
     dbconn.update("formalshopping",where="itemid=$itemid",vars=dict(itemid=itemid),**values)
@@ -46,6 +45,8 @@ def updateshoppingitem(itemid,**values):
 def updateGeneralscore(itemclass):
     dbconn.query("update formalshopping set generalscore = (sharenum*1000 + favournum*100 + tradenum*100 + commend*100)*1.0/browsenum where itemclass=$itemclass and generalscore is null and processed=0",vars=dict(itemclass=itemclass))
 
+def hasShoppingitembyItemid(itemid):
+    return web.listget(dbconn.query("select * from shoppingitem where itemid=$itemid",vars=dict(itemid=itemid)),0,None)
 
 class Shoppingitem:
     def __init__(self):

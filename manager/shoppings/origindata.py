@@ -2,6 +2,7 @@
 
 import urllib2,urllib,re
 import time
+from helpers.crawls import getUrl
 from manager.settings import localdir
 
 """
@@ -112,7 +113,8 @@ def getListHtml(itemclass):
     private_params = {"cat":cat_dict[itemclass]}
     params.update(private_params)
     url = url_host + htm_dict[itemclass] + "?" + urllib.urlencode(params)
-    html = urllib2.urlopen(url).read()
+    resp = getUrl(url)
+    html = resp.read() if resp else None
     return html
 
 def getSameHtml(itemclass,item):
@@ -126,9 +128,8 @@ def getSameHtml(itemclass,item):
               }
 
     url = url_host + htm_dict[itemclass] + "?" + urllib.urlencode(params)
-    print url
-    time.sleep(5)
-    html = urllib2.urlopen(url).read()
+    resp = getUrl(url)
+    html = resp.read() if resp else None
     return html
 
 
@@ -150,13 +151,15 @@ gobaby=1
 
 def get30sellhtml(item):
     url = "http://ajax.tbcdn.cn/json/ifq.htm?id="+ str(item.itemId) +"&sid="+ str(item.sellerId) +"&p=1&al=false&ap=1&ss=0&free=0&q=1&ex=0&exs=0&shid=&at=b&ct=1"
-    html = urllib2.urlopen(url).read()
+    resp = getUrl(url)
+    html = resp.read() if resp else None
     return html
 
 
 def getItemHtml(item):
     url = "http://item.taobao.com/item.htm?id=" + str(item.itemId)
-    html = urllib2.urlopen(url).read()
+    resp = getUrl(url)
+    html = resp.read() if resp else None
     return html
 
 
@@ -165,7 +168,8 @@ def getItemBFSHtml(txt):
     m = comp_counterApi.search(txt)
     if m:
         url = m.group(1)+"&callback=DT.mods.SKU.CountCenter.saveCounts"
-        html = urllib2.urlopen(url).read()
+        resp = getUrl(url)
+        html = resp.read() if resp else None
         return html
 
 """

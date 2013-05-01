@@ -5,41 +5,61 @@ from manager.settings import localdir,dbconn
 import web
 from manager.models import shoppings
 from datetime import datetime
+from helpers.loggers import get_logger
+import traceback
 
 def collect(itemclass):
+    newcount = 0
+    samecount = 0
     html = origindata.getListHtml(itemclass)
 
+    if not html:
+        return
 
     items = getdata.getItems(html)
 
     for item in items: 
         item = analydata.filter1st(item) ##第一道过滤
         if item:
+            newcount += 1
             item.itemclass = itemclass
-            shoppings.insertshoppingitem(item)
+            if not shoppings.hasShoppingitembyItemid(item.itemId):
+                item.picked=1
+                shoppings.insertshoppingitem(item)
+            else:
+                samecount += 1
+
+    get_logger("tactics").info(itemclass+",list,handle: "+str(newcount)+" same: "+str(samecount))
 
 def insertSameProduct(itemclass):
+    samecount = 0
+    samitemcount = 0
     sps = shoppings.getSpHasSameItem(itemclass)
     for item in sps: 
         html = origindata.getSameHtml(itemclass,item)
-        
+        if not html:
+            return 
         ##f = open(localdir+"test","w")
         ##f.write(html)
-
         items = getdata.getItems(html)
         if not items:
-            print "wowowo"
             continue
+        
         for sameitem in items:
             if analydata.filter0st(sameitem): ##同款产品第一道过滤
-
                 if sameitem.itemId == item.itemId:
-                    shoppings.updateshoppingitem(sameitem.itemId,picked=1)
+                    pass
                 else:
-                    sameitem.pid = item.pid
-                    sameitem.picked = 0
-                    sameitem.itemclass = item.itemclass
-                    shoppings.insertshoppingitem(sameitem)
+                    samitemcount += 1
+                    if not shoppings.hasShoppingitembyItemid(sameitem.itemId):
+                        sameitem.pid = item.pid
+                        sameitem.picked = 0
+                        sameitem.itemclass = item.itemclass
+                        shoppings.insertshoppingitem(sameitem)
+                    else:
+                        samecount += 1
+
+    get_logger("tactics").info(itemclass+",samelist,handle: "+str(samitemcount)+" same: "+str(samecount))
 
 
 def pickItemtoPre(itemclass):
@@ -74,19 +94,24 @@ def updateFormalDetail(itemclass):
     res = shoppings.getFormaltoUpdate(itemclass) 
     for item in res:
         pagesource = origindata.getItemHtml(item)
-        itemBFSHtml = origindata.getItemBFSHtml(pagesource)
-        browsenum,sharenum,storenumun,favournum = getdata.getItemBFS(itemBFSHtml)
-        promoteTimeLimit = getdata.getItemTimeLimit(pagesource)
-        ##tradenum30html = origindata.get30sellhtml(item)
-        ##tradenum30,tradenum30_interval = getdata.get30sell(tradenum30html)
-        shoppings.updateFormal(item.itemId,
-                        browsenum = browsenum,
-                        sharenum = sharenum,
-                        storenumun = storenumun,
-                        favournum = favournum,
-                        promoteTimeLimit = promoteTimeLimit, 
-                        udate = datetime.now()
-        )
+        if not pagesource:
+            continue
+        try:
+            itemBFSHtml = origindata.getItemBFSHtml(pagesource)
+            browsenum,sharenum,storenumun,favournum = getdata.getItemBFS(itemBFSHtml)
+            promoteTimeLimit = getdata.getItemTimeLimit(pagesource)
+            ##tradenum30html = origindata.get30sellhtml(item)
+            ##tradenum30,tradenum30_interval = getdata.get30sell(tradenum30html)
+            shoppings.updateFormal(item.itemId,
+                            browsenum = browsenum,
+                            sharenum = sharenum,
+                            storenumun = storenumun,
+                            favournum = favournum,
+                            promoteTimeLimit = promoteTimeLimit, 
+                            udate = datetime.now()
+            )
+        except:
+            get_logger("crawl").debug("%s %s",itemBFSHtml,traceback.format_exc())
     
 
 
@@ -100,9 +125,8 @@ def startupdate(itemclass):
     insertSameProduct(itemclass)
     pickItemtoPre(itemclass)
     pickPretoformal(itemclass)
-    shoppings.updateprocess(itemclass)
     updateFormalDetail(itemclass)
     shoppings.updateGeneralscore(itemclass)
     formaltoshopping(itemclass)
-    shoppings.updateFormalprocess(itemclass)
+    shoppings.updateShoppingProcess(itemclass)
 

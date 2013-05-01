@@ -2,13 +2,18 @@
 
 import json,re
 from manager.models.shoppings import Shoppingitem
+from helpers.loggers import get_logger
+from helpers.crawls import failurecount
 
 comp_pid = re.compile("pid=([0-9-]+)")
 
 def getItems(html):
     data = json.loads(html.decode("gbk"))
 
-    if not data.has_key("itemList"):
+    if not data.has_key("itemList") or not data["itemList"]:
+        get_logger("crawl").debug(html)
+        global failurecount
+        failurecount += 1
         return None
     itemdatalist = data["itemList"]
     itemlist = list()
@@ -70,7 +75,7 @@ comp_storenumun = re.compile('\"SCCP_2_\d+\":(\d+)')
 comp_favournum = re.compile('\"ICCP_1_\d+\":(\d+)')
 
 def getItemBFS(html):
-    print html
+ 
     m = comp_browsenum.search(html)
     browsenum = m.group(1) if m else None
 
