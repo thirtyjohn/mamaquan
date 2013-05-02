@@ -1,6 +1,7 @@
 #coding:utf-8
 from manager.settings import dbconn
 import web
+from datetime import datetime
 
 def getSpHasSameItem(itemclass):
     return dbconn.query("select * from shoppingitem where sameiteminfocount > 1 and itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
@@ -110,7 +111,8 @@ def insertshoppingitem(item):
                     dsrScore = item.dsrScore,
                     pid = item.pid,
                     picked = item.picked,
-                    itemclass = item.itemclass
+                    itemclass = item.itemclass,
+                    wdate = datetime.now()
         )
 
 
@@ -145,7 +147,8 @@ def insertpreshopping(item):
                     dsrScore = item.dsrScore,
                     itemclass = item.itemclass,
                     pid = item.pid,
-                    picked = item.picked
+                    picked = item.picked,
+                    wdate = datetime.now()
         )
 
 def insertformalitem(item,picked=None):
@@ -179,7 +182,8 @@ def insertformalitem(item,picked=None):
                     dsrScore = item.dsrScore,
                     itemclass = item.itemclass,
                     pid = item.pid,
-                    picked = picked
+                    picked = picked,
+                    wdate = datetime.now()
         )
 
 
@@ -205,5 +209,6 @@ def insertShopping(item):
                     score = item.generalscore,
                     itemclass = item.itemclass,
                     picked = item.picked,
-                    udate = item.udate
+                    udate = item.udate,
+                    wdate = datetime.now()
     )
