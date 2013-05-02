@@ -31,7 +31,7 @@ def crawl(url):
     try:
         resp = urllib2.urlopen(url)
     except HTTPError,e:
-        get_logger("crawl").error(str(e.code)+":"+url)
+        get_logger("crawl").debug(str(e.code)+":"+url)
         failurecount += 1
         return None
     if needreset():

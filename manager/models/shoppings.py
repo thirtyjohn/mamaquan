@@ -7,11 +7,9 @@ def getSpHasSameItem(itemclass):
 
 def getOkspitems(itemclass):
     return dbconn.query("""
-        select * from shoppingitem
-        where
-            processed = 0
-            and pid in (select pid from shoppingitem where processed = 0 group by pid having count(*)>1)
-            and itemclass = $itemclass
+        select * from shoppingitem s
+            join (select pid from shoppingitem where processed = 0 and itemclass = $itemclass group by pid having count(*)>1) t
+        on s.pid = t.pid and s.processed = 0
     """,vars=dict(itemclass=itemclass))
 
 def getPrePids(itemclass):

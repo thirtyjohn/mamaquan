@@ -121,12 +121,15 @@ def formaltoshopping(itemclass):
         shoppings.insertShopping(item)
 
 def startupdate(itemclass):
-    collect(itemclass)
-    insertSameProduct(itemclass)
-    pickItemtoPre(itemclass)
-    pickPretoformal(itemclass)
-    updateFormalDetail(itemclass)
-    shoppings.updateGeneralscore(itemclass)
-    formaltoshopping(itemclass)
+    try:
+        collect(itemclass)
+        insertSameProduct(itemclass)
+        pickItemtoPre(itemclass)
+        pickPretoformal(itemclass)
+        updateFormalDetail(itemclass)
+        shoppings.updateGeneralscore(itemclass)
+        formaltoshopping(itemclass)
+    except:
+        get_logger("schedErrJob").debug("%s",traceback.format_exc())
     shoppings.updateShoppingProcess(itemclass)
 
