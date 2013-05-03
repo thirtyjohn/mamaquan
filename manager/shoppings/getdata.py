@@ -1,4 +1,4 @@
-#coding:utf8
+#coding:utf-8
 
 import json,re
 from manager.models.shoppings import Shoppingitem
@@ -10,11 +10,15 @@ comp_pid = re.compile("pid=([0-9-]+)")
 def getItems(html):
     data = json.loads(html.decode("gbk"))
 
-    if not data.has_key("itemList") or not data["itemList"]:
+    if not data.has_key("itemList"):
         get_logger("crawl").debug(html)
         global failurecount
         failurecount += 1
         return None
+    if not data["itemList"]:
+        get_logger("crawl").debug("itemlist is null")
+        return None
+        
     itemdatalist = data["itemList"]
     itemlist = list()
 
@@ -102,4 +106,15 @@ def getItemTimeLimit(html):
         if m1:
             return int(m1.group(1))    
 
+   
+
+comp_ruyi_dict = re.compile("{.+}")
+def getRuyiPrice(html):
+    m = comp_ruyi_dict.search(html)
+    dict_html = m.group() if m else None
+    if not dict_html:
+        return None
+    data = json.loads(dict_html)
+    return data["Item"]["Prices"]
+    
     

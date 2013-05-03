@@ -3,8 +3,18 @@ from manager.settings import dbconn
 import web
 from datetime import datetime
 
+def getPickedSps(itemclass):
+    return dbconn.query("select * from shoppingitem where itemclass = $itemclass and processed=0 and picked=1",vars=dict(itemclass=itemclass))
+
 def getSpHasSameItem(itemclass):
     return dbconn.query("select * from shoppingitem where sameiteminfocount > 1 and itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
+
+
+def getPidsToCp(itemclass):
+    return dbconn.query("select pid from shoppingitem where processed = 0 and pid is not null and itemclass=$itemclass group by pid having count(*) > 1",vars=dict(itemclass=itemclass))
+
+def getSpItemsByPid(pid):
+    return dbconn.query("select * from shoppingitem where pid = $pid and processed=0", vars=dict(pid=pid))
 
 def getOkspitems(itemclass):
     return dbconn.query("""
@@ -17,8 +27,7 @@ def getPrePids(itemclass):
     return dbconn.query("select distinct pid from preshopping where itemclass = $itemclass and processed=0", vars=dict(itemclass=itemclass))
 
 
-def getPreShoppingsByPid(pid):
-    return dbconn.query("select * from preshopping where pid = $pid and processed=0", vars=dict(pid=pid))
+
 
 def getFormaltoUpdate(itemclass):
     return dbconn.query("select * from formalshopping where picked = 1 and itemclass = $itemclass and processed=0",vars=dict(itemclass=itemclass))
@@ -40,9 +49,6 @@ def updateFormal(itemid,**values):
 def updateshoppingitem(itemid,**values):
     dbconn.update("shoppingitem",where="itemid=$itemid",vars=dict(itemid=itemid),**values)
 
-
-def updateGeneralscore(itemclass):
-    dbconn.query("update formalshopping set generalscore = (sharenum*1000 + favournum*100 + tradenum*100 + commend*100)*1.0/browsenum where itemclass=$itemclass and generalscore is null and processed=0",vars=dict(itemclass=itemclass))
 
 def hasShoppingitembyItemid(itemid):
     return web.listget(dbconn.query("select * from shoppingitem where itemid=$itemid",vars=dict(itemid=itemid)),0,None)
@@ -151,7 +157,7 @@ def insertpreshopping(item):
                     wdate = datetime.now()
         )
 
-def insertformalitem(item,picked=None):
+def insertformalshopping(item,picked=None):
     dbconn.insert("formalshopping",
                     originalImage = item.originalImage,
                     image = item.image,
@@ -182,7 +188,12 @@ def insertformalitem(item,picked=None):
                     dsrScore = item.dsrScore,
                     itemclass = item.itemclass,
                     pid = item.pid,
-                    picked = picked,
+                    picked = item.picked,
+                    browsenum = item.browsenum,
+                    sharenum = item.sharenum,
+                    favournum = item.favournum,
+                    promoteTimeLimit = item.promoteTimeLimit,
+                    udate = item.udate,
                     wdate = datetime.now()
         )
 

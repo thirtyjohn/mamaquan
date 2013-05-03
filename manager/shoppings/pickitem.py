@@ -2,24 +2,26 @@
 
 import origindata,getdata,analydata 
 from manager.settings import localdir,dbconn
-import web
+import web,traceback
 from manager.models import shoppings
 from datetime import datetime
 from helpers.loggers import get_logger
-import traceback
+from tactics import pagetocrawl
 
-def collect(itemclass):
+def collectpage(itemclass,page):
     newcount = 0
     samecount = 0
-    html = origindata.getListHtml(itemclass)
+    html = origindata.getListHtml(itemclass,page)
 
     if not html:
         return
 
     items = getdata.getItems(html)
+    if not items:
+        return
 
     for item in items: 
-        item = analydata.filter1st(item) ##第一道过滤
+        item = analydata.filterFromList(item) ##第一道过滤
         if item:
             newcount += 1
             item.itemclass = itemclass
@@ -29,7 +31,11 @@ def collect(itemclass):
             else:
                 samecount += 1
 
-    get_logger("tactics").info(itemclass+",list,handle: "+str(newcount)+" same: "+str(samecount))
+    get_logger("tactics").info(itemclass+",list,page:"+str(page)+",handle: "+str(newcount)+" same: "+str(samecount))
+
+def collect(itemclass):
+    for page in pagetocrawl[itemclass]:
+        collectpage(itemclass,page=page)
 
 def insertSameProduct(itemclass):
     samecount = 0
@@ -46,7 +52,7 @@ def insertSameProduct(itemclass):
             continue
         
         for sameitem in items:
-            if analydata.filter0st(sameitem): ##同款产品第一道过滤
+            if analydata.filterSameItem(sameitem): ##同款产品第一道过滤
                 if sameitem.itemId == item.itemId:
                     pass
                 else:
@@ -62,37 +68,30 @@ def insertSameProduct(itemclass):
     get_logger("tactics").info(itemclass+",samelist,handle: "+str(samitemcount)+" same: "+str(samecount))
 
 
-def pickItemtoPre(itemclass):
-    sps = shoppings.getOkspitems(itemclass)
+
+def calCpRank(itemclass):
+    p_res = shoppings.getPidsToCp(itemclass)
+    for p in p_res:
+        items = list()
+        res = shoppings.getSpItemsByPid(p.pid) 
+        for r in res:
+            if r.picked == 1:
+                pickitem = r
+            items.append(r)
+        cprank = analydata.compare(pickitem,items)
+        shoppings.updateshoppingitem(pickitem.itemId,cprank=cprank)
+
+
+
+def updateItemRank(itemclass): 
+    sps = shoppings.getPickedSps(itemclass)
     for sp in sps:
-        shoppings.insertpreshopping(sp)
+        shoppings.updateshoppingitem(sp.itemId,itemrank=analydata.calItemRank(sp) )
 
 
-def pickGoodItem(pid):
-    items = list()
-    res = shoppings.getPreShoppingsByPid(pid) 
-    for r in res:
-        if r.picked == 1:
-            pickitem = r
-        items.append(r)
-
-    gooditem = analydata.compare(pickitem,items) 
-    if gooditem:
-        famitems = analydata.getFamitems(gooditem,items)
-        shoppings.insertformalitem(gooditem,picked=1)
-        for i in famitems:
-            shoppings.insertformalitem(i,picked=0)
-
-
-def pickPretoformal(itemclass):
-    res = shoppings.getPrePids(itemclass) 
-    for r in res:
-        pickGoodItem(r.pid)
-
-
-def updateFormalDetail(itemclass):
-    res = shoppings.getFormaltoUpdate(itemclass) 
-    for item in res:
+def updateItemDetail(itemclass):
+    items = shoppings.getPickedSps(itemclass)
+    for item in items:
         pagesource = origindata.getItemHtml(item)
         if not pagesource:
             continue
@@ -102,19 +101,46 @@ def updateFormalDetail(itemclass):
             promoteTimeLimit = getdata.getItemTimeLimit(pagesource)
             ##tradenum30html = origindata.get30sellhtml(item)
             ##tradenum30,tradenum30_interval = getdata.get30sell(tradenum30html)
-            shoppings.updateFormal(item.itemId,
+            shoppings.updateshoppingitem(item.itemId,
                             browsenum = browsenum,
                             sharenum = sharenum,
-                            storenumun = storenumun,
                             favournum = favournum,
                             promoteTimeLimit = promoteTimeLimit, 
                             udate = datetime.now()
             )
         except:
             get_logger("crawl").debug("%s %s",itemBFSHtml,traceback.format_exc())
-    
 
 
+def updateItemChange(itemclass):
+    items = shoppings.getPickedSps(itemclass)
+    for item in items:
+        html = origindata.getRuyiHtml(item)
+        if not html:
+            continue
+        prices = getdata.getRuyiPrice(html)
+        print prices
+        if not prices:
+            continue
+        changerank = analydata.calChange(item.currentPrice,prices)
+        shoppings.updateshoppingitem(item.itemId,changerank=changerank)
+
+
+def pickGoodItems(itemclass):
+    sps = shoppings.getPickedSps(itemclass)
+    for sp in sps:
+        if analydata.isGoodItem(sp):
+            shoppings.insertformalshopping(sp)
+            if not sp.pid:
+                continue
+            res = shoppings.getSpItemsByPid(sp.pid)
+            items = list()
+            for r in res:
+                items.append(r)
+            for famitem in analydata.getFamitems(items):
+                shoppings.insertformalshopping(famitem)
+
+        
 def formaltoshopping(itemclass):
     items = shoppings.getFormaltoShopping(itemclass)
     for item in items:
@@ -124,12 +150,18 @@ def startupdate(itemclass):
     try:
         collect(itemclass)
         insertSameProduct(itemclass)
-        pickItemtoPre(itemclass)
-        pickPretoformal(itemclass)
-        updateFormalDetail(itemclass)
-        shoppings.updateGeneralscore(itemclass)
+        calCpRank(itemclass)
+        updateItemDetail(itemclass)
+        updateItemRank(itemclass)
+        updateItemChange(itemclass)
+        pickGoodItems(itemclass)
         formaltoshopping(itemclass)
     except:
         get_logger("schedErrJob").debug("%s",traceback.format_exc())
     shoppings.updateShoppingProcess(itemclass)
 
+
+##pickItemtoPre(itemclass)
+        ##pickPretoformal(itemclass)
+        ##updateFormalDetail(itemclass)
+        ##shoppings.updateGeneralscore(itemclass)

@@ -106,12 +106,14 @@ other_dict = {
 
 
 
-def getListHtml(itemclass):
+def getListHtml(itemclass,page=None):
     params = general_params.copy()
     if other_dict.has_key(itemclass):
         params.update(other_dict[itemclass])
     private_params = {"cat":cat_dict[itemclass]}
     params.update(private_params)
+    if page:
+        params.update({"data-value":(page-1)*96})
     url = url_host + htm_dict[itemclass] + "?" + urllib.urlencode(params)
     resp = getUrl(url)
     html = resp.read() if resp else None
@@ -172,6 +174,17 @@ def getItemBFSHtml(txt):
         html = resp.read() if resp else None
         return html
 
+
+
+
+def getRuyiHtml(item):
+    ruyi_host = "http://ruyi.etao.com/ext/productLinkSearch?"
+    params = urllib.urlencode({"link":"http://item.taobao.com/item.htm?id="+str(item.itemId),"pid":"rf002","group":"prices,item,items"})
+    resp = getUrl(ruyi_host+params)
+    html = resp.read() if resp else None
+    return html
+
+    
 """
 if __name__ == "__main__":
     ##html = getCloth()

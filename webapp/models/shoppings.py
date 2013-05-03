@@ -4,10 +4,13 @@ import web
 
 
 def getindexsps():
-    return dbconn.query("select * from shopping where picked=1 order by score-(timestampdiff(second,udate,now()))/864 desc limit 20 ")
+    return dbconn.query("select * from shopping where picked=1 order by id desc limit 30 ")
 
 def getsp(spid):
     return web.listget(dbconn.query("select * from shopping where id=$spid",vars=dict(spid=spid)),0,None)
 
 def getfamsp(pid):
     return dbconn.query("select * from shopping where pid = $pid and picked=0 order by score desc",vars=dict(pid=pid))
+
+
+##score-(timestampdiff(second,udate,now()))/864 desc
