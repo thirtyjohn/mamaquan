@@ -223,7 +223,12 @@ def compare(pickitem,items):
 
 
 def calItemRank(item):
-    return (item.sharenum*1000 + item.favournum*100 + item.tradeNum*100 + item.commend*100)*1.0/item.browsenum
+    ##质量分不超过1
+    i_score = (item.sharenum*250 + item.favournum*10 + item.tradeNum*50 + item.commend*50)/4.0/item.browsenum
+    if i_score > 1:
+        i_score = 1
+    ##质量分乘以可信度 1000可达0.5
+    return i_score*(1-1000.0/(item.browsenum+1000))
 
 
 def calChange(currentprice,pricelist):
@@ -257,6 +262,8 @@ def calChange(currentprice,pricelist):
 
 
 def isGoodItem(item):
+    if item.itemrank < tactics.OUT_GOOD_ITEMRANK:
+        return False
     if item.changerank < tactics.OUT_GOOD_CHANGERANK:
         return False
     if item.cprank == tactics.OUT_GOOD_CPRANK:
@@ -271,6 +278,14 @@ def isGoodItem(item):
         return True
     return False
 
+
+def computescore(item):
+    cprank = item.cprank if item.cprank else 0
+    itemrank = item.itemrank if item.itemrank else 0
+    changerank = item.changerank if item.changerank else 0
+    time_now = int(time.time()) - 1367550132
+    score = cprank*1.5 + itemrank + changerank*1.5 + time_now*0.75/3600
+    return score
 """
 在取相似产品时，超低价，不可信的就别出了
 """

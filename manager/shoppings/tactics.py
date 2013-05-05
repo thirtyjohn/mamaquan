@@ -48,29 +48,30 @@ MAX_SAMPLE_DIFF_RATE = 3
 """
 OUT_GOOD_CHANGERANK = 0
 OUT_GOOD_CPRANK = -1
+OUT_GOOD_ITEMRANK = 0.2
 IN_GOOD_CPRANK = 1
-IN_GOOD_ITEMRANK = 20
+IN_GOOD_ITEMRANK = 0.6
 IN_GOOD_CHANGERANK = 0.2
-INTER_GOOD_ITEMRANK = 5
+INTER_GOOD_ITEMRANK = 0.3
 INTER_GOOD_CHANGERANK = 0.05
 
 
 pagetocrawl = {
-        "nvzhuang":range(9,16),
-        "nvxie":range(9,16),
-        "wenxiong":range(9,16),
-        "shuiyi":range(9,16),
-        "sushen":range(9,16),
-        "danjianbao":range(9,16),
-        "shoutibao":range(9,16),
-        "xiekuabao":range(9,16),
-        "qianbao":range(9,16),
-        "shounabao":range(9,16),
-        "tongzhuang":range(9,16),
-        "chuangshang":range(9,16),
-        "jiajushipin":range(9,16),
-        "peishi":range(9,16),
-        "maorongwanju":range(9,16),
+        "nvzhuang":range(1,11),
+        "nvxie":range(1,11),
+        "wenxiong":range(1,11),
+        "shuiyi":range(1,11),
+        "sushen":range(1,11),
+        "danjianbao":range(1,11),
+        "shoutibao":range(1,11),
+        "xiekuabao":range(1,11),
+        "qianbao":range(1,11),
+        "shounabao":range(1,11),
+        "tongzhuang":range(1,11),
+        "chuangshang":range(1,11),
+        "jiajushipin":range(1,11),
+        "peishi":range(1,11),
+        "maorongwanju":range(1,11),
 }
 
 

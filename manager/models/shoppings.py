@@ -157,7 +157,7 @@ def insertpreshopping(item):
                     wdate = datetime.now()
         )
 
-def insertformalshopping(item,picked=None):
+def insertformalshopping(item,score=None):
     dbconn.insert("formalshopping",
                     originalImage = item.originalImage,
                     image = item.image,
@@ -194,7 +194,8 @@ def insertformalshopping(item,picked=None):
                     favournum = item.favournum,
                     promoteTimeLimit = item.promoteTimeLimit,
                     udate = item.udate,
-                    wdate = datetime.now()
+                    wdate = datetime.now(),
+                    score = score
         )
 
 
@@ -217,7 +218,7 @@ def insertShopping(item):
                     sellerid = item.sellerId,
                     sellerloc = item.loc,
                     sellerrank = item.ratesum,
-                    score = item.generalscore,
+                    score = item.score,
                     itemclass = item.itemclass,
                     picked = item.picked,
                     udate = item.udate,

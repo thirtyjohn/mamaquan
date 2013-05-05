@@ -1,8 +1,7 @@
 #coding:utf-8
 
 import origindata,getdata,analydata 
-from manager.settings import localdir,dbconn
-import web,traceback
+import traceback
 from manager.models import shoppings
 from datetime import datetime
 from helpers.loggers import get_logger
@@ -130,7 +129,8 @@ def pickGoodItems(itemclass):
     sps = shoppings.getPickedSps(itemclass)
     for sp in sps:
         if analydata.isGoodItem(sp):
-            shoppings.insertformalshopping(sp)
+            score = analydata.computescore(sp)
+            shoppings.insertformalshopping(sp,score=score)
             if not sp.pid:
                 continue
             res = shoppings.getSpItemsByPid(sp.pid)

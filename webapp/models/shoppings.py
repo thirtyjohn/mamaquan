@@ -4,7 +4,7 @@ import web
 
 
 def getindexsps():
-    return dbconn.query("select * from shopping where picked=1 order by id desc limit 30 ")
+    return dbconn.query("select * from shopping where picked=1 and wdate > '2013-05-03 22:00:00' order by score desc limit 30 ")
 
 def getsp(spid):
     return web.listget(dbconn.query("select * from shopping where id=$spid",vars=dict(spid=spid)),0,None)
