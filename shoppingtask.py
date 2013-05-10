@@ -18,6 +18,7 @@ sched = Scheduler(daemonic = False)
 sched.add_listener(err_listener)
 # Crawl Scheduler Taobao
 sched.add_cron_job(startupdate, minute=1, args=['nvzhuang'])
+sched.add_cron_job(startupdate, minute=5, args=['nvxie'])
 sched.add_cron_job(startupdate, minute=10, args=['wenxiong'])
 sched.add_cron_job(startupdate, minute=15, args=['shuiyi'])
 sched.add_cron_job(startupdate, minute=20, args=['sushen'])

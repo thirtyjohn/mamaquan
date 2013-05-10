@@ -35,6 +35,15 @@ a:hover{color:#996600;text-decoration:underline;}
 
 #content{width:960px;margin:0 auto;overflow:hidden;zoom:1;}
 
+#index_dp_list{margin-top:5px;}
+.index_dp{float:left;width:158px;background-color:#F4F5ED;margin-right:5px;padding:15px;}
+.index_dp_img{overflow:hidden;zoom:1;border:1px solid #ddd;padding:5px;background-color:#fff;width:149px;height:149px;}
+.index_dp_img img{width:149px;vertical-align:middle;}
+.index_dp dl{margin-top:5px;overflow:hidden;zoom:1;color:#666;}
+.index_dp dt{float:left;}
+.index_dp dd{float:right;}
+.index_dp h5{color:#996600;}
+
 #index_sp_list{margin-top:15px;}
 .index_sp{float:left;width:280px;height:190px;background-color:#F4F5ED;margin:0 15px 15px 0;padding:15px;}
 .index_sp:hover{cursor:pointer;background-color:#f7f8f0;}
@@ -50,13 +59,13 @@ a:hover{color:#996600;text-decoration:underline;}
 .index_b_title{overflow:hidden;zoom:1;border-bottom:2px solid #CC9933;}
 .json_sp{overflow:hidden;zoom:1;padding:40px;width:520px;}
 
-
-#index_mulu{overflow:hidden;zoom:1;background-color:#F4F5ED;padding:10px;}
+#index_mulu_wrap{background-color:#F4F5ED;overflow:hidden;zoom:1;}
+#index_mulu{float:left;padding:10px;width:680px;border-right: 15px solid #FFFFFF;}
 .index_mulu_lb{float:left;margin-left:10px;}
 .index_mulu_lb li {float:left;width:100px;text-align:center;}
 
-.index_mulu_img{float:left;border:1px solid #ddd;padding:5px;background-color:#fff;width:145px;height:145px;margin-right:15px;}
-.index_mulu_img img{width:145px;height:145px;}
+.index_mulu_img{float:left;border:1px solid #ddd;padding:5px;background-color:#fff;width:120px;height:120px;margin-right:15px;}
+.index_mulu_img img{width:120px;height:120px;}
 
 
 .mulu{overflow:hidden;zoom:1;background-color:#F4F5ED;padding:10px;}
@@ -66,7 +75,7 @@ a:hover{color:#996600;text-decoration:underline;}
 .leibie li{float:left;width:100px;color:#996600;}
 .checked{font-weight:bold;}
 
-
+#index_huodong{overflow:hidden;zoom:1;background-color:#F4F5ED;padding:10px;h}
 
 .pr_inlist{float:left;width:250px;padding:0 70px 50px 0;}
 .pr_inlist img{width:180px;height:180px;text-align:center;}

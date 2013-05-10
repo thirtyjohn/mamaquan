@@ -224,11 +224,16 @@ def compare(pickitem,items):
 
 def calItemRank(item):
     ##质量分不超过1
-    i_score = (item.sharenum*250 + item.favournum*10 + item.tradeNum*50 + item.commend*50)/4.0/item.browsenum
+    sharenum = item.sharenum if item.sharenum else 0
+    favournum = item.favournum if item.favournum else 0
+    tradeNum = item.tradeNum if item.tradeNum else 0
+    commend = item.commend if item.commend else 0
+    browsenum = item.browsenum if item.browsenum else 0
+    i_score = (sharenum*250 + favournum*10 + tradeNum*50 + commend*50)/4.0/browsenum
     if i_score > 1:
         i_score = 1
     ##质量分乘以可信度 1000可达0.5
-    return i_score*(1-1000.0/(item.browsenum+1000))
+    return i_score*(1-1000.0/(browsenum+1000))
 
 
 def calChange(currentprice,pricelist):
