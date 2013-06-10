@@ -2,7 +2,7 @@
 <%inherit file="browse.html"/>
 
 <%
-    from helpers.utils import secondtodatetxt
+    from helpers.utils import secondtodatetxt,getMarketName
     from webapp.settings import itemclass_name
 %>
 
@@ -65,30 +65,32 @@
     <div class="index_b_title">
         <span class="b_title">超值单品</span><span style="margin-left:10px;" class="c6">汇集每日劲爆单品</span>
     </div>
-
+    <div id="index_dp_list">
     <%
         count_dp = 0
     %>
-    % for dp in dplist:
-    <div id="index_dp_list${" index_last_row" if count_dp%5 == 0 else ""}">
-        <div class="index_dp">
+    % for dptuple in dplist:
+        <%
+            count_dp +=1
+            dp = dptuple[0]
+            dpmatchlist = dptuple[1]
+        %>
+        <div class="index_dp ${" index_last_row" if count_dp%5 == 0 else ""}">
             <div class="index_dp_img">
-                <img src=${dp.image} />
+                <a target="_blank" href="${dp.url}"><img src=${dp.image} /></a>
             </div>
             <h5 style="margin:5px 0;">${dp.name}</h5>
             <div class="clear">
-            <span class="c6" style="line-height:21px;">${dp.market}</span>
+            <span class="c6" style="line-height:21px;">${getMarketName(dp.market)}</span>
             <span style="float:right;font-size:16px;" class="price">￥${dp.price}</span>
             </div>
             <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
+                % for dpmatch in dpmatchlist:
                 <dl>
-                    <dt>京东商城</dt>
-                    <dd>￥215.00</dd> 
+                    <dt><a target="_blank" href="${dpmatch.url}" class="c6">${getMarketName(dpmatch.market)}</a></dt>
+                    <dd>￥${dpmatch.price}</dd> 
                 </dl>
-                <dl>
-                    <dt>当当网</dt>
-                    <dd>￥205.00</dd>
-                </dl>
+                % endfor
             </div>
         </div>
     % endfor

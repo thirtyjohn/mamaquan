@@ -1,6 +1,6 @@
 #coding:utf8
 import re
-from settings import url_market,exchange_rate
+from settings import url_market,exchange_rate,market_name
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
 comp_weight = re.compile(u"(\d+)[g|克]")
@@ -90,3 +90,9 @@ def getMarketFromUrl(url):
 
 def price(price,currency):
     return price*exchange_rate[currency]
+
+
+def getMarketName(market):
+    if market_name.has_key(market):
+        return market_name[market]
+    return None

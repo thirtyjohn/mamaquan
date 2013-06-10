@@ -14,6 +14,19 @@ url_market = {
     u"vjia.com":u"vjia",
 }
 
+market_name = {
+    u"zcn":u"亚马逊中国",
+    u"amazon":u"亚马逊美国",
+    u"jd":u"京东",
+    u"tmall":u"天猫",
+    u"dangdang":u"当当网",
+    u"yihaodian":u"1号店",
+    u"51buy":u"易迅网",
+    u"taobao":u"淘宝",
+    u"suning":u"苏宁易购",
+    u"vjia":u"v+",
+}
+
 
 exchange_rate = {
     1:1.0,
