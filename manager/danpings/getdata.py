@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 import re,traceback
 from manager.models import danpings
 from helpers.loggers import get_logger
+from helpers.cpslinks import getSrcUrl
+from helpers.utils import getMarketFromUrl
 
 
 class Dpsource:
@@ -33,7 +35,6 @@ class Smzdm(Dpsource):
         self.comp_price = re.compile(u"(\d+)元")
         self.comp_price_en = re.compile(u"\$([0-9.]+)")
         self.comp_itemid = re.compile(u"youhui/(\d+)")
-        self.itemclassdict = {}
 
     def getNewlist(self):
         resp = getUrl(self.url)
@@ -66,17 +67,20 @@ class Smzdm(Dpsource):
                     if m:
                         dp.price = float(m.group(1))
                         dp.currency = 2
-            dp.img = div.find("img","post_thumb_pic_main")["src"]
-            dp.market = unicode(div.find("span","from_val").string) if div.find("span","from_val") else None
+            dp.img = div.find("img","post_thumb_pic_main")["src"] 
             dp.desp = u"<p>"+div.find("p","p_excerpt").get_text()+ u"</p><p>" + div.find("p","p_detail").get_text()+ u"</p>"
+            itemclasses = list()
             for cat in div.find("div","leftShowInfo").find_all("a",rel="category tag"):
-                if cat.string in self.itemclassdict.keys():
-                    dp.itemclass = self.itemclassdict[cat.string]
-                    break
+                itemclasses.append(cat.string)
+            dp.itemclass = "$".join(itemclasses)
             dp.url = div.find("div","zhida").find("a")["href"] if div.find("div","zhida") else None
             if dp.url:
                 resp = getUrl(dp.url)
                 dp.redirecturl = resp.geturl() if resp else None
+            if dp.redirecturl:
+                dp.srcurl = getSrcUrl(dp.redirecturl)
+            if dp.srcurl:
+                dp.market = getMarketFromUrl(dp.srcurl)
             self.dplist.append(dp)
 
 

@@ -1,13 +1,16 @@
 #coding:utf-8
 from webapp.settings import render,static_leibie,static_tp
 import web,json
-from webapp.models import shoppings,products
+from webapp.models import shoppings,products,danpings
 from helpers.utils import _xsseccape
 
 
 class index:
     def GET(self):
-        itemlist = shoppings.getindexsps() 
+        itemlist = list()
+        res = shoppings.getindexsps()
+        for r in res:
+            itemlist.append(r)
         """
         for r in res:
             itemlist.append(r)
@@ -38,6 +41,16 @@ class shoppingitem:
         famsps = shoppings.getfamsp(sp.pid)
         if data.has_key("type") and data["type"] == "json":
             return json.dumps({"html":render.spjson(sp=sp,famsps=famsps)})
+
+
+
+class danpingitem:
+    def GET(self,name):
+        dpid = int(name)
+        data = web.input()
+        dp = danpings.getdp(dpid)
+        if data.has_key("type") and data["type"] == "json":
+            return json.dumps({"html":render.spjson(dp=dp)})
 
 
 

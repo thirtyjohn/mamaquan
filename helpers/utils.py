@@ -1,5 +1,6 @@
 #coding:utf8
 import re
+from settings import url_market
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
 comp_weight = re.compile(u"(\d+)[g|克]")
@@ -74,3 +75,11 @@ def secondtodatetxt(sec):
 
 def _xsseccape(t):
     return True
+
+
+comp_domain = re.compile(u"[0-9a-z]+\.(com|net|cn)")
+def getMarketFromUrl(url):
+    domain = comp_domain.search(url).group()
+    return url_market[domain]
+
+    

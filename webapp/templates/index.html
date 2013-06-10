@@ -3,6 +3,7 @@
 
 <%
     from helpers.utils import secondtodatetxt
+    from webapp.settings import itemclass_name
 %>
 
 
@@ -173,12 +174,18 @@
     <div class="index_b_title">
         <span class="b_title">实惠淘</span><span style="margin-left:10px;" class="c6">每天精选特惠优质商品</span>
     </div>
-    <div id="index_sp_list">
+
+    % for itemclass in ("nvzhuang","nvxie","danjianbao"):
+    <div class="index_sp_list">
+    <h5 class="index_sp_list_title">${itemclass_name[itemclass]}</h5>
+
     <%
         count_img = 0
     %>
     %for item in itemlist:
     <%
+        if item.itemclass <> itemclass:
+            continue
         count_img = count_img + 1
     %>
         <div class="index_sp${" index_last_row" if count_img%3==0 else ""}" data-id="${item.ID}">
@@ -201,6 +208,11 @@
         </div>
     %endfor
     </div>
+
+
+
+    % endfor
+
     </div>
 
 

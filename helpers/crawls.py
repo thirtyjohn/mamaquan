@@ -30,7 +30,7 @@ def crawl(url):
         failurecount += 1
         return None
     except URLError,e:
-        get_logger("crawl").debug(e.msg +":"+url)
+        get_logger("crawl").debug(e +":"+url)
         failurecount += 1
         return None
     return resp

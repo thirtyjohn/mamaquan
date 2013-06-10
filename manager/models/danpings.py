@@ -17,6 +17,7 @@ class Danping:
         self.itemid = None
         self.source = None
         self.redirecturl = None
+        self.srcurl = None
 
 
 def insertDpitem(dp):
@@ -35,8 +36,29 @@ def insertDpitem(dp):
         itemid = dp.itemid,
         source = dp.source,
         redirecturl = dp.redirecturl,
+        srcurl = dp.srcurl,
         wdate = datetime.now()
     )
 
 def hasitem(itemid,source):
     return web.listget(dbconn.query("select * from danpingitem where source=$source and itemid=$itemid",vars=dict(itemid=itemid,source=source)),0,None)
+
+def findstatus(status):
+    return dbconn.query("select * from danpingitem where status = $status",vars=dict(status=status))
+
+def updatestatus(dpid,status):
+    dbconn.update("danpingitem",where="id=$dpid",vars=dict(dpid=dpid),status=status)
+
+def insertmatch(dpid,d):
+    dbconn.insert("danpingmatch",
+                dpid = dpid,
+                market = d.market,
+                price = d.price,
+                currency = d.currency,
+                url = d.url,
+                wdate = datetime.now()
+    )
+
+def getavg_match(dpid):
+    r = web.listget(dbconn.query("select avg(price) as avgprice from danpingmatch where dpid = $dpid",vars=dict(dpid=dpid)),0,None)
+    return r.avgprice

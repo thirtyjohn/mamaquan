@@ -44,7 +44,8 @@ a:hover{color:#996600;text-decoration:underline;}
 .index_dp dd{float:right;}
 .index_dp h5{color:#996600;}
 
-#index_sp_list{margin-top:15px;}
+.index_sp_list{margin-top:15px;}
+.index_sp_list_title{margin-bottom:5px;font-size:16px;}
 .index_sp{float:left;width:280px;height:190px;background-color:#F4F5ED;margin:0 15px 15px 0;padding:15px;}
 .index_sp:hover{cursor:pointer;background-color:#f7f8f0;}
 .index_last_row{margin-right:0px;}

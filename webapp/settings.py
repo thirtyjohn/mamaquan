@@ -38,4 +38,10 @@ market_name = {
     "jd":u"京东直销",
     "tmall":u"天猫官方旗舰店",
 }
+
+itemclass_name = {
+    "nvzhuang":u"衣服",
+    "nvxie":u"鞋子",
+    "danjianbao":u"包包" 
+}
  

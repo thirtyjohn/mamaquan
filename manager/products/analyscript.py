@@ -291,7 +291,7 @@ class Amazon:
 
         htmls = html.split("&&&")
 
-        atf_txt,btf_txt,pagination = None,None,None
+        atf_txt,btf_txt = None,None
         for d in htmls:
             try:
                 data = json.loads(d)
@@ -301,9 +301,7 @@ class Amazon:
                 atf_txt = data["results-atf"]["data"]["value"]
             if data.has_key("results-btf"):
                 btf_txt = data["results-btf"]["data"]["value"]
-            if data.has_key("pagination"):
-                pagination = data["pagination"]["data"]["value"]
-            if atf_txt and btf_txt and pagination:
+            if atf_txt and btf_txt:
                 break
             ##if data.has_key("results-atf-next"):
                 ##atf_next_txt = data["results-atf-next"]["data"]["value"]
@@ -327,7 +325,7 @@ class Amazon:
     def hasNextPage(self,html):
         htmls = html.split("&&&")
 
-        pagination = None,None,None
+        pagination = None
         for d in htmls:
             try:
                 data = json.loads(d)
