@@ -1,7 +1,7 @@
 #coding:utf-8
 import logging
 import logging.handlers
-from manager.settings import crawl_failure_log,shed_failure_log,tactics_log
+from manager.settings import crawl_failure_log,shed_failure_log,tactics_log,general_log
 
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
@@ -32,7 +32,17 @@ handler_tactics.setFormatter(formatter)
 logger_tactics.addHandler(handler_tactics)
 
 
-logger_dict = {"crawl":logger_crawl,"schedErrJob":logger_sched,"tactics":logger_tactics}
+logger_general = logging.getLogger("general")
+logger_general.setLevel(logging.DEBUG)
+handler_general = logging.handlers.RotatingFileHandler(
+             general_log, maxBytes=100000000, backupCount=100)
+handler_general.setLevel(logging.DEBUG)
+handler_general.setFormatter(formatter)
+logger_general.addHandler(handler_general)
+
+
+
+logger_dict = {"crawl":logger_crawl,"schedErrJob":logger_sched,"tactics":logger_tactics,"general":logger_general}
 
 def get_logger(name):
     return logger_dict[name]

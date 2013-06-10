@@ -65,15 +65,20 @@
     <div class="index_b_title">
         <span class="b_title">超值单品</span><span style="margin-left:10px;" class="c6">汇集每日劲爆单品</span>
     </div>
-    <div id="index_dp_list">
+
+    <%
+        count_dp = 0
+    %>
+    % for dp in dplist:
+    <div id="index_dp_list${" index_last_row" if count_dp%5 == 0 else ""}">
         <div class="index_dp">
             <div class="index_dp_img">
-                <img src="http://img11.360buyimg.com/n2/80/62c5b767-4ec6-405f-b73d-62680e63041b.jpg" />
+                <img src=${dp.image} />
             </div>
-            <h5 style="margin:5px 0;">Waterpik 洁碧 WP-70EC 标准型水牙线（冲牙器）</h5>
+            <h5 style="margin:5px 0;">${dp.name}</h5>
             <div class="clear">
-            <span class="c6" style="line-height:21px;">亚马逊</span>
-            <span style="float:right;font-size:16px;" class="price">￥175.00</span>
+            <span class="c6" style="line-height:21px;">${dp.market}</span>
+            <span style="float:right;font-size:16px;" class="price">￥${dp.price}</span>
             </div>
             <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
                 <dl>
@@ -86,86 +91,9 @@
                 </dl>
             </div>
         </div>
-        <div class="index_dp">
-            <div class="index_dp_img">
-                <img src="http://img11.360buyimg.com/n2/g1/M02/06/1D/rBEGDVAkbR4IAAAAAAFPz1J5_rYAABWnQOHGIUAAU_n188.jpg" />
-            </div>
-            <h5 style="margin:5px 0;">Fisher Price 费雪 W9898 欢乐成长之声光健身器</h5>
-            <div class="clear">
-            <span class="c6" style="line-height:21px;">亚马逊</span>
-            <span style="float:right;font-size:16px;" class="price">￥269.00</span>
-            </div>
-            <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
-                <dl>
-                    <dt>京东商城</dt>
-                    <dd>￥315.00</dd> 
-                </dl>
-                <dl>
-                    <dt>当当网</dt>
-                    <dd>￥365.00</dd>
-                </dl>
-            </div>
-        </div>
-        <div class="index_dp">
-            <div class="index_dp_img">
-                <img src="http://img13.360buyimg.com/n2/g7/M02/0F/1D/rBEHZVC8UUAIAAAAAAFbOUuhdygAADHIQDk2XwAAVtR965.jpg" />
-            </div>
-            <h5 style="margin:5px 0;">Bear小熊 酸奶机 + 搅拌棒</h5>
-            <div class="clear">
-            <span class="c6" style="line-height:21px;">亚马逊</span>
-            <span style="float:right;font-size:16px;" class="price">￥40.00</span>
-            </div>
-            <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
-                <dl>
-                    <dt>京东商城</dt>
-                    <dd>￥65.00</dd> 
-                </dl>
-                <dl>
-                    <dt>当当网</dt>
-                    <dd>￥75.00</dd>
-                </dl>
-            </div>
-        </div>
-        <div class="index_dp">
-            <div class="index_dp_img">
-                <img src="http://img12.360buyimg.com/n2/g10/M00/0D/02/rBEQWFFKwWoIAAAAAAPKlTNmrOsAACjkQER7qUAA8qt236.jpg" />
-            </div>
-            <h5 style="margin:5px 0;">meiji 明治 熊猫乐园 饼干 70g</h5>
-            <div class="clear">
-            <span class="c6" style="line-height:21px;">亚马逊</span>
-            <span style="float:right;font-size:16px;" class="price">￥40.00</span>
-            </div>
-            <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
-                <dl>
-                    <dt>京东商城</dt>
-                    <dd>￥65.00</dd> 
-                </dl>
-                <dl>
-                    <dt>当当网</dt>
-                    <dd>￥75.00</dd>
-                </dl>
-            </div>
-        </div>
-        <div class="index_dp index_last_row">
-            <div class="index_dp_img">
-                <img src="http://pn.zdmimg.com/201304/24/173405d6.png_n3.jpg" />
-            </div>
-            <h5 style="margin:5px 0;">L'Oreal Paris 巴黎欧莱雅 Youth Code 青春密码 套装</h5>
-            <div class="clear">
-            <span class="c6" style="line-height:21px;">亚马逊</span>
-            <span style="float:right;font-size:16px;" class="price">$12.95</span>
-            </div>
-            <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
-                <dl>
-                    <dt>京东商城</dt>
-                    <dd>$15.95</dd> 
-                </dl>
-                <dl>
-                    <dt>当当网</dt>
-                    <dd>$13.95</dd>
-                </dl>
-            </div>
-        </div>
+    % endfor
+        
+         
     </div>
     </div>
     

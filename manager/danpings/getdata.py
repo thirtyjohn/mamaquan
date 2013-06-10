@@ -6,6 +6,7 @@ from manager.models import danpings
 from helpers.loggers import get_logger
 from helpers.cpslinks import getSrcUrl
 from helpers.utils import getMarketFromUrl
+from helpers.b2c import factory
 
 
 class Dpsource:
@@ -34,7 +35,7 @@ class Smzdm(Dpsource):
         self.from_encoding = "gbk"
         self.comp_price = re.compile(u"(\d+)元")
         self.comp_price_en = re.compile(u"\$([0-9.]+)")
-        self.comp_itemid = re.compile(u"youhui/(\d+)")
+        self.comp_sourceid = re.compile(u"youhui/(\d+)")
 
     def getNewlist(self):
         resp = getUrl(self.url)
@@ -48,13 +49,13 @@ class Smzdm(Dpsource):
         soup = BeautifulSoup(self.html,from_encoding=self.from_encoding)
         divs = soup.find_all("div","perContentBox")
         for div in divs:
-            m = self.comp_itemid.search(div.find("h2","con_title").find("a")["href"])
+            m = self.comp_sourceid.search(div.find("h2","con_title").find("a")["href"])
             if not m:
                 continue
             dp = danpings.Danping()
-            dp.itemid = m.group(1)
+            dp.sourceid = m.group(1)
             dp.source = self.name
-            if danpings.hasitem(dp.itemid,dp.source):
+            if danpings.hasitem(dp.sourceid,dp.source):
                 continue
             title = div.find("h2","con_title").find("a").get_text() 
             pricetxt = div.find("h2","con_title").find("span","red").string if div.find("h2","con_title").find("span","red") else None
@@ -81,6 +82,8 @@ class Smzdm(Dpsource):
                 dp.srcurl = getSrcUrl(dp.redirecturl)
             if dp.srcurl:
                 dp.market = getMarketFromUrl(dp.srcurl)
+                b2c_item = factory(dp.market)
+                dp.itemid = b2c_item.getItemidFromUrl(dp.srcurl)
             self.dplist.append(dp)
 
 

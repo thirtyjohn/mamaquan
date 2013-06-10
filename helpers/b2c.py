@@ -36,6 +36,9 @@ class B2c:
     def getitem(self):
         pass
 
+    def getimg(self):
+        pass
+
     def isZiyin(self):
         pass
 
@@ -58,6 +61,9 @@ class B2c:
         html = getUrl(url).read()
         return html
 
+    def getItemidFromUrl(self,url):
+        pass
+
 
 
 class Jd(B2c):
@@ -67,10 +73,11 @@ class Jd(B2c):
         self.market = "jd"
         self.comp_Price = re.compile("\"p\":\"([0-9.]+)\"")
         self.comp_itemid = re.compile("/(\d+).html")
+        self.from_encoding = "gbk"
 
     def getlist(self):
         ss = SoupStrainer("ul" , "list-h clearfix")
-        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding="gbk")
+        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         lis = soup.find_all("li")
         itemlist = list()
         for li in lis:
@@ -90,8 +97,8 @@ class Jd(B2c):
 
     def getimg(self):
         ss = SoupStrainer("div" , id="preview")
-        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding="gbk")
-        img = soup.find("div",id="spec-n1").img.src
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        img = soup.find("div",id="spec-n1").img["src"]
         return img
 
 
@@ -100,9 +107,7 @@ class Jd(B2c):
             return False
         else:
             return True
-    """
-    http://search.jd.com/Search?keyword=Happybellies%20%E7%A6%A7%E8%B4%9D%20%E5%B9%BC%E5%84%BF%E8%94%AC%E6%9E%9C%E8%BD%AF%E9%A5%B4%20100g&enc=utf-8&area=2
-    """
+
 
     def getItemUrl(self):
         return "http://item.jd.com/"+str(self.itemid)+".html"
@@ -114,17 +119,21 @@ class Jd(B2c):
         if self.listhtml.find("intellisense") > -1:
             return True
         return False
-        
-        
-        
+
+    def getItemidFromUrl(self,url):
+        m = self.comp_itemid.search(url)
+        if m:
+            return m.group(1)
+        return None
 
 
 class Zcn(B2c):
     def __init__(self,itemid=None,itemhtml=None,listhtml=None):
         B2c.__init__(self,itemid=None,itemhtml=None,listhtml=None)
         self.market = "zcn"
-        self.comp_amazonid = re.compile(u"/dp/(\w+)/")
-        self.comp_amazonprice = re.compile(u"([0-9.]+)")
+        self.comp_itemid = re.compile(u"/dp/(\w+)")
+        self.comp_price = re.compile(u"([0-9.]+)")
+        self.from_encoding = "utf8"
 
     def getlist(self):
 
@@ -132,8 +141,8 @@ class Zcn(B2c):
             item = Item()
             item.market = self.market
             item.name = unicode(txt.find("h3","newaps").find("span","lrg").string)
-            item.itemid = self.comp_amazonid.search(txt.find("h3","newaps").a["href"]).group(1)
-            item.price = float(self.comp_amazonprice.search(txt.find("li","newp").a.span.string).group(1))
+            item.itemid = self.comp_itemid.search(txt.find("h3","newaps").a["href"]).group(1)
+            item.price = float(self.comp_price.search(txt.find("li","newp").a.span.string).group(1))
             item.img = txt.find("div","image imageContainer").img["src"]
             return item
 
@@ -157,7 +166,7 @@ class Zcn(B2c):
                 
         itemlist = list()
         if atf_txt:
-            soup = BeautifulSoup(atf_txt,from_encoding="utf8")
+            soup = BeautifulSoup(atf_txt,from_encoding=self.from_encoding)
             div_atfResults = soup.find("div",id="atfResults")
             ##atfResults = soup.find_all("div","fstRowGrid prod celwidget")
             for atf in div_atfResults.children:
@@ -168,7 +177,7 @@ class Zcn(B2c):
                 item = getitem(atf)
                 itemlist.append(item)
         if btf_txt: 
-            soup = BeautifulSoup(btf_txt,from_encoding="utf8")
+            soup = BeautifulSoup(btf_txt,from_encoding=self.from_encoding)
             div_btfResults = soup.find("div",id="btfResults")
             ##btfResults = soup.find_all("div","rsltGrid prod celwidget")
             for btf in div_btfResults.children:
@@ -183,16 +192,28 @@ class Zcn(B2c):
 
         return itemlist
 
-    
+    def getItemUrl(self):
+        return "http://www.amazon.cn/dp/"+str(self.itemid)
 
     def getSearchUrl(self,txt):
-        return "http://www.amazon.cn/mn/search/ajax?rh=i%3Aaps%2Ck%3A%E7%94%B5%E9%A3%8E%E6%89%87&__mk_zh_CN=%E4%BA%9A%E9%A9%AC%E9%80%8A%E7%BD%91%E7%AB%99&fromHash=&fromRH=i%3Aaps%2Ck%3ACOMVITA+%E5%BA%B7%E7%BB%B4%E4%BB%96+%E9%BA%A6%E5%8D%A2%E5%8D%A1%E8%8A%B1+%E8%9C%82%E8%9C%9C%EF%BC%88UMF5+%E3%80%81500g%EF%BC%89&section=ATF&fromApp=gp%2Fsearch&fromPage=results&version=2&ajp=iss"
-
+        return "http://www.amazon.cn/s/ref=nb_sb_noss?__mk_zh_CN=%E4%BA%9A%E9%A9%AC%E9%80%8A%E7%BD%91%E7%AB%99&url=search-alias%3Daps&field-keywords="+urllib.quote(txt.encode("utf8"))
 
     def noRightResult(self):
         if self.listhtml.find("noResultsTitle") > -1:
             return True
         return False
+
+    def getItemidFromUrl(self,url):
+        m = self.comp_itemid.search(url)
+        if m:
+            return m.group(1)
+        return None
+
+    def getimg(self):
+        ss = SoupStrainer("div" , id="main_image_0")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        img = soup.img["src"]
+        return img
 
 
 class Dangdang(B2c):
@@ -201,13 +222,17 @@ class Dangdang(B2c):
         self.market = "dangdang"
         self.comp_itemid = re.compile(u"product_id=(\d+)")
         self.comp_price = re.compile(u"([0-9.]+)")
+        self.from_encoding = "gbk"
+
+    def getItemUrl(self):
+        return "http://product.dangdang.com/product.aspx?product_id="+str(self.itemid)
 
     def getSearchUrl(self,txt):
         return "http://search.dangdang.com/?key=" + urllib.quote(txt.encode("gbk"))
 
     def getlist(self):
         ss = SoupStrainer("div" , "book_shoplist")
-        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding="gbk")
+        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         lis = soup.find_all("li")
         itemlist = list()
         for li in lis:
@@ -224,5 +249,18 @@ class Dangdang(B2c):
         if self.listhtml.find("top_inforpanel") > -1:
             return True
         return False
+
+    def getItemidFromUrl(self,url):
+        m = self.comp_itemid.search(url)
+        if m:
+            return m.group(1)
+        return None
+
+
+    def getimg(self):
+        ss = SoupStrainer("a" , id="largePicLink")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        img = soup.img["wsrc"]
+        return img
         
 

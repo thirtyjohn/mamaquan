@@ -11,6 +11,10 @@ class index:
         res = shoppings.getindexsps()
         for r in res:
             itemlist.append(r)
+        dplist = list()
+        res = danpings.getindexdps()
+        for r in res:
+            dplist.append(r)
         """
         for r in res:
             itemlist.append(r)
@@ -29,7 +33,7 @@ class index:
         productlist = sorted(productlist,key=lambda product:product["gooditem"].generalscore ,reverse=True)
         """
         ##itemlist = sorted(itemlist,key=lambda item:item.generalscore ,reverse=True)
-        return render.index(itemlist=itemlist)
+        return render.index(itemlist=itemlist,dplist=dplist)
 
 
 

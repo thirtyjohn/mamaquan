@@ -1,6 +1,6 @@
 #coding:utf8
 import re
-from settings import url_market
+from settings import url_market,exchange_rate
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
 comp_weight = re.compile(u"(\d+)[g|克]")
@@ -79,7 +79,14 @@ def _xsseccape(t):
 
 comp_domain = re.compile(u"[0-9a-z]+\.(com|net|cn)")
 def getMarketFromUrl(url):
-    domain = comp_domain.search(url).group()
-    return url_market[domain]
+    m = comp_domain.search(url)
+    if not m:
+        return None
+    domain = m.group()
+    if url_market.has_key(domain):
+        return url_market[domain]
+    return None
 
-    
+
+def price(price,currency):
+    return price*exchange_rate[currency]

@@ -10,4 +10,12 @@ url_market = {
     u"yihaodian.com":u"yihaodian",
     u"51buy.com":u"51buy",
     u"taobao.com":u"taobao",
+    u"suning.com":u"suning",
+    u"vjia.com":u"vjia",
+}
+
+
+exchange_rate = {
+    1:1.0,
+    2:6.1335
 }
