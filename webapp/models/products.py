@@ -42,8 +42,8 @@ def getlbs(tp,qdict):
 def getpr(tp,prid):
     return web.listget(dbconn.query("select * from "+static_tp[tp]["tablename"]+" where id=$prid",vars=dict(prid=prid)),0,None)
 
-def getpritems(tp,prid):
-    return dbconn.query("select * from  prmatch m join pritem i on m.prid=$prid and m.itemid=i.itemid and m.market=i.market",vars=dict(prid=prid))
+def getpritems(prid):
+    return dbconn.query("select * from prmatch where prid = $prid ",vars=dict(prid=prid))
 
 def getotherprs(tp,prid):
     sql = ""

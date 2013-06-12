@@ -32,7 +32,7 @@ class Naifen(Item):
 
 
     def update(self,itemid,market):
-        dbconn.update("naifen",where="itemid=$itemid and market=$market",vars=dict(itemid=itemid,market=market),
+        dbconn.update("naifenitem",where="itemid=$itemid and market=$market",vars=dict(itemid=itemid,market=market),
             duration = self.duration,
             weight = self.weight,
             spec = self.spec,
@@ -254,6 +254,8 @@ class Jd:
         pageall = int(self.comp_page.search(page_string).group(1))
         if pagenum < pageall:
             self.initNfs(brand,pagenum+1)
+
+        
 
 
 

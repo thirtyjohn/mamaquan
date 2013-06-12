@@ -1,12 +1,5 @@
 ## -*- coding: utf-8 -*-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="text/javascript" src="/static/jquery_min.js" ></script>
-</head>
-<body>
+<%inherit file="base.html"/>
 <script>
     $(function(){
         $(".disimg").click(function(){
@@ -39,14 +32,14 @@
 </style>
 <%
     import urllib
-    from analyscript import genItemUrl
+    from helpers.b2c import getItemUrl
 %>
 
     % for nf,fams in famlist:
         <div class="nf">
         <dt>${nf.name}</dt>
         <dd>${nf.price}</dd>
-        <dd><a href="${genItemUrl(nf.itemid,nf.market)}">前往</a></dd>
+        <dd><a href="${getItemUrl(nf.itemid,nf.market)}">前往</a></dd>
         % if nf.img:
         <dd><span class="disimg">显示图片</span><img style="display:none;" src="${nf.img}"/></dd>
         % endif
@@ -61,13 +54,12 @@
             % if fam.img:
             <dd><span class="disimg">显示图片</span><img style="display:none;" src="${fam.img}"/></dd>
             % endif
-            <dd><a href="/match?act=match&itemid=${nf.itemid}&market=${nf.market}&naifenid=${fam.ID}&brand=${nf.brand}">匹配</a></dd>
+            <dd><a href="/match?act=match&itemid=${nf.itemid}&market=${nf.market}&prid=${fam.ID}&brand=${nf.brand}">匹配</a></dd>
             </div>
         % endfor 
 
     <br/>
     <br/>
     % endfor
-</body>
-</html>
+
 

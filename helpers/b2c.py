@@ -20,7 +20,14 @@ def factory(market):
         b2c = Zcn()
     elif market == "dangdang":
         b2c = Dangdang()
+    elif market == "tmall":
+        b2c = Tmall()
     return b2c
+
+def getItemUrl(itemid,market):
+    b = factory(market)
+    b.itemid = itemid
+    return b.getItemUrl()
 
 
 class B2c:
@@ -29,6 +36,7 @@ class B2c:
         self.itemid = None
         self.itemhtml = None
         self.listhtml = None
+        self.listurl = None
 
     def getlist(self):
         pass
@@ -50,6 +58,10 @@ class B2c:
 
     def getItemUrl(self):
         pass
+
+    def getListHtml(self):
+        html = getUrl(self.listurl).read()
+        return html
 
     def getSearchHtml(self,txt):
         url = self.getSearchUrl(txt)
@@ -126,6 +138,13 @@ class Jd(B2c):
             return m.group(1)
         return None
 
+    def nextPage(self):
+        ss = SoupStrainer("div" , id="bottom_pager")
+        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
+        if soup.find("span","next-disabled"):
+            return False
+        return True
+
 
 class Zcn(B2c):
     def __init__(self,itemid=None,itemhtml=None,listhtml=None):
@@ -174,6 +193,8 @@ class Zcn(B2c):
                     continue
                 if atf.name <> "div":
                     continue
+                if not atf.find("h3","newaps"):
+                    continue
                 item = getitem(atf)
                 itemlist.append(item)
         if btf_txt: 
@@ -186,6 +207,8 @@ class Zcn(B2c):
                 if not isinstance(atf,bs4.element.Tag):
                     continue
                 if atf.name <> "div":
+                    continue
+                if not atf.find("h3","newaps"):
                     continue
                 item = getitem(btf)
                 itemlist.append(item)
@@ -214,6 +237,25 @@ class Zcn(B2c):
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
         img = soup.img["src"]
         return img
+
+    def nextPage(self):
+        htmls = self.listhtml.split("&&&")
+
+        pagination = None
+        for d in htmls:
+            try:
+                data = json.loads(d)
+            except:
+                continue
+            if data.has_key("pagination"):
+                pagination = data["pagination"]["data"]["value"]
+            if  pagination:
+                break
+
+        soup = BeautifulSoup(pagination,from_encoding="utf8")
+        if soup.find("span","pagnRA"):
+            return True
+        return False
 
 
 class Dangdang(B2c):
@@ -263,4 +305,59 @@ class Dangdang(B2c):
         img = soup.img["wsrc"]
         return img
         
+
+
+class Tmall(B2c):
+    def __init__(self,itemid=None,itemhtml=None,listhtml=None):
+        B2c.__init__(self,itemid=None,itemhtml=None,listhtml=None)
+        self.market = "tmall"
+        self.comp_id = re.compile(u"id=(\d+)")
+        self.comp_page = re.compile("<span class=\"page-info\">(\d+)/(\d+)</span>")
+        self.from_encoding = "gbk"
+
+    def getProperty(self):
+        ss = SoupStrainer("ul",id="J_AttrUL")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+
+        lis = soup.find_all("li")
+        nvlist = list()
+        for li in lis:
+            if li.string.find(u"：") > -1:
+                name,value = li.string.split(u"：")
+            else:
+                name,value = li.string.split(u":")
+            nvlist.append((name,value))
+        return nvlist
+
+    def getlist(self):
+        ss = SoupStrainer("div",id="J_ShopSearchResult")
+        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
+        lis = soup.find("ul","shop-list").find_all("li")
+        itemlist = list()
+
+        for li in lis:
+            item = Item()
+            item.itemid = self.comp_id.search(li.find("div","desc").a["href"]).group(1)
+            item.name = li.find("div","desc").a.string.strip()
+            item.price = int(float(li.find("div","price").strong.string))
+            item.img = li.find("div","pic").img["data-ks-lazyload"]
+            itemlist.append(item)
+        return itemlist
+
+    def getItemUrl(self):
+        return "http://detail.tmall.com/item.htm?id="+str(self.itemid)
+
+    
+    def nextPage(self):
+        m = self.comp_page.search(self.listhtml)
+        if m:
+            currentpage = int(m.group(1))
+            allpage = int(m.group(2))
+            if currentpage < allpage:
+                return currentpage+1
+            return None
+        return None
+
+
+
 

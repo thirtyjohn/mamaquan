@@ -179,7 +179,7 @@ class product:
         pr = products.getpr(tp,prid)
         if not pr:
             return web.notfound()
-        pritems = products.getpritems(tp,prid)
+        pritems = products.getpritems(prid)
         otherprs = products.getotherprs(tp,prid)
         return render.product(tp=tp,pr=pr,pritems=pritems,otherprs=otherprs)
 

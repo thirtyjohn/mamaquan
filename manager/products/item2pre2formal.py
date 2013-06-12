@@ -1,16 +1,98 @@
 #coding:utf8
-import web,re
-from settings import dbconn
-from utils import analyname,analyname_duan,analyname_series,analyname_weight,comp_weight
+import re
+from manager.settings import dbconn
+from helpers.utils import analyname,analyname_duan,analyname_series,analyname_weight,comp_weight
+from helpers.b2c import factory
+from manager.models import products
+
+def insertmmlisturl(brand=None,market=None,url=None):
+    dbconn.insert("mmlisturl",brand=brand,market=market,url=url)
+
+"""
+插入调度入口
+"""
+def getlistandinsert(brand=None,market=None):
+    b2c_list = factory(market)
+    nextpage = 1
+    while True:
+        if nextpage:
+            url = products.getHost(brand=brand,market=market,page=nextpage)
+            print url
+            b2c_list.listurl = url
+            b2c_list.listhtml = b2c_list.getListHtml()
+            nflist = b2c_list.getlist()
+            for nf in nflist:
+                nf.market = market
+                nf.brand = brand
+                products.insertNfitem(nf)
+
+            nextpage = nextpage+1 if b2c_list.nextPage() else None
+        else:
+            break
+
+
+"""
+更新调度入口
+"""
+def updatenafens(brand=None,market=None):
+    if not market:
+        return
+    b2c_test = factory(market)
+    if not hasattr(b2c_test,"getProperty"):
+        return
+    nfs = products.getNfitemNotProcessed(market=market,brand=brand)
+    for nf in nfs:
+        b2c_item = factory(market)
+        b2c_item.itemid = nf.itemid
+        b2c_item.itemhtml = b2c_item.getItemHtml()
+        nvlist = b2c_item.getProperty()
+        nfitem = products.getNfProperty(nvlist)
+        nfitem.update(nf.itemid,market)
+
+
+
+
+"""
+以某渠道作为样本进入预产品库，同时建立对应关系
+"""
+def yangben(brand,market):
+    products.batchInsertPreNf(brand=brand,market=market) 
+
+
+
+
 """
 比较算法，目前还比较简陋，主要通过名称匹配
 """
 def isSameNf(nf,product):
     price_diff = nf.price*1.0/product.price if nf.price > product.price else product.price*1.0/nf.price
+    ##print price_diff
+    ##print "pr======"
+    ##print analyname(product.name)
+    ##print "nf======"
+    ##print analyname(nf.name)
     if analyname(product.name) == analyname(nf.name) and  price_diff < 1.2:
         return True
     return False
 
+"""
+匹配某渠道某品牌奶粉
+"""
+def testmatch(brand=None,market=None):
+    nf_list = list()
+    res = products.getNfitemNotMatch(brand=brand,market=market) 
+    for r in res:
+        nf_list.append(r)
+    res = products.getPreNf(brand=brand) 
+    for r in res:
+        for nf in nf_list:
+            if isSameNf(nf,r):
+                dbconn.insert("prmatch",prid=r.ID,itemid=nf.itemid,market=market)
+
+
+"""
+寻找相似用于人工比对
+"""
 
 def isFamiliar(nf,product):
     nfduan,nfseries,nfweight = analyname(nf.name)
@@ -23,38 +105,6 @@ def isFamiliar(nf,product):
         return False
     return True
 
-"""
-匹配某渠道某品牌奶粉
-"""
-def testmatch(brand,market):
-    nf_list = list()
-    res = dbconn.query(u"select * from naifen where brand = $brand and market = $market and itemid not in (select itemid from naifenmatch where market=$market)",vars=dict(brand=brand,market=market))
-    for r in res:
-        nf_list.append(r)
-    res = dbconn.query(u"select * from prenaifen where brand = $brand",vars=dict(brand=brand))
-    for r in res:
-        for nf in nf_list:
-            if isSameNf(nf,r):
-                dbconn.insert("naifenmatch",naifenid=r.ID,itemid=nf.itemid,market=market)
-
-
-
-
-
-"""
-以某渠道作为样本进入预产品库，同时建立对应关系
-"""
-def yangben(brand,market):
-##批量插入预产品库
-    dbconn.query("insert into prenaifen (name,duration,weight,spec,brand,series,sellto,age,duan,pack,place,price,img) select name,duration,weight,spec,brand,series,sellto,age,duan,pack,place,price,img from naifen where brand = $brand and market = $market",vars=dict(brand=brand,market=market))
-##建立对应关系
-    res = dbconn.query(u"select * from prenaifen where brand = $brand",vars=dict(brand=brand))
-    for r in res:
-        res1  = dbconn.query(u"select * from naifen where name = $name and market=$market",vars=dict(name=r.name,market=market))
-        item = web.listget(res1,0,None)
-        dbconn.insert("naifenmatch",naifenid=r.ID,itemid=item.itemid,market=market)
-
-
 def findfamiliar(extra,prenaifens):
     fams = list() 
     for r in prenaifens:
@@ -62,14 +112,16 @@ def findfamiliar(extra,prenaifens):
             fams.append(r)
     return fams
 
-
+"""
+获得没又被匹配到的奶粉及其相似的产品
+"""
 def getExtra(brand,market):
     extralist = list()
     res = dbconn.query("""
 
-        select * from naifen
+        select * from naifenitem
         where brand = $brand and market = $market and (matchlater is null or matchlater <> 1)
-        and itemid not in (select itemid from naifenmatch where market = $market)
+        and itemid not in (select itemid from prmatch where market = $market)
         
                 """,vars=dict(brand=brand,market=market)
     )
@@ -88,7 +140,7 @@ def getExtra(brand,market):
     return famlist
 
 
-def insertformalproduct():
+def insertformalproduct(brand):
     """
     同品牌下,同系列，段数
     每克的价格基本能确定是否同产品。
@@ -98,7 +150,7 @@ def insertformalproduct():
     段数/系列 == 重量/价格 互为校验,
     把数据弄到最准，然后关联表都不用就能建立关联啦。
     """
-    res = dbconn.query("select * from prenaifen")
+    res = dbconn.query("select * from prenaifen where status = 0 and brand = $brand",vars=dict(brand=brand))
     for r in res:
         
         weight = None
@@ -131,9 +183,12 @@ def insertformalproduct():
 
         
         dbconn.insert("formalnaifen",ID=r.ID,name=r.name,weight=weight,duan=duan,series=series,brand=r.brand,pack=r.pack,place=r.place,price=r.price,img=r.img)
+        dbconn.update("prenaifen",status=1,where="id=$prid",vars=dict(prid=r.ID))
 
 
-
+"""
+通过重量，价格校验段数和系列
+"""
 
 def getjiaoyan():
     res_list = list()
@@ -160,6 +215,10 @@ def getjiaoyan():
         res_list.append((r,famlist))
     return res_list
 
+
+"""
+找到属性缺失的,通过其他属性计算给出可能相似的东西
+"""
 def getqueshi():
     res_list = list()
     res = dbconn.query("""
