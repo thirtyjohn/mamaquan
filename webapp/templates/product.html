@@ -2,7 +2,8 @@
 <%inherit file="browse.html"/>
 
 <%
-    from webapp.settings import static_tp,market_name
+    from webapp.settings import static_tp
+    from helpers.utils import getMarketName
 %>
 
 <div id="content">
@@ -15,11 +16,11 @@
     </div>
     
     <div id="pr_left">
+    <h1>${pr.name}</h1>
     <div id="pr_detail">
         <div id="pr_detail_left">
-            <h1>${pr.name}</h1>
             <div class="pr_img"><img src="${pr.img}"/></div>
-            <div>
+            <div style="float:left;">
                 <ul>
                     <li>品牌：${pr.brand}</li>
                     <li>系列：${pr.series}</li>
@@ -29,7 +30,10 @@
                 </ul>
             </div>
         </div>
-        <div id="pr_detail_right"></div>
+        <div id="pr_detail_right">
+            <div>${pr.price}</div>
+            <div class="jjtz" >降价通知</div>
+        </div>
     </div>
 
     <div id="pr_items">
@@ -44,7 +48,7 @@
                     </tr>
                 %for pritem in pritems:
                     <tr>
-                        <td><h3>${market_name[pritem.market]}</h3></td>
+                        <td><h3>${getMarketName(pritem.market)}</h3></td>
                         <td>
                             <h4 class="price">￥${pritem.price}</h4>
                             <h6>可叠加优惠：满400减60</h6>

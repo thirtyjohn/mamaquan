@@ -30,5 +30,8 @@ def getsp(spid):
 def getfamsp(pid):
     return dbconn.query("select * from shopping where pid = $pid and picked=0 order by score desc",vars=dict(pid=pid))
 
+def delete(spid):
+    dbconn.delete("shopping",where="ID=$spid", vars=dict(spid=spid))
+
 
 ##score-(timestampdiff(second,udate,now()))/864 desc

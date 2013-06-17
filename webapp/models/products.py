@@ -51,3 +51,10 @@ def getotherprs(tp,prid):
         sql = sql + " and p."+c+" = n."+c
     return dbconn.query("select n.* from "+static_tp[tp]["tablename"]+" p join "+static_tp[tp]["tablename"]+" n on p.id =$prid and n.id <> $prid"+sql,vars=dict(prid=prid))
 
+
+def getindexpr():
+    pr = web.listget(dbconn.query("select * from formalnaifen where id = 100157"),0,None)
+    prmatch = dbconn.query("select * from prmatch where prid = $prid",vars=dict(prid=pr.ID))
+    return (pr,prmatch)
+
+

@@ -7,6 +7,7 @@ from helpers.utils import _xsseccape
 
 class index:
     def GET(self):
+        product = products.getindexpr()
         itemlist = list()
         res = shoppings.getindexsps()
         for r in res:
@@ -33,7 +34,7 @@ class index:
         productlist = sorted(productlist,key=lambda product:product["gooditem"].generalscore ,reverse=True)
         """
         ##itemlist = sorted(itemlist,key=lambda item:item.generalscore ,reverse=True)
-        return render.index(itemlist=itemlist,dplist=dplist)
+        return render.index(product=product,itemlist=itemlist,dplist=dplist)
 
 
 

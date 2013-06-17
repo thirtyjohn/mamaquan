@@ -8,15 +8,15 @@
 
 
 <div id="content">
-    <div id="index_mmml" style="margin-top:20px;overflow:hidden;zoom:1;">
+    <div id="index_mmml" style="margin-top:20px;overflow:hidden;zoom:1;"> 
     <div class="index_b_title">
-        <span class="b_title">实用目录</span><span style="margin-left:10px;" class="c6">实时跟踪奶粉最低价格和优惠信息</span>
+        <img style="width:28px;height:28px;" src="/static/img/testicon.png" /><span style="vertical-align: super;margin-left:5px;" class="b_title">实用目录</span><span style="margin-left:10px;vertical-align: super;" class="c6">实时跟踪最低价</span>
     </div>
 
     <div id="index_mulu_wrap">
     <div id="index_mulu">
         <div style="overflow:hidden;zoom:1;border-bottom:1px solid #ddd;padding-bottom:10px;">
-        <span style="float:left;" class="c6 cb">奶粉品牌</span>
+        <span style="float:left;line-height: 30px;" class="c6 cb">奶粉品牌</span>
         <ul class="index_mulu_lb">
             <li><a href="/naifen/s?q=b:Dumex/%E5%A4%9A%E7%BE%8E%E6%BB%8B">Dumex/多美滋</a></li>
             <li><a href="/naifen/s?q=b:Wyeth/%E6%83%A0%E6%B0%8F">Wyeth/惠氏</a></li>
@@ -24,31 +24,32 @@
             <li><a href="">Meiji/明治</a></li>
         </ul>
         </div>
-
+        <%
+            pr = product[0]
+            prmatch = product[1]
+        %>
         <div style="overflow:hidden;margin-top:10px;">
             <h3 class="c6 cb" style="margin-bottom:5px;">实时比价</h3>
-            <div style="float:left; width:445px;">
-                <div class="index_mulu_img"><img src="http://img02.taobaocdn.com/bao/uploaded/i2/19389032880560445/T1.jdpXDVeXXXXXXXX_!!0-item_pic.jpg_160x160.jpg" /></div>
-                <div style="margin-bottom:10px;"><a style="color:#996600;font-size:14px;" href="#">多美滋优衡多营养900g单罐装</a></div>
-                <div><span class="small_t">最低：</span><span class="price" style="font-size:16px;">￥175.00</span></div>
-                <div style="margin-top:5px;"><span class="small_t">可叠加：</span><span class="c6">多美滋590立减60，活动截止4.30</span></div>
-                <div style="margin-top:20px;"><span class="c6">亚马逊官方直销</span></div>
+            <div style="float:left; width:445px;margin-right:5px;">
+                <div class="index_mulu_img"><img src="${pr.img}" /></div>
+                <div style="margin-bottom:10px;"><a style="color:#996600;font-size:14px;" href="/naifen/${pr.ID}">${pr.name}</a></div>
+                <div><span class="red_small_t">最低</span><span class="price" style="font-size:16px;vertical-align: middle;margin-left:5px;font-weight:bold;">￥${pr.price}</span></div>
+                % if pr.promo:
+                <div style="margin-top:5px;"><span class="small_t">可叠加：</span>
+                <span class="c6">${pr.promo}</span>
+                </div>
+                % endif
+                <div style="margin-top:20px;"><span class="c6">${getMarketName(pr.market)}</span></div>
             </div>
             <div style="overflow:hidden;zoom:1;">
                 <h5 class="c6">3家官网、12家网络卖家提供报价</h5>
                 <ul style="overflow:hidden;zoom:1;">
+                    % for prm in prmatch:
                     <li style="margin-top:5px;overflow:hidden;zoom:1;">
-                        <dt style="float:left;width:100px;" class="c6">亚马逊自营</dt>
-                        <dd style="float:left;" class="price">￥175.00</dd> 
+                        <dt style="float:left;width:100px;" class="c6">${getMarketName(prm.market)}</dt>
+                        <dd style="float:left;" class="price">￥${prm.price}</dd> 
                     </li>
-                    <li style="margin-top:5px;overflow:hidden;zoom:1;">
-                        <dt style="float:left;width:100px;" class="c6">京东自营</dt>
-                        <dd style="float:left;" class="price">￥183.00</dd>
-                    </li>
-                    <li style="margin-top:5px;overflow:hidden;zoom:1;">
-                        <dt style="float:left;width:100px;" class="c6">天猫旗舰店</dt>
-                        <dd style="float:left;" class="price">￥198.00 + 8.00</dd>
-                    </li>
+                    % endfor
                 </ul>
             </div>
         </div>
@@ -63,7 +64,7 @@
 
     <div id="index_czdp" style="margin-top:30px;overflow:hidden;zoom:1;">
     <div class="index_b_title">
-        <span class="b_title">超值单品</span><span style="margin-left:10px;" class="c6">汇集每日劲爆单品</span>
+        <img style="width:28px;height:28px;" src="/static/img/testicon.png" /><span class="b_title" style="vertical-align: super;margin-left:5px;">超值单品</span><span style="margin-left:10px;vertical-align: super;" class="c6">汇集每日劲爆单品</span>
     </div>
     <div id="index_dp_list">
     <%
@@ -102,7 +103,7 @@
 
     <div id="index_mmt" style="margin-top:30px;overflow:hidden;zoom:1;">
     <div class="index_b_title">
-        <span class="b_title">实惠淘</span><span style="margin-left:10px;" class="c6">每天精选特惠优质商品</span>
+        <img style="width:28px;height:28px;" src="/static/img/testicon.png" /><span class="b_title" style="vertical-align: super;margin-left:5px;">实惠淘</span><span style="margin-left:10px;vertical-align: super;" class="c6">每天精选特惠优质商品</span>
     </div>
 
     % for itemclass in ("nvzhuang","nvxie","danjianbao"):
@@ -119,19 +120,18 @@
         count_img = count_img + 1
     %>
         <div class="index_sp${" index_last_row" if count_img%3==0 else ""}" data-id="${item.ID}">
-           <div class="index_sp_img">
-            <div class="index_sp_discount">${round(item.price*1.0/item.pricebefore*10,1)}折</div>
+           <div class="index_sp_img"> 
             <img src="${item.bigimg}" />
            </div>
            <div style="overflow:hidden;zoom:1;">
            <div class="index_sp_name">${item.name}</div>
            <div class="index_sp_promo"> 
            % if item.promoteTimeLimit:
-                <div>还剩<br/>${secondtodatetxt(item.promoteTimeLimit)}</div>
+                <div><span class="red_small_t">还剩</span><span style="margin-left:5px;vertical-align:middle;font-size:12px;">${secondtodatetxt(item.promoteTimeLimit)}</span></div>
            % endif
            </div>
            <div class="index_sp_price">
-            <h5><del>￥${item.pricebefore}</del></h5>
+            <h5>${round(item.price*1.0/item.pricebefore*10,1)}折<del>￥${item.pricebefore}</del></h5>
             <h4>${item.price}</h5>
            </div>
            </div>

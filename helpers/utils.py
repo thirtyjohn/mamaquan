@@ -60,17 +60,15 @@ def analyname(name):
 
 
 def secondtodatetxt(sec):
-    txt = ""
     days = sec/86400
     hours = (sec - days*86400)/3600
     minutes = (sec - days*86400 - hours*3600)/60    
     if days > 0:
-        txt = txt + str(days) + u"天"
+        return str(days) + u"天"
     if hours > 0:
-        txt = txt + str(hours) + u"小时"
+        return str(hours) + u"小时"
     if minutes > 0:
-        txt = txt + str(minutes) + u"分钟"
-    return txt
+        return str(minutes) + u"分钟"
 
 
 def _xsseccape(t):

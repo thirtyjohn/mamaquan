@@ -50,7 +50,7 @@ class B2c:
     def isZiyin(self):
         pass
 
-    def getprize(self):
+    def getPrice(self):
         pass
 
     def getSearchUrl(self,txt):
@@ -69,6 +69,8 @@ class B2c:
         return html
 
     def getItemHtml(self):
+        if self.itemhtml:
+            return self.itemhtml
         url = self.getItemUrl()
         html = getUrl(url).read()
         return html
@@ -101,7 +103,7 @@ class Jd(B2c):
             itemlist.append(item)
         return itemlist
 
-    def getprize(self):
+    def getPrice(self):
         url = "http://p.3.cn/prices/get?skuid=J_"+str(self.itemid)+"&type=1"
         html = getUrl(url).read()
         price = float(self.comp_Price.search(html).group(1))
@@ -233,6 +235,7 @@ class Zcn(B2c):
         return None
 
     def getimg(self):
+        self.itemhtml = self.getItemHtml()
         ss = SoupStrainer("div" , id="main_image_0")
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
         img = soup.img["src"]
@@ -256,6 +259,16 @@ class Zcn(B2c):
         if soup.find("span","pagnRA"):
             return True
         return False
+
+    def getPrice(self):
+        self.itemhtml = self.getItemHtml()
+        ss = SoupStrainer("span" , id="actualPriceValue")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        price_txt = soup.find("b").string
+        return float(self.comp_price.search(price_txt).group(1))
+
+
+        
 
 
 class Dangdang(B2c):
@@ -313,6 +326,7 @@ class Tmall(B2c):
         self.market = "tmall"
         self.comp_id = re.compile(u"id=(\d+)")
         self.comp_page = re.compile("<span class=\"page-info\">(\d+)/(\d+)</span>")
+        self.comp_initApi = re.compile(u"\"initApi\" : \"(\S+?)\"")
         self.from_encoding = "gbk"
 
     def getProperty(self):
@@ -357,6 +371,22 @@ class Tmall(B2c):
                 return currentpage+1
             return None
         return None
+
+    def getPrice(self):
+        self.itemhtml = self.getItemHtml() 
+        price_url = self.comp_initApi.search(self.itemhtml).group(1)
+        html = getUrl(price_url,header={"Referer":self.getItemUrl()}).read()
+        print html
+        data = json.loads(html.decode(self.from_encoding))
+        data_def = data["defaultModel"]["itemPriceResultDO"]["priceInfo"]["def"]
+        price = float(data_def["price"])
+        if data_def.has_key("promotionList") and data_def["promotionList"]:
+            if len(data_def["promotionList"]) > 0:
+                for promo in data_def["promotionList"]:
+                    if float(promo["promo"]) < price:
+                        price = float(promo["promo"])
+
+        return price
 
 
 

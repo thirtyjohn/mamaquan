@@ -12,18 +12,23 @@ MAX_FAILCOUNT = 20
 可增加一个缓存逻辑
 """
 
-def getUrl(url):
-    resp = crawl(url)
+def getUrl(url,header=None):
+    resp = crawl(url,header=header)
     return resp
 
 
-def crawl(url):
+def crawl(url,header=None):
     global failurecount
     if needreset():
         resetip()
     try:
         req = urllib2.Request(url)
         req.add_header("User-Agent",random.choice(ua_list))
+        if header:
+            for k,v in header.items():
+                req.add_header(k,v)
+        if not ( header and header.has_key("User-Agent")):
+            req.add_header("User-Agent",random.choice(ua_list))
         resp = urllib2.urlopen(req,timeout=10)
     except HTTPError,e:
         get_logger("crawl").debug(str(e.code)+":"+url)
