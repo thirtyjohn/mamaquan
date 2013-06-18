@@ -9,7 +9,6 @@ render = render_mako(
         )
 
 dbconn = web.database(dbn='mysql', user="root", host="127.0.0.1", db="mmquan")
-
 localdir = "/Users/macbookpro/workspace/interest/taobaoyouhui/"
 
 crawl_failure_log = "/Users/macbookpro/workspace/log/mmquan/crawl_failure_log"
