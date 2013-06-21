@@ -5,7 +5,7 @@ import web
 def getindexdps():
     dplist = list()
     dpids = list()
-    res = dbconn.query("select * from formaldanping order by id desc limit 5 ")
+    res = dbconn.query("select * from danping order by id desc limit 5 ")
     for r in res:
         dplist.append((r,[]))
         dpids.append(r.ID)
@@ -27,4 +27,4 @@ def getindexdps():
     return dplist
 
 def getdp(dpid):
-    return web.listget(dbconn.query("select * from formaldanping where id = $dpid",vars=dict(dpid=dpid)),0,None)
+    return web.listget(dbconn.query("select * from danping where id = $dpid",vars=dict(dpid=dpid)),0,None)
