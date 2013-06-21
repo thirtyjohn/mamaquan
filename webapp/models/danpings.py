@@ -22,7 +22,8 @@ def getindexdps():
             match_dict.update({r.dpid:[r]})
 
     for dp in dplist:
-        dp[1].extend(match_dict[dp[0].ID])
+        if match_dict.has_key(dp[0].ID):
+            dp[1].extend(match_dict[dp[0].ID])
 
     return dplist
 

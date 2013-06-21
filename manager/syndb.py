@@ -1,6 +1,8 @@
 #coding:utf-8
-
+import time
 from manager.settings import dbconn,syndbconn
+
+
 def syndp():
     res = dbconn.query("select * from formaldanping where syn=0")
     for r in res:
@@ -37,4 +39,7 @@ def syndpmatch():
         dbconn.update("danpingmatch",where="dpid=$dpid and market=$market", vars=dict(dpid=r.dpid,market=r.market),syn=1)
 
 
-
+while True:
+    time.sleep(60)
+    syndp()
+    syndpmatch()
