@@ -38,8 +38,8 @@ def syndpmatch():
         )
         dbconn.update("danpingmatch",where="dpid=$dpid and market=$market", vars=dict(dpid=r.dpid,market=r.market),syn=1)
 
-
-while True:
-    time.sleep(60)
-    syndp()
-    syndpmatch()
+def main():
+    while True:
+        time.sleep(60)
+        syndp()
+        syndpmatch()
