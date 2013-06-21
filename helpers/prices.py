@@ -67,7 +67,7 @@ def getCpdataFromSearch(name,marketlist):
             b2c_item = factory(market)
             b2c_item.itemid = d.itemid
             if not d.price:
-                d.price = b2c_item.getprize()
+                d.price = b2c_item.getPrice()
             d.currency = 1
             d.url = b2c_list.getSearchUrl(name)
             cplist.append(d)

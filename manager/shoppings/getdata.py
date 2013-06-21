@@ -23,8 +23,9 @@ def getItems(html):
     itemlist = list()
 
     for itemdata in itemdatalist:
+        print itemdata
         item = Shoppingitem()
-        item.originalImage = itemdata["originalImage"]
+        item.originalImage = itemdata["originalImage"] if itemdata.has_key("originalImage") else None
         item.image = itemdata["image"]
         item.tip = itemdata["tip"]
         item.fullTitle = itemdata["fullTitle"]

@@ -6,7 +6,7 @@ from manager.models import danpings
 from helpers.loggers import get_logger
 from helpers.cpslinks import getSrcUrl
 from helpers.utils import getMarketFromUrl
-from helpers.b2c import factory
+from helpers import b2c
 
 
 def factory(source):
@@ -90,7 +90,7 @@ class Smzdm(Dpsource):
                     dp.srcurl = getSrcUrl(dp.redirecturl)
                 if dp.srcurl:
                     dp.market = getMarketFromUrl(dp.srcurl)
-                    b2c_item = factory(dp.market)
+                    b2c_item = b2c.factory(dp.market) 
                     dp.itemid = b2c_item.getItemidFromUrl(dp.srcurl)
                 self.dplist.append(dp)
             except:
