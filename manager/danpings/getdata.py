@@ -9,6 +9,13 @@ from helpers.utils import getMarketFromUrl
 from helpers.b2c import factory
 
 
+def factory(source):
+    dpsource = Dpsource()
+    if source == "smzdm":
+        dpsource = Smzdm()
+    return dpsource
+
+
 class Dpsource:
     def __init__(self):
         self.url = None

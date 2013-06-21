@@ -1,6 +1,7 @@
 #coding:utf8
 
 from manager.shoppings.pickitem import startupdate
+from manager.danpings import pickdp
 from apscheduler.scheduler import Scheduler
 from helpers.loggers import get_logger
 
@@ -17,6 +18,7 @@ def err_listener(ev):
 sched = Scheduler(daemonic = False)
 sched.add_listener(err_listener)
 # Crawl Scheduler Taobao
+"""
 sched.add_cron_job(startupdate, minute=1, args=['nvzhuang'])
 sched.add_cron_job(startupdate, minute=5, args=['nvxie'])
 sched.add_cron_job(startupdate, minute=10, args=['wenxiong'])
@@ -32,6 +34,8 @@ sched.add_cron_job(startupdate, minute=55, args=['chuangshang'])
 sched.add_cron_job(startupdate, minute=27, args=['jiajushipin'])
 sched.add_cron_job(startupdate, minute=37, args=['peishi'])
 sched.add_cron_job(startupdate, minute=47, args=['maorongwanju'])
+"""
+sched.add_cron_job(pickdp.startupdate,minute=7,args=['smzdm'])
 
 sched.start()
 

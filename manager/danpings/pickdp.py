@@ -1,5 +1,6 @@
 #coding:utf-8
-import getdata,traceback
+import traceback
+from manager.danpings import getdata 
 from manager.models import danpings
 from manager.settings import filter_class
 from helpers.prices import getRuyiHtml,getCpdata,getRuyiSearch,getCpdataFromSearch
@@ -7,8 +8,10 @@ from helpers.utils import price
 from helpers.b2c import factory
 from helpers.loggers import get_logger
 
-def collect():
-    s = getdata.Smzdm()
+
+    
+def collect(source):
+    s = getdata.factory(source)
     s.getNewlist()
     s.getlist()
     s.insert()
@@ -144,8 +147,8 @@ def insertinttoformaldp():
         danpings.updatestatus(dp.ID,5)
 
 
-def startupdate():
-    collect()
+def startupdate(source):
+    collect(source)
     filter1st()
     filterclass()
     updatecpprice()
