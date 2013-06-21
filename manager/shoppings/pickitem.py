@@ -140,11 +140,12 @@ def pickGoodItems(itemclass):
             for famitem in analydata.getFamitems(items):
                 shoppings.insertformalshopping(famitem)
 
-        
+"""        
 def formaltoshopping(itemclass):
     items = shoppings.getFormaltoShopping(itemclass)
     for item in items:
         shoppings.insertShopping(item)
+"""
 
 def startupdate(itemclass):
     try:
@@ -155,7 +156,7 @@ def startupdate(itemclass):
         updateItemRank(itemclass)
         updateItemChange(itemclass)
         pickGoodItems(itemclass)
-        formaltoshopping(itemclass)
+        ##formaltoshopping(itemclass)
     except:
         get_logger("schedErrJob").debug("%s",traceback.format_exc())
     shoppings.updateShoppingProcess(itemclass)

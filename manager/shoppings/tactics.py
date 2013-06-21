@@ -57,21 +57,21 @@ INTER_GOOD_CHANGERANK = 0.05
 
 
 pagetocrawl = {
-        "nvzhuang":range(1,11),
-        "nvxie":range(1,11),
-        "wenxiong":range(1,11),
-        "shuiyi":range(1,11),
-        "sushen":range(1,11),
-        "danjianbao":range(1,11),
-        "shoutibao":range(1,11),
-        "xiekuabao":range(1,11),
-        "qianbao":range(1,11),
-        "shounabao":range(1,11),
-        "tongzhuang":range(1,11),
-        "chuangshang":range(1,11),
-        "jiajushipin":range(1,11),
-        "peishi":range(1,11),
-        "maorongwanju":range(1,11),
+        "nvzhuang":range(5,10),
+        "nvxie":range(5,10),
+        "wenxiong":range(5,10),
+        "shuiyi":range(5,10),
+        "sushen":range(5,10),
+        "danjianbao":range(5,10),
+        "shoutibao":range(5,10),
+        "xiekuabao":range(5,10),
+        "qianbao":range(5,10),
+        "shounabao":range(5,10),
+        "tongzhuang":range(5,10),
+        "chuangshang":range(5,10),
+        "jiajushipin":range(5,10),
+        "peishi":range(5,10),
+        "maorongwanju":range(5,10),
 }
 
 

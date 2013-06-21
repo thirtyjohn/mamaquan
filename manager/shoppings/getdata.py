@@ -28,13 +28,13 @@ def getItems(html):
         item.originalImage = itemdata["originalImage"] if itemdata.has_key("originalImage") else None
         item.image = itemdata["image"]
         item.tip = itemdata["tip"]
-        item.fullTitle = itemdata["fullTitle"]
+        item.fullTitle = itemdata["fullTitle"] if itemdata.has_key("fullTitle") else None
         item.price = float(itemdata["price"]) if itemdata["price"] else None
         item.currentPrice = float(itemdata["currentPrice"]) if itemdata["currentPrice"] else None
         item.vipPrice = float(itemdata["vipPrice"]) if itemdata["vipPrice"] else None
         item.ship = float(itemdata["ship"]) if itemdata["ship"] else None
         item.tradeNum = int(itemdata["tradeNum"]) if itemdata["tradeNum"] else None
-        item.smallNick = itemdata["smallNick"]
+        item.smallNick = itemdata["smallNick"] if itemdata.has_key("smallNick") else None
         item.nick = itemdata["nick"]
         item.sellerId = int(itemdata["sellerId"]) if itemdata["sellerId"] else None
         item.itemId = int(itemdata["itemId"]) if itemdata["itemId"] else None
