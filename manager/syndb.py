@@ -1,7 +1,8 @@
 #coding:utf-8
-import time
+import time,traceback
 from datetime import datetime
 from manager.settings import dbconn,syndbconn
+from helpers.loggers import get_logger
 
 
 def syndp():
@@ -72,7 +73,13 @@ def synsp():
 
 def main():
     while True:
+        try:
+            syndp()
+            syndpmatch()
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
+        try:
+            synsp()
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
         time.sleep(60)
-        syndp()
-        syndpmatch()
-        synsp()
