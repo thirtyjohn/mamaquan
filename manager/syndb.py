@@ -49,7 +49,7 @@ def synsp():
                     pid = str(item.pid),
                     bigimg = item.originalImage,
                     img = item.image,
-                    name = item.fullTitle,
+                    name = item.tip,
                     price = item.currentPrice,
                     pricebefore = item.price,
                     ship = item.ship,
