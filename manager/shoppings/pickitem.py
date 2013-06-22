@@ -34,35 +34,41 @@ def collectpage(itemclass,page):
 
 def collect(itemclass):
     for page in pagetocrawl[itemclass]:
-        collectpage(itemclass,page=page)
+        try:
+            collectpage(itemclass,page=page)
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
 
 def insertSameProduct(itemclass):
     samecount = 0
     samitemcount = 0
     sps = shoppings.getSpHasSameItem(itemclass)
-    for item in sps: 
-        html = origindata.getSameHtml(itemclass,item)
-        if not html:
-            return 
-        ##f = open(localdir+"test","w")
-        ##f.write(html)
-        items = getdata.getItems(html)
-        if not items:
-            continue
-        
-        for sameitem in items:
-            if analydata.filterSameItem(sameitem): ##同款产品第一道过滤
-                if sameitem.itemId == item.itemId:
-                    pass
-                else:
-                    samitemcount += 1
-                    if not shoppings.hasShoppingitembyItemid(sameitem.itemId):
-                        sameitem.pid = item.pid
-                        sameitem.picked = 0
-                        sameitem.itemclass = item.itemclass
-                        shoppings.insertshoppingitem(sameitem)
+    for item in sps:
+        try:
+            html = origindata.getSameHtml(itemclass,item)
+            if not html:
+                return 
+            ##f = open(localdir+"test","w")
+            ##f.write(html)
+            items = getdata.getItems(html)
+            if not items:
+                continue
+            
+            for sameitem in items:
+                if analydata.filterSameItem(sameitem): ##同款产品第一道过滤
+                    if sameitem.itemId == item.itemId:
+                        pass
                     else:
-                        samecount += 1
+                        samitemcount += 1
+                        if not shoppings.hasShoppingitembyItemid(sameitem.itemId):
+                            sameitem.pid = item.pid
+                            sameitem.picked = 0
+                            sameitem.itemclass = item.itemclass
+                            shoppings.insertshoppingitem(sameitem)
+                        else:
+                            samecount += 1
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
 
     get_logger("tactics").info(itemclass+",samelist,handle: "+str(samitemcount)+" same: "+str(samecount))
 
@@ -71,30 +77,37 @@ def insertSameProduct(itemclass):
 def calCpRank(itemclass):
     p_res = shoppings.getPidsToCp(itemclass)
     for p in p_res:
-        items = list()
-        res = shoppings.getSpItemsByPid(p.pid) 
-        for r in res:
-            if r.picked == 1:
-                pickitem = r
-            items.append(r)
-        cprank = analydata.compare(pickitem,items)
-        shoppings.updateshoppingitem(pickitem.itemId,cprank=cprank)
+        try:
+            items = list()
+            res = shoppings.getSpItemsByPid(p.pid) 
+            for r in res:
+                if r.picked == 1:
+                    pickitem = r
+                items.append(r)
+            cprank = analydata.compare(pickitem,items)
+            shoppings.updateshoppingitem(pickitem.itemId,cprank=cprank)
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
 
 
 
 def updateItemRank(itemclass): 
     sps = shoppings.getPickedSps(itemclass)
     for sp in sps:
-        shoppings.updateshoppingitem(sp.itemId,itemrank=analydata.calItemRank(sp) )
+        try:
+            shoppings.updateshoppingitem(sp.itemId,itemrank=analydata.calItemRank(sp) )
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
+
 
 
 def updateItemDetail(itemclass):
     items = shoppings.getPickedSps(itemclass)
     for item in items:
-        pagesource = origindata.getItemHtml(item)
-        if not pagesource:
-            continue
         try:
+            pagesource = origindata.getItemHtml(item)
+            if not pagesource:
+                continue
             itemBFSHtml = origindata.getItemBFSHtml(pagesource)
             browsenum,sharenum,storenumun,favournum = getdata.getItemBFS(itemBFSHtml)
             promoteTimeLimit = getdata.getItemTimeLimit(pagesource)
@@ -108,37 +121,43 @@ def updateItemDetail(itemclass):
                             udate = datetime.now()
             )
         except:
-            get_logger("crawl").debug("%s %s",itemBFSHtml,traceback.format_exc())
+            get_logger("schedErrJob").debug("%s %s",itemBFSHtml,traceback.format_exc())
 
 
 def updateItemChange(itemclass):
     items = shoppings.getPickedSps(itemclass)
     for item in items:
-        html = origindata.getRuyiHtml(item)
-        if not html:
-            continue
-        prices = getdata.getRuyiPrice(html)
-        print prices
-        if not prices:
-            continue
-        changerank = analydata.calChange(item.currentPrice,prices)
-        shoppings.updateshoppingitem(item.itemId,changerank=changerank)
+        try:
+            html = origindata.getRuyiHtml(item)
+            if not html:
+                continue
+            prices = getdata.getRuyiPrice(html)
+            print prices
+            if not prices:
+                continue
+            changerank = analydata.calChange(item.currentPrice,prices)
+            shoppings.updateshoppingitem(item.itemId,changerank=changerank)
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
 
 
 def pickGoodItems(itemclass):
     sps = shoppings.getPickedSps(itemclass)
     for sp in sps:
-        if analydata.isGoodItem(sp):
-            score = analydata.computescore(sp)
-            shoppings.insertformalshopping(sp,score=score)
-            if not sp.pid:
-                continue
-            res = shoppings.getSpItemsByPid(sp.pid)
-            items = list()
-            for r in res:
-                items.append(r)
-            for famitem in analydata.getFamitems(items):
-                shoppings.insertformalshopping(famitem)
+        try:
+            if analydata.isGoodItem(sp):
+                score = analydata.computescore(sp)
+                shoppings.insertformalshopping(sp,score=score)
+                if not sp.pid:
+                    continue
+                res = shoppings.getSpItemsByPid(sp.pid)
+                items = list()
+                for r in res:
+                    items.append(r)
+                for famitem in analydata.getFamitems(items):
+                    shoppings.insertformalshopping(famitem)
+        except:
+            get_logger("schedErrJob").debug("%s",traceback.format_exc())
 
 """        
 def formaltoshopping(itemclass):
