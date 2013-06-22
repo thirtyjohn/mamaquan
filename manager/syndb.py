@@ -75,3 +75,4 @@ def main():
         time.sleep(60)
         syndp()
         syndpmatch()
+        synsp()
