@@ -116,6 +116,8 @@ def getRuyiPrice(html):
     if not dict_html:
         return None
     data = json.loads(dict_html)
-    return data["Item"]["Prices"]
+    if data["Item"].has_key("Prices"):
+        return data["Item"]["Prices"]
+    return None
     
     
