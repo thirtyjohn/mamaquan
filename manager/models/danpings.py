@@ -61,7 +61,7 @@ def insertmatch(dpid,d):
 
 def getmatch_min(dpid):
     pricelist = list()
-    res = dbconn.query("select min(price) as minprice,currency from danpingmatch where dpid = $dpid group by currency",vars=dict(dpid=dpid))
+    res = dbconn.query("select min(price) as minprice,currency from danpingmatch where dpid = $dpid and price is not null group by currency",vars=dict(dpid=dpid))
     for r in res:
         pricelist.append(price(r.minprice,r.currency))
     if len(pricelist) > 0:

@@ -11,7 +11,10 @@ def getItems(html):
     data = json.loads(html.decode("gbk"))
 
     if not data.has_key("itemList"):
-        get_logger("crawl").debug(html)
+        if data.has_key("status"):
+            get_logger("crawl").debug("crawl spitemlist exp:"+ (str(data["status"]["code"]) + ":" +data["status"]["url"] if data["status"].has_key("code") else html) )
+        else:
+            get_logger("crawl").debug(html)
         global failurecount
         failurecount += 1
         return None
