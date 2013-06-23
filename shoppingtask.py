@@ -4,6 +4,7 @@ from manager.shoppings import pickitem
 from manager.danpings import pickdp
 from apscheduler.scheduler import Scheduler
 from helpers.loggers import get_logger
+from manager import syndb
 
 
 def err_listener(ev):  
@@ -38,6 +39,8 @@ sched.add_cron_job(startupdate, minute=37, args=['peishi'])
 sched.add_cron_job(startupdate, minute=47, args=['maorongwanju'])
 """
 sched.add_cron_job(pickdp.startupdate,minute=7,args=['smzdm'])
+
+sched.add_cron_job(syndb.main, second=1)
 
 sched.start()
 
