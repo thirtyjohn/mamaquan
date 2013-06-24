@@ -239,7 +239,7 @@ def calItemRank(item):
 def calChange(currentprice,pricelist):
     prices = list()
     for p in pricelist:
-        if p[1] is not None:
+        if p[1] is not None and p[1]/currentprice < tactics.MAX_DIFF_CHANGE_HISTORY: ##价格偏差太大的不要
             prices.append(p)
 
     if len(prices) == 0:
@@ -271,7 +271,7 @@ def isGoodItem(item):
         return False
     if item.changerank < tactics.OUT_GOOD_CHANGERANK:
         return False
-    if item.cprank == tactics.OUT_GOOD_CPRANK:
+    if item.cprank < tactics.OUT_GOOD_CPRANK:
         return False
     if item.cprank == tactics.IN_GOOD_CPRANK:
         return True
@@ -289,7 +289,7 @@ def computescore(item):
     itemrank = item.itemrank if item.itemrank else 0
     changerank = item.changerank if item.changerank else 0
     time_now = int(time.time()) - 1367550132
-    score = cprank*1.5 + itemrank + changerank*1.5 + time_now*0.75/3600
+    score = cprank*1.5 + itemrank + changerank*2 + time_now*0.2/3600
     return score
 """
 在取相似产品时，超低价，不可信的就别出了
