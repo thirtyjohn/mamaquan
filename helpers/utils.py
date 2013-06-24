@@ -1,5 +1,6 @@
 #coding:utf8
-import re
+import re,time,urllib2,urllib
+from mechanize import Browser
 from settings import url_market,exchange_rate,market_name
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
@@ -94,3 +95,18 @@ def getMarketName(market):
     if market_name.has_key(market):
         return market_name[market]
     return None
+
+
+def resetAdsl():
+    print "============disconect========="
+    req = urllib2.Request("http://192.168.0.1/goform/SysStatusHandle")
+    req.add_header("Referer","http://192.168.0.1/system_status.asp")
+    req.add_header("Cookie","admin:language=cn")
+    data = {'CMD':'WAN_CON', 'GO':'system_status.asp', 'action':'4'}
+    urllib2.urlopen(req,data=urllib.urlencode(data))
+    time.sleep(1)
+    print "============reconect========="
+    data = {'CMD':'WAN_CON', 'GO':'system_status.asp', 'action':'3'}
+    urllib2.urlopen(req,data=urllib.urlencode(data))
+
+
