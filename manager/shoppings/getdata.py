@@ -1,9 +1,10 @@
 #coding:utf-8
 
-import json,re
+import json,re,time,traceback
 from manager.models.shoppings import Shoppingitem
 from helpers.loggers import get_logger
 from helpers.crawls import failurecount
+from datetime import datetime
 
 comp_pid = re.compile("pid=([0-9-]+)")
 
@@ -110,17 +111,55 @@ def getItemTimeLimit(html):
         if m1:
             return int(m1.group(1))    
 
-   
+"""
+抽取price中第一个sku的价格列表并转化为
+[(unix_time,price),...]
+"""
 
-comp_ruyi_dict = re.compile("{.+}")
-def getRuyiPrice(html):
-    m = comp_ruyi_dict.search(html)
-    dict_html = m.group() if m else None
-    if not dict_html:
+comp_priceCutData = re.compile("{.+}")
+def getItemPriceCutData(html):
+
+    m = comp_priceCutData.search(html)
+    html = m.group()
+    html = re.sub(r"new Date\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)",r"\1$\2$\3$\4",html)
+
+    html = re.sub(r"{\s*(\w)", r'{"\1', html)
+    html = re.sub(r",\s*(\w)", r',"\1', html)
+    html = re.sub(r"(\w)\s*:", r'\1":', html)
+    html = re.sub(r"(\w)\s*," , r'\1",',html)
+    html = re.sub(r"(\w)\s*}" , r'\1"}',html)
+    html = re.sub(r":\s*(\w)" , r':"\1',html)
+    html = re.sub(r"(\w)\s*]" , r'\1"]',html)
+
+    html = re.sub(r"\'" , '"',html)
+    
+
+
+    data = json.loads(html.decode("gbk"))
+    if not data.has_key("price"):
         return None
-    data = json.loads(dict_html)
-    if data["Item"].has_key("Prices"):
-        return data["Item"]["Prices"]
-    return None
+    if len(data["price"]) == 0:
+        return None
+    pricelist = list()
+    for price in data["price"][0]["data"]:
+        y = None
+        try:
+            y = float(price["y"])
+        except:
+            get_logger("crawl").debug(traceback.format_exc()) 
+        x = None
+        try:
+            xs = price["x"].split("$")
+            x = time.mktime(datetime(int(xs[0]),int(xs[1]),int(xs[2])).timetuple())
+        except:
+            get_logger("crawl").debug(traceback.format_exc())
+        if x is None or y is None:
+            continue
+        pricelist.append((x,y))
+
+    return pricelist
+        ##pricelist.append((price["x"],price["y"]))
+        
+
     
     

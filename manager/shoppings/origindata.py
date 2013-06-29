@@ -173,16 +173,11 @@ def getItemBFSHtml(txt):
         html = resp.read() if resp else None
         return html
 
-
-
-
-def getRuyiHtml(item):
-    ruyi_host = "http://ruyi.etao.com/ext/productLinkSearch?"
-    params = urllib.urlencode({"link":"http://item.taobao.com/item.htm?id="+str(item.itemId),"pid":"rf002","group":"prices,item,items"})
-    resp = getUrl(ruyi_host+params)
+def getItemPriceCutHtml(item):
+    url = "http://detailskip.taobao.com/json/price_cut_data.htm?id=" + str(item.itemId)
+    resp = getUrl(url)
     html = resp.read() if resp else None
     return html
-
     
 """
 if __name__ == "__main__":

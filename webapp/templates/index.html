@@ -83,13 +83,13 @@
             <h5 style="margin:5px 0;">${dp.name}</h5>
             <div class="clear">
             <span class="c6" style="line-height:21px;">${getMarketName(dp.market)}</span>
-            <span style="float:right;font-size:16px;" class="price">￥${dp.price}</span>
+            <span style="float:right;font-size:14px;" class="price">￥${int(dp.price)}.00</span>
             </div>
             <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
                 % for dpmatch in dpmatchlist:
                 <dl>
                     <dt><a target="_blank" href="${dpmatch.url}" class="c6">${getMarketName(dpmatch.market)}</a></dt>
-                    <dd>￥${dpmatch.price}</dd> 
+                    <dd>￥${int(dpmatch.price)}</dd> 
                 </dl>
                 % endfor
             </div>
@@ -130,8 +130,8 @@
            % endif
            </div>
            <div class="index_sp_price">
-            <h5>${round(item.price*1.0/item.pricebefore*10,1)}折<del>￥${item.pricebefore}</del></h5>
-            <h4>${item.price}</h5>
+            <h5>${round(item.price*1.0/item.pricebefore*10,1)}折<del>￥${int(item.pricebefore)}</del></h5>
+            <h4>${int(item.price)}.00</h5>
            </div>
            </div>
         </div>

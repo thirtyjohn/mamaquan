@@ -6,6 +6,7 @@ from manager.models import shoppings
 from datetime import datetime
 from helpers.loggers import get_logger
 from tactics import pagetocrawl
+from helpers.prices import getRuyiHtml,getRuyiPrice
 
 def collectpage(itemclass,page):
     newcount = 0
@@ -128,11 +129,11 @@ def updateItemChange(itemclass):
     items = shoppings.getPickedSps(itemclass)
     for item in items:
         try:
-            html = origindata.getRuyiHtml(item)
-            if not html:
-                continue
-            prices = getdata.getRuyiPrice(html)
-            print prices
+            html = origindata.getItemPriceCutHtml(item)
+            prices = getdata.getItemPriceCutData(html) if html else None
+            if not prices:
+                html = getRuyiHtml(item.href)
+                prices = getRuyiPrice(html) if html else None
             if not prices:
                 continue
             changerank = analydata.calChange(item.currentPrice,prices)

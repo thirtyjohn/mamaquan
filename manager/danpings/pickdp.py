@@ -51,25 +51,30 @@ def updatecpprice():
     dps = danpings.findstatus(1)
     for dp in dps:
         try:
-            html = getRuyiHtml(dp.srcurl)
-            print "getRuyi......"
-            print html
-            datalist = getCpdata(html)
-            if datalist:
-                for d in datalist:
-                    danpings.insertmatch(dp.ID,d)
-                danpings.updatestatus(dp.ID,2)
-                continue
-
             can_market = {"jd":"","dangdang":"","zcn":""}
             if can_market.has_key(dp.market):
                 del can_market[dp.market]
+            html = getRuyiHtml(dp.srcurl)
+            print "getRuyi......"
+            ##print html
+            datalist = getCpdata(html)
+            if datalist:
+                for d in datalist:
+                    if len(can_market.keys()) == 0:
+                        break
+                    if d.market in can_market.keys():
+                        danpings.insertmatch(dp.ID,d)
+                        del can_market[d.market]
+
+            if len(can_market.keys()) < 2:
+                danpings.updatestatus(dp.ID,2)
+                continue
 
             print "getRuyiSearch....."
-            print can_market
+            ##print can_market
             datalist = getRuyiSearch(dp.name)
             if datalist:
-                print "datalenth: " +  str(len(datalist))
+                ##print "datalenth: " +  str(len(datalist))
                 for d in datalist:
                     if len(can_market.keys()) == 0:
                         break
@@ -81,9 +86,9 @@ def updatecpprice():
                 continue
 
             print "getFromSearch....."
-            print can_market
+            ##print can_market
             datalist = getCpdataFromSearch(dp.name,can_market.keys())
-            print len(datalist)
+            ##print len(datalist)
             if datalist:
                 for d in datalist:
                     if len(can_market.keys()) == 0:

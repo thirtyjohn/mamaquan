@@ -16,7 +16,7 @@ a:hover{color:#996600;text-decoration:underline;}
 .m_title{font-size:15px;}
 .small_t{color:#A7B164;}
 .red_small_t{padding:3px;background-color:#cc6633;border-radius: 5px 5px 5px 5px;color:#fff;font-size:11px;}
-.price{color:#cc4400;}
+.price{color:#cc0000;font-weight:bold;}
 .c6{color:#666;}
 .cb{font-weight:bold;}
 .clear{overflow:hidden;zoom:1;}
@@ -56,8 +56,8 @@ a:hover{color:#996600;text-decoration:underline;}
 .index_sp_name{color:#996600;font-size:13px;height:35px;overflow:hidden;}
 .index_sp_promo{height:75px;padding-top:30px;color:#666;overflow:hidden;zoom:1;}
 .index_sp_price{}
-.index_sp_price h5{color:#999;text-align:center;text-align:right;font-size:12px;margin-bottom:5px;}
-.index_sp_price h4{color:#fff;background-color:#f59384;text-align:center;font-size:15px;padding:5px;}
+.index_sp_price h5{color:#999;font-size:12px;margin-bottom:5px;}
+.index_sp_price h4{color:#cc0000;font-size:16px;font-weight:bold;}
 .index_b_title{overflow:hidden;zoom:1;border-bottom:2px solid #CC9933;padding-bottom:3px;}
 .json_sp{overflow:hidden;zoom:1;padding:40px;width:520px;}
 

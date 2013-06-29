@@ -3,6 +3,8 @@ from helpers.crawls import getUrl
 import urllib,json,re
 from helpers.utils import getMarketFromUrl
 from b2c import factory,Item
+from helpers.loggers import get_logger
+
 
 
 def getRuyiHtml(url):
@@ -11,6 +13,17 @@ def getRuyiHtml(url):
     resp = getUrl(ruyi_host+params)
     html = resp.read() if resp else None
     return html
+
+comp_ruyi_dict = re.compile("{.+}")
+def getRuyiPrice(html):
+    m = comp_ruyi_dict.search(html)
+    dict_html = m.group() if m else None
+    if not dict_html:
+        return None
+    data = json.loads(dict_html)
+    if data["Item"].has_key("Prices"):
+        return data["Item"]["Prices"]
+    return None
 
 comp_price = re.compile(u"([0-9.]+)")
 def getCpdata(html):
@@ -68,6 +81,9 @@ def getCpdataFromSearch(name,marketlist):
             b2c_item.itemid = d.itemid
             if not d.price:
                 d.price = b2c_item.getPrice()
+            if not d.price:
+                get_logger("general").debug("when getCpdataFromSearch " + name + " in " + market + ":no price")
+                continue
             d.currency = 1
             d.url = b2c_list.getSearchUrl(name)
             cplist.append(d)

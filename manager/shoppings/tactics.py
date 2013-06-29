@@ -59,7 +59,7 @@ INTER_GOOD_CHANGERANK = 0.05
 """
 历史价格最大偏差比例
 """
-MAX_DIFF_CHANGE_HISTORY = 5
+MAX_DIFF_CHANGE_HISTORY = 3
 
 
 pagetocrawl = {
