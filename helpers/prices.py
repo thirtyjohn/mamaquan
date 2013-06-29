@@ -6,7 +6,6 @@ from b2c import factory,Item
 from helpers.loggers import get_logger
 
 
-
 def getRuyiHtml(url):
     ruyi_host = "http://ruyi.etao.com/ext/productLinkSearch?"
     params = urllib.urlencode({"link":url})
