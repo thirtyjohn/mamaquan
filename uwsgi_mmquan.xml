@@ -1,0 +1,13 @@
+<uwsgi>
+	<socket>127.0.0.1:9000</socket>
+	<module>application</module>
+	<pythonpath>/path/to/mamaquan/</pythonpath>
+	<workers>4</workers>
+	<master/>
+	<harakiri>60</harakiri>
+	<harakiri-verbose/>
+	<limit-as>128</limit-as>
+	<memory-report/>
+	<daemonize>/log/uwsgi_pmj.log</daemonize>
+	<pidfile>/var/run/uwsgi_pmj.pid</pidfile>
+</uwsgi>
