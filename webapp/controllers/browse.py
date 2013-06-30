@@ -108,10 +108,7 @@ class productsearch:
         if data.has_key("q"):
             data_q = data["q"]
             qs = data["q"].split(",")
-        print data_q
-        print qs
         for q in qs:
-            print q
             nv = q.split(u":") if len(q.split(":"))==2 else None
             if not nv:
                 continue
@@ -119,7 +116,6 @@ class productsearch:
             v = nv[1]
             if n and n in qd[tp].keys() and _xsseccape(v):
                 qdict.update({qd[tp][n]:v})
-        print qdict
         prlist = products.getprs(tp,qdict)
 
         """
@@ -156,7 +152,6 @@ class productsearch:
         """
         lbvs = list()
         for r in products.getlbs(tp,qdict):
-            print r.name
             lbvs.append(r.name)
         lblist = list()
         for lb in static_leibie[tp]:
