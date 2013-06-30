@@ -1,7 +1,7 @@
 #coding:utf-8
 import traceback
 from datetime import datetime
-from manager.settings import dbconn,syndbconn
+from manager.settings import dbconn,syndbconn,serverdbconn
 from helpers.loggers import get_logger
 
 
@@ -23,6 +23,21 @@ def syndp():
                 status = r.status,
                 itemid = r.itemid
         )
+        serverdbconn.insert("danping",
+                ID = r.ID,
+                name = r.name,
+                price = r.price,
+                currency = r.currency,
+                image = r.image,
+                market = r.market,
+                desp = r.desp,
+                itemclass = r.itemclass,
+                url = r.url,
+                wdate = r.wdate,
+                source = r.source,
+                status = r.status,
+                itemid = r.itemid
+        )
         dbconn.update("formaldanping",where="id=$dpid",vars=dict(dpid=r.ID),syn=1)
 
 
@@ -30,6 +45,15 @@ def syndpmatch():
     res = dbconn.query("select * from danpingmatch where syn=0")
     for r in res:
         syndbconn.insert("danpingmatch",
+            dpid = r.dpid, 
+            market = r.market, 
+            price = r.price, 
+            currency = r.currency, 
+            url = r.url, 
+            wdate =r.wdate, 
+            img = r.img
+        )
+        serverdbconn.insert("danpingmatch",
             dpid = r.dpid, 
             market = r.market, 
             price = r.price, 
@@ -68,6 +92,32 @@ def synsp():
                     udate = item.udate,
                     wdate = datetime.now()
         )
+
+        serverdbconn.insert("shopping",
+                    ID = item.ID,
+                    itemId = str(item.itemId),
+                    pid = str(item.pid),
+                    bigimg = item.originalImage,
+                    img = item.image,
+                    name = item.tip,
+                    price = item.currentPrice,
+                    pricebefore = item.price,
+                    ship = item.ship,
+                    promotetype = 1 if item.isLimitPromotion==1 else None,
+                    promoteTimeLimit = item.promoteTimeLimit,
+                    tradeNum = item.tradeNum,
+                    commend = item.commend,
+                    sellername = item.nick,
+                    sellerid = item.sellerId,
+                    sellerloc = item.loc,
+                    sellerrank = item.ratesum,
+                    score = item.score,
+                    itemclass = item.itemclass,
+                    picked = item.picked,
+                    udate = item.udate,
+                    wdate = datetime.now()
+        )
+
         dbconn.update("formalshopping",where="id=$spid", vars=dict(spid=item.ID),syn=1)
 
 

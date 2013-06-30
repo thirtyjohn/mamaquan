@@ -10,6 +10,7 @@ render = render_mako(
 
 dbconn = web.database(dbn='mysql', user="root", host="127.0.0.1", db="mmquan")
 syndbconn = web.database(dbn='mysql', user="root", host="127.0.0.1", db="mmquan")
+serverdbconn =  web.database(dbn='mysql', user="root", host="", db="mmquan", pw="")
 
 localdir = "/Users/macbookpro/workspace/interest/taobaoyouhui/"
 
