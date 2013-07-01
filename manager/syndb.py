@@ -121,6 +121,20 @@ def synsp():
         dbconn.update("formalshopping",where="id=$spid", vars=dict(spid=item.ID),syn=1)
 
 
+def synpr():
+    res = dbconn.query("select * from formalproduct where syn = 0")
+    for r in res:
+        syndbconn.update("product",where = "id=$prid",vars=dict(prid=r.ID),price=r.price, market=r.market, promo=r.promo )
+        serverdbconn.update("product",where = "id=$prid",vars=dict(prid=r.ID),price=r.price, market=r.market, promo=r.promo )
+        dbconn.update("formalproduct",where="id=$prid", vars=dict(prid=r.ID),syn=1)
+
+    res = dbconn.query("select * from formalprmatch where syn = 0")
+    for r in res:
+        syndbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo )
+        serverdbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo )
+        dbconn.update("formalprmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market), syn=1)
+
+
 def main():
     try:
         syndp()
@@ -129,5 +143,10 @@ def main():
         get_logger("schedErrJob").debug("%s",traceback.format_exc())
     try:
         synsp()
+    except:
+        get_logger("schedErrJob").debug("%s",traceback.format_exc())
+
+    try:
+        synpr()
     except:
         get_logger("schedErrJob").debug("%s",traceback.format_exc())

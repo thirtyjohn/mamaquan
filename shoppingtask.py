@@ -5,6 +5,7 @@ from manager.danpings import pickdp
 from apscheduler.scheduler import Scheduler
 from helpers.loggers import get_logger
 from manager import syndb
+from manager.products import dailyupdate 
 
 
 def err_listener(ev):  
@@ -38,7 +39,17 @@ sched.add_cron_job(startupdate, minute=27, args=['jiajushipin'])
 sched.add_cron_job(startupdate, minute=37, args=['peishi'])
 sched.add_cron_job(startupdate, minute=47, args=['maorongwanju'])
 """
+
+"""
+单品更新，每小时爬一次
+"""
 sched.add_cron_job(pickdp.startupdate,minute=7,args=['smzdm'])
+
+"""
+产品更新，每8小时爬一次，分8批
+"""
+sched.add_cron_job(dailyupdate.startupdate,hours="0,8,16",kwargs={"brands":["wyeth","abbott","dumex","meiji"],"hours":1})
+
 
 sched.add_cron_job(syndb.main, second=1)
 
