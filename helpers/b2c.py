@@ -153,7 +153,7 @@ class Zcn(B2c):
         B2c.__init__(self,itemid=None,itemhtml=None,listhtml=None)
         self.market = "zcn"
         self.comp_itemid = re.compile(u"/dp/(\w+)")
-        self.comp_price = re.compile(u"([0-9.]+)")
+        self.comp_price = re.compile(u"([0-9.,]+)")
         self.from_encoding = "utf8"
 
     def getlist(self):
@@ -265,7 +265,7 @@ class Zcn(B2c):
         ss = SoupStrainer("span" , id="actualPriceValue")
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
         price_txt = soup.find("b").string
-        return float(self.comp_price.search(price_txt).group(1))
+        return float(self.comp_price.search(price_txt).group(1).replace(",",""))
 
 
         
