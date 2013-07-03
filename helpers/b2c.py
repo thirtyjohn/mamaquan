@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup,SoupStrainer
 from helpers.crawls import getUrl
 import re,urllib,json,bs4
+from helpers.loggers import get_logger
 
 class Item:
     def __init__(self):
@@ -106,7 +107,11 @@ class Jd(B2c):
     def getPrice(self):
         url = "http://p.3.cn/prices/get?skuid=J_"+str(self.itemid)+"&type=1"
         html = getUrl(url).read()
-        price = float(self.comp_Price.search(html).group(1))
+        m = self.comp_Price.search(html)
+        if not m:
+            get_logger("general").debug("jd price: "+html)
+            return None
+        price = float(m.group(1))
         return price
 
     def getimg(self):
@@ -376,13 +381,21 @@ class Tmall(B2c):
         self.itemhtml = self.getItemHtml() 
         price_url = self.comp_initApi.search(self.itemhtml).group(1)
         html = getUrl(price_url,header={"Referer":self.getItemUrl()}).read()
-        print html
-        data = json.loads(html.decode(self.from_encoding))
+        data = None
+        try:
+            data = json.loads(html.decode(self.from_encoding))
+        except:
+            get_logger("general").debug("tmall price: " + html)
+        if not data:
+            return None
         data_def = data["defaultModel"]["itemPriceResultDO"]["priceInfo"]["def"]
         price = float(data_def["price"])
         if data_def.has_key("promotionList") and data_def["promotionList"]:
             if len(data_def["promotionList"]) > 0:
                 for promo in data_def["promotionList"]:
+                    if not promo.has_key("promo"):
+                        get_logger("general").debug(promo)
+                        continue
                     if float(promo["promo"]) < price:
                         price = float(promo["promo"])
 
