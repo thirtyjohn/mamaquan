@@ -6,7 +6,7 @@ def getprs(tp,qdict):
     condis = list()
     for k,v in qdict.items():
         condis.append(k+"='"+v+"'")
-    sql = "select * from "+static_tp[tp]["tablename"]
+    sql = "select * from product p join "+static_tp[tp]["tablename"] + " q on p.id = q.id "
     if len(condis) > 0:
         sql = sql + " where " + " and ".join(condis)
     res = dbconn.query(sql)
@@ -23,7 +23,7 @@ def getlbs(tp,qdict):
     cols = qdict.keys()
     sqls = list()
     for i in range(len(cols)):
-        sql = "select distinct "+cols[i]+" as name from "+static_tp[tp]["tablename"]
+        sql = "select distinct "+cols[i]+" as name from product p join "+static_tp[tp]["tablename"] + " q on p.id = q.id "
         wheres = list()
         for j in range(len(cols)):
             if i==j or qdict[cols[j]] is None:
@@ -40,20 +40,23 @@ def getlbs(tp,qdict):
 
 
 def getpr(tp,prid):
-    return web.listget(dbconn.query("select * from "+static_tp[tp]["tablename"]+" where id=$prid",vars=dict(prid=prid)),0,None)
+    return web.listget(dbconn.query("select * from product p join "+static_tp[tp]["tablename"]+" q on p.id = q.id where p.id=$prid",
+                    vars=dict(prid=prid)),0,None)
 
 def getpritems(prid):
     return dbconn.query("select * from prmatch where prid = $prid ",vars=dict(prid=prid))
 
-def getotherprs(tp,prid):
-    sql = ""
-    for c in tp_same[tp]:
-        sql = sql + " and p."+c+" = n."+c
-    return dbconn.query("select n.* from "+static_tp[tp]["tablename"]+" p join "+static_tp[tp]["tablename"]+" n on p.id =$prid and n.id <> $prid"+sql,vars=dict(prid=prid))
+def getotherprs(pr):
+    sql = "select * from product p join "+static_tp[pr.prtype]["tablename"]+" q on p.id = q.id where p.id <> $prid "
+    dict_vars = dict(prid=pr.ID)
+    for c in tp_same[pr.prtype]:
+        sql = sql + " and "+c+" = $"+c
+        dict_vars.update({c:pr[c]})
+    return dbconn.query(sql,vars=dict_vars)
 
 
 def getindexpr():
-    pr = web.listget(dbconn.query("select * from formalnaifen where id = 100157"),0,None)
+    pr = web.listget(dbconn.query("select * from product p join naifen q on p.id = q.id where p.id = 100157"),0,None)
     prmatch = dbconn.query("select * from prmatch where prid = $prid",vars=dict(prid=pr.ID))
     return (pr,prmatch)
 
