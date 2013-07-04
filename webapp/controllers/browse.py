@@ -183,7 +183,8 @@ class productsearch:
             else:
                 lbkv.update({r.k:[r.v]})
 
-
+        print lbkv["series"]
+        print static_leibie["naifen"][2][2]
         lblist = list()
         for lb in static_leibie[tp]: ##主要为了排序和标题映射
             if not lbkv.has_key(lb[0]):
