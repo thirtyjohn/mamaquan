@@ -8,6 +8,7 @@ urls = (
     "/shopping/(\d+)","webapp.controllers.browse.shoppingitem",
     "/shopping/(\d+)/delete","webapp.controllers.action.delitem",
     "/mulu","webapp.controllers.browse.mulu",
+    "/(naifen|niaobu|wanju|baojian)","webapp.controllers.browse.productsearch",
     "/(naifen|niaobu|wanju|baojian)/s","webapp.controllers.browse.productsearch",
     "/(naifen|niaobu|wanju|baojian)/(\d+)","webapp.controllers.browse.product",
 )
