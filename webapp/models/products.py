@@ -14,7 +14,10 @@ def getprs(tp,qdict):
 
 
 def getlbs(tp,qdict):
- 
+    qdict = qdict.copy()
+    """
+    每个属性获取 在其他属性限制下的当前属性的所有属性值
+    """
     for lb in static_leibie[tp]:
         if not lb[0] in qdict.keys():
             qdict.update({lb[0]:None})
@@ -23,7 +26,7 @@ def getlbs(tp,qdict):
     cols = qdict.keys()
     sqls = list()
     for i in range(len(cols)):
-        sql = "select distinct "+cols[i]+" as name from product p join "+static_tp[tp]["tablename"] + " q on p.id = q.id "
+        sql = "select distinct "+cols[i]+" as v, '"+cols[i]+"' as k from product p join "+static_tp[tp]["tablename"] + " q on p.id = q.id "
         wheres = list()
         for j in range(len(cols)):
             if i==j or qdict[cols[j]] is None:

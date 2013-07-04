@@ -2,7 +2,6 @@
 <%inherit file="browse.html"/>
 <%
     from webapp.settings import static_tp
-    from urllib import quote
 %>
 
 <div id="content">
@@ -17,14 +16,7 @@
             </div>
             <ul>
                 %for v in lb[2]:
-                    <%
-                        href= "/"+tp+"/s?q="
-                        if data_q:
-                            href = href + quote(data_q.encode('utf8') +","+lb[0].encode('utf8')+':'+v['value'].encode('utf8'))
-                        else:
-                            href = href + quote(lb[0].encode('utf8')+':'+v['value'].encode('utf8'))
-                    %>
-                <li class="${"checked" if v['checked']==1 else ''}" ><a href="${href}">${v["name"]}</a></li>
+                <li class="${"checked" if v['checked']==1 else ''}" ><a href="${v['href']}">${v["name"]}</a></li>
                 %endfor
             </ul>
         </div>

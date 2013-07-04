@@ -1,6 +1,6 @@
 #coding:utf-8
 from webapp.settings import render,static_leibie,static_tp
-import web,json
+import web,json,urllib
 from webapp.models import shoppings,products,danpings
 from helpers.utils import _xsseccape
 
@@ -102,6 +102,7 @@ class productsearch:
         qdict = dict()
         """
         {"duan":u"1","series":u"fdf",}
+        解压q中的信息，形成qdict
         """
         data = web.input()
         data_q = None
@@ -116,6 +117,10 @@ class productsearch:
             v = nv[1]
             if n and n in qd[tp].keys() and _xsseccape(v):
                 qdict.update({qd[tp][n]:v})
+
+        """
+        根据qdict获取产品列表
+        """
         prlist = products.getprs(tp,qdict)
 
         """
@@ -150,21 +155,56 @@ class productsearch:
         如果总项数小于7，就不用重排序
         如果总项数大于7，有的按数量排，没的原定排
         """
-        lbvs = list()
+
+
+        """
+        构造筛选列表:
+        [
+            (
+            "duan",
+            "阶段",
+            [{1段:href},...]
+            ),
+            ...
+        ]
+        """
+
+        """
+        把获得的查询结果整理成
+        {
+            "duan":[1,2,3],
+            ...
+        }
+        """
+        lbkv = dict() 
         for r in products.getlbs(tp,qdict):
-            lbvs.append(r.name)
+            if lbkv.has_key(r.k):
+                lbkv[r.k].append(r.v)
+            else:
+                lbkv.update({r.k:[r.v]})
+
+
         lblist = list()
-        for lb in static_leibie[tp]:
+        for lb in static_leibie[tp]: ##主要为了排序和标题映射
+            if not lbkv.has_key(lb[0]):
+                continue
             vlist = list()
-            for static_v in lb[2]:
-                if static_v in lbvs:
-                    vlist.append({"name":lb[3][static_v],"value":static_v,"checked":1 if static_v in qdict.values() else 0})
+            for static_v in lb[2]: ##类别的每个属性
+                if static_v in lbkv[lb[0]]:                     
+                    hrefs = list()
+                    ##与原有条件进行对照
+                    for k,v in qdict.items():
+                        if not k == lb[0]: ##原有条件与本属性不是一类，则添加
+                            hrefs.append(dq[tp][k].encode('utf8')+':'+v.encode('utf8'))
+                        elif not v == static_v: ##本属性与条件属性一致，则看值是否一致，如果不一致则替换，一致则不添加
+                            hrefs.append(dq[tp][lb[0]].encode('utf8')+':'+static_v.encode('utf8'))
+                    if not qdict.has_key(lb[0]): ##如果条件属性不包含本属性，则添加
+                        hrefs.append(dq[tp][lb[0]].encode('utf8')+':'+static_v.encode('utf8'))
+                    href =  "/"+tp+"/s?q=" + urllib.quote(",".join(hrefs))
+                    vlist.append({"name":lb[3][static_v],"href":href,"checked":1 if static_v in qdict.values() else 0})
             if len(vlist) > 0:
                 lblist.append((dq[tp][lb[0]],lb[1],vlist))
 
-        """
-        [("duan","阶段",[{1段:4},{}]),]
-        """
         
         return render.products(prlist=prlist,lblist=lblist,tp=tp,data_q=data_q)
 
