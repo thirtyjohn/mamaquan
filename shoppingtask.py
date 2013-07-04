@@ -48,7 +48,7 @@ sched.add_cron_job(pickdp.startupdate,minute=7,args=['smzdm'])
 """
 产品更新，每8小时爬一次，分8批
 """
-sched.add_cron_job(dailyupdate.startupdate,hours="0,8,16",kwargs={"brands":["wyeth","abbott","dumex","meiji"],"hours":1})
+sched.add_cron_job(dailyupdate.startupdate,hour="0,8,16",args=['naifen'] ,kwargs={"brands":["wyeth","abbott","dumex","meiji"],"hours":1})
 
 
 sched.add_cron_job(syndb.main, second=1)
