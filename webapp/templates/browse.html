@@ -10,6 +10,9 @@ ${parent.css()}
 <script type="text/javascript" src="/static/js/mmquan.js"  ></script>
 </%block>
 <%block name="header">
+<%
+    from webapp.settings import hostname
+%>
 <div id="header">
     <div id="logo">
         <h1><a href="/" class="yahei">居品网</a></h1>
@@ -17,9 +20,9 @@ ${parent.css()}
     </div>
     <div id="navigate">
         <ul class="yahei"> 
-            <li><a href="#">目录</a></li>
-            <li><a href="#">单品</a></li>
-            <li><a href="#">实惠</a></li>
+            <li><a href="${hostname}#mulu">目录</a></li>
+            <li><a href="${hostname}#danpin">单品</a></li>
+            <li><a href="${hostname}#shihui">实惠</a></li>
         </ul>
     </div>
 </div>

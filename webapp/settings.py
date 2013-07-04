@@ -10,7 +10,7 @@ render = render_mako(
 
 dbconn = web.database(dbn='mysql', user="root", host="127.0.0.1", db="mmquan")
 localdir = "/Users/macbookpro/workspace/interest/taobaoyouhui/"
-
+hostname = "http://192.168.0.102/"
 
 static_leibie = {
     "naifen":
