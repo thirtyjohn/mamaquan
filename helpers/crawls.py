@@ -1,20 +1,36 @@
 #coding:utf-8
-import urllib2,time,random
+import urllib2,time,random,hashlib,os
 from urllib2 import HTTPError,URLError
 from helpers.loggers import get_logger
+from manager.settings import crawl_cache_dir
 
+ 
 
 failurecount = 0
 
 MAX_FAILCOUNT = 20
 
-"""
-可增加一个缓存逻辑
-"""
+md5 = hashlib.md5()
+def getFilepath(url):
+    md5.update(url)      
+    filename =  md5.hexdigest()
+    filepath = crawl_cache_dir + "/" + filename[0:2] + "/" + filename
+    return filepath 
 
-def getUrl(url,header=None):
+
+def getUrl(url,header=None,maxcachetime=None):
+    filepath = getFilepath(url)
+    if os.path.exists(filepath):
+        if maxcachetime:
+            if os.path.getctime(filepath) > time.time() - maxcachetime :
+                return open(filepath,"r").read()
+        else:
+            return open(filepath,"r").read()
     resp = crawl(url,header=header)
-    return resp
+    html = resp.read() if resp else None
+    if html:
+        open(filepath,"w").write(html)
+    return html
 
 
 def crawl(url,header=None):

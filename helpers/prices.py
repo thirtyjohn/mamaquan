@@ -10,8 +10,7 @@ from helpers.loggers import get_logger
 def getRuyiHtml(url):
     ruyi_host = "http://ruyi.etao.com/ext/productLinkSearch?"
     params = urllib.urlencode({"link":url})
-    resp = getUrl(ruyi_host+params)
-    html = resp.read() if resp else None
+    html = getUrl(ruyi_host+params)
     return html
 
 comp_ruyi_dict = re.compile("{.+}")
@@ -44,7 +43,7 @@ def getCpdata(html):
 
 def getRuyiSearch(txt):
     url = "http://ruyi.taobao.com/ext/etaoSearch?q="+urllib.quote(txt.encode("utf8"))+"&application=&pid=rf002&page=1"
-    html = getUrl(url).read()
+    html = getUrl(url)
     data = json.loads(html)
     cplist = list()
     if not data.has_key("Items"):

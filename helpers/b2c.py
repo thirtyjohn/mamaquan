@@ -54,6 +54,9 @@ class B2c:
     def getPrice(self):
         pass
 
+    def getPromo(self):
+        pass
+
     def getSearchUrl(self,txt):
         pass
 
@@ -61,19 +64,20 @@ class B2c:
         pass
 
     def getListHtml(self):
-        html = getUrl(self.listurl).read()
+        html = getUrl(self.listurl)
         return html
 
     def getSearchHtml(self,txt):
         url = self.getSearchUrl(txt)
-        html = getUrl(url).read()
+        html = getUrl(url)
         return html
 
     def getItemHtml(self):
         if self.itemhtml:
             return self.itemhtml
         url = self.getItemUrl()
-        html = getUrl(url).read()
+        html = getUrl(url)
+        self.itemhtml = html
         return html
 
     def getItemidFromUrl(self,url):
@@ -106,7 +110,7 @@ class Jd(B2c):
 
     def getPrice(self):
         url = "http://p.3.cn/prices/get?skuid=J_"+str(self.itemid)+"&type=1"
-        html = getUrl(url).read()
+        html = getUrl(url)
         m = self.comp_Price.search(html)
         if not m:
             get_logger("general").debug("jd price: "+html)
@@ -151,6 +155,22 @@ class Jd(B2c):
         if soup.find("span","next-disabled"):
             return False
         return True
+
+    def getPromo(self):
+        url = "http://jprice.360buy.com/pageadword/"+str(self.itemid)+"-1-1.html?callback=Promotions.set"
+        html = getUrl(url)
+        m = re.search("Promotions.set\((.+)\)",html)
+        data = json.loads(m.group(1))
+        promotionInfoList = data["promotionInfoList"]
+        if len(promotionInfoList) == 0:
+            return "no"
+        needMondey = float(promotionInfoList[0]["needMondey"]) if promotionInfoList[0]["needMondey"] else None
+        reward = float(promotionInfoList[0]["reward"]) if promotionInfoList[0]["reward"] else None
+        if needMondey > 0.0 and reward > 0.0:
+            return u"满"+str(needMondey)+u"减"+str(reward)
+        else:
+            return "no"
+
 
 
 class Zcn(B2c):
@@ -271,8 +291,18 @@ class Zcn(B2c):
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
         price_txt = soup.find("b").string
         return float(self.comp_price.search(price_txt).group(1).replace(",",""))
+    
 
-
+    def getPromo(self):
+        self.itemhtml = self.getItemHtml()
+        ss = SoupStrainer("div",id="quickPromoBucketContent")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        lis = soup.find_all("li")
+        if len(lis) == 0:
+            return "no"
+        if lis[0].find("form"):
+            return "no"
+        return lis[0].get_text()
         
 
 
@@ -322,7 +352,21 @@ class Dangdang(B2c):
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
         img = soup.img["wsrc"]
         return img
-        
+    
+
+    def getPromo(self):
+        html = self.getItemHtml()
+        ss = SoupStrainer("div" , "show_info")
+        soup = BeautifulSoup(html,parse_only=ss,from_encoding=self.from_encoding)
+        promos = soup.find_all("div","event clearfix")
+        if promos and len(promos) > 0:
+            for p in promos:
+                print p.find("span","icon_bg").get_text()
+                if p.find("span","icon_bg").get_text().strip() == u"满额减":
+                    return p.find("div","rule").get_text().strip()
+        return "no"
+
+
 
 
 class Tmall(B2c):
@@ -380,7 +424,7 @@ class Tmall(B2c):
     def getPrice(self):
         self.itemhtml = self.getItemHtml() 
         price_url = self.comp_initApi.search(self.itemhtml).group(1)
-        html = getUrl(price_url,header={"Referer":self.getItemUrl()}).read()
+        html = getUrl(price_url,header={"Referer":self.getItemUrl()})
         data = None
         try:
             data = json.loads(html.decode(self.from_encoding))

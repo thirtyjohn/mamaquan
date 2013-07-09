@@ -1,5 +1,5 @@
 #coding:utf-8
-from helpers.crawls import getUrl
+from helpers.crawls import getUrl,crawl
 from bs4 import BeautifulSoup
 import re,traceback
 from manager.models import danpings
@@ -45,10 +45,7 @@ class Smzdm(Dpsource):
         self.comp_sourceid = re.compile(u"youhui/(\d+)")
 
     def getNewlist(self):
-        resp = getUrl(self.url)
-        if not resp:
-            return
-        self.html = resp.read()
+        self.html = getUrl(self.url)
 
     def getlist(self):
         if not self.html:
@@ -84,7 +81,7 @@ class Smzdm(Dpsource):
                 dp.itemclass = "$".join(itemclasses)
                 dp.url = div.find("div","zhida").find("a")["href"] if div.find("div","zhida") else None
                 if dp.url:
-                    resp = getUrl(dp.url)
+                    resp = crawl(dp.url)
                     dp.redirecturl = resp.geturl() if resp else None
                 if dp.redirecturl:
                     dp.srcurl = getSrcUrl(dp.redirecturl)

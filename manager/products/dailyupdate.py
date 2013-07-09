@@ -28,11 +28,21 @@ def updatePrm(prm):
     b2c_item.itemid = prm.itemid
 
     price = b2c_item.getPrice()
-    ##promo = b2c_item.getPromo()
+    promo = b2c_item.getPromo()
+    print "promo:" + str(promo)
 
-    dbconn.insert("pricelog",market=prm.market,itemid=prm.itemid,price=price,wdate=datetime.now())
+    if price is None or promo is None: ##获取参数出错
+        get_logger("general").debug("get price or promo wrong: price = "+str(price)+",promo = "+str(promo) + "market = "+prm.market+",itemid="+prm.itemid)
+        return
 
-    dbconn.update("formalprmatch",where="market=$market and itemid=$itemid",vars=dict(market=prm.market,itemid=prm.itemid),price=price,utime=datetime.now(),syn=0)
+    if promo == "no":
+        promo = None
+    if price == prm.price and promo == prm.promo:##无变化
+        return
+
+    dbconn.insert("pricelog",market=prm.market,itemid=prm.itemid,price=price,promo=promo,wdate=datetime.now())
+
+    dbconn.update("formalprmatch",where="market=$market and itemid=$itemid",vars=dict(market=prm.market,itemid=prm.itemid),price=price,utime=datetime.now(),syn=0,promo=promo)
 
 
 def getMinPrice(prid):
@@ -49,6 +59,8 @@ def startupdate(prtype,brands=None,market=None,hours=None):
             for prm in prms:
                 updatePrm(prm)
             minprm = getMinPrice(pr.ID)
+            if pr.market == minprm.market and pr.price == minprm.price and pr.promo == minprm.promo: ##无变化不更新
+                continue
             dbconn.update("formalproduct",where="id=$prid",vars=dict(prid=pr.ID),market=minprm.market,price=minprm.price,promo=minprm.promo,utime=datetime.now(),syn=0)
         except:
             get_logger("general").debug(traceback.format_exc())

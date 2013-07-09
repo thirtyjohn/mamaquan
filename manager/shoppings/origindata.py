@@ -114,8 +114,7 @@ def getListHtml(itemclass,page=None):
     if page:
         params.update({"data-value":(page-1)*96})
     url = url_host + htm_dict[itemclass] + "?" + urllib.urlencode(params)
-    resp = getUrl(url)
-    html = resp.read() if resp else None
+    html = getUrl(url)
     return html
 
 def getSameHtml(itemclass,item):
@@ -129,8 +128,7 @@ def getSameHtml(itemclass,item):
               }
 
     url = url_host + htm_dict[itemclass] + "?" + urllib.urlencode(params)
-    resp = getUrl(url)
-    html = resp.read() if resp else None
+    html = getUrl(url) 
     return html
 
 
@@ -152,15 +150,13 @@ gobaby=1
 
 def get30sellhtml(item):
     url = "http://ajax.tbcdn.cn/json/ifq.htm?id="+ str(item.itemId) +"&sid="+ str(item.sellerId) +"&p=1&al=false&ap=1&ss=0&free=0&q=1&ex=0&exs=0&shid=&at=b&ct=1"
-    resp = getUrl(url)
-    html = resp.read() if resp else None
+    html = getUrl(url) 
     return html
 
 
 def getItemHtml(item):
     url = "http://item.taobao.com/item.htm?id=" + str(item.itemId)
-    resp = getUrl(url)
-    html = resp.read() if resp else None
+    html = getUrl(url) 
     return html
 
 
@@ -169,14 +165,12 @@ def getItemBFSHtml(txt):
     m = comp_counterApi.search(txt)
     if m:
         url = m.group(1)+"&callback=DT.mods.SKU.CountCenter.saveCounts"
-        resp = getUrl(url)
-        html = resp.read() if resp else None
-        return html
+        html = getUrl(url) 
+    return html
 
 def getItemPriceCutHtml(item):
     url = "http://detailskip.taobao.com/json/price_cut_data.htm?id=" + str(item.itemId)
-    resp = getUrl(url)
-    html = resp.read() if resp else None
+    html = getUrl(url) 
     return html
     
 """
