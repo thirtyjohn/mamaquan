@@ -358,12 +358,19 @@ class Dangdang(B2c):
         html = self.getItemHtml()
         ss = SoupStrainer("div" , "show_info")
         soup = BeautifulSoup(html,parse_only=ss,from_encoding=self.from_encoding)
-        promos = soup.find_all("div","event clearfix")
+        promos = soup.find_all("div","event")
         if promos and len(promos) > 0:
             for p in promos:
-                print p.find("span","icon_bg").get_text()
                 if p.find("span","icon_bg").get_text().strip() == u"满额减":
-                    return p.find("div","rule").get_text().strip()
+                    promo_txt = u""
+                    for c in p.find("div","rule").children:
+                        if isinstance(c,bs4.element.NavigableString):
+                            promo_txt += c
+                        else:
+                            if c.name == "br":
+                                break
+                            promo_txt += c.get_text()
+                    return promo_txt if promo_txt.strip()<>"" else "no"
         return "no"
 
 
@@ -444,6 +451,11 @@ class Tmall(B2c):
                         price = float(promo["promo"])
 
         return price
+
+
+    def getPromo(self):
+        return "no"
+
 
 
 
