@@ -72,7 +72,9 @@
                 <div class="clear">
                 <h3><a href="/${tp}/${opr.ID}">${opr.name}</a></h3>
                 <h5 class="price">￥${opr.price}</h5>
+                % if opr.price and opr.weight:
                 <h6>${round(opr.price/opr.weight,2)}元/克</h6>
+                %endif
                 </div>
             </div>
         %endfor

@@ -45,7 +45,7 @@ def updatePrm(prm):
 
 
 def getMinPrice(prid):
-    return web.listget(dbconn.query("select * from formalprmatch where prid = $prid order by price limit 1",vars=dict(prid=prid)),0,None)
+    return web.listget(dbconn.query("select * from formalprmatch where prid = $prid and price is not null order by price limit 1",vars=dict(prid=prid)),0,None)
 
 
 def startupdate(prtype,brands=None,market=None,hours=None):
@@ -58,6 +58,8 @@ def startupdate(prtype,brands=None,market=None,hours=None):
             for prm in prms:
                 updatePrm(prm)
             minprm = getMinPrice(pr.ID)
+            if not minprm:
+                continue
             if pr.market == minprm.market and pr.price == minprm.price and pr.promo == minprm.promo: ##无变化不更新
                 continue
             dbconn.update("formalproduct",where="id=$prid",vars=dict(prid=pr.ID),market=minprm.market,price=minprm.price,promo=minprm.promo,utime=datetime.now(),syn=0)
