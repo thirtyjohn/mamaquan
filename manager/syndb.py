@@ -130,8 +130,8 @@ def synpr():
 
     res = dbconn.query("select * from formalprmatch where syn = 0")
     for r in res:
-        syndbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo )
-        serverdbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo )
+        syndbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo, utime=r.utime )
+        serverdbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo, utime=r.utime )
         dbconn.update("formalprmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market), syn=1)
 
 

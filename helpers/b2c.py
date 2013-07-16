@@ -1,7 +1,7 @@
 #coding:utf-8
 from bs4 import BeautifulSoup,SoupStrainer
 from helpers.crawls import getUrl
-import re,urllib,json,bs4
+import re,urllib,json,bs4,traceback
 from helpers.loggers import get_logger
 
 class Item:
@@ -437,6 +437,7 @@ class Tmall(B2c):
             data = json.loads(html.decode(self.from_encoding))
         except:
             get_logger("general").debug("tmall price: " + html)
+            get_logger("general").debug("tmall price: " + traceback.format_exc())
         if not data:
             return None
         data_def = data["defaultModel"]["itemPriceResultDO"]["priceInfo"]["def"]

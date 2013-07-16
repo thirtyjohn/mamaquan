@@ -29,7 +29,6 @@ def updatePrm(prm):
 
     price = b2c_item.getPrice()
     promo = b2c_item.getPromo()
-    print "promo:" + str(promo)
 
     if price is None or promo is None: ##获取参数出错
         get_logger("general").debug("get price or promo wrong: price = "+str(price)+",promo = "+str(promo) + "market = "+prm.market+",itemid="+prm.itemid)
