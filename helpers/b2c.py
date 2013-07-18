@@ -83,6 +83,9 @@ class B2c:
     def getItemidFromUrl(self,url):
         pass
 
+    def getStock(self):
+        return 1
+
 
 
 class Jd(B2c):
@@ -302,8 +305,17 @@ class Zcn(B2c):
             return "no"
         if lis[0].find("form"):
             return "no"
+        if lis[0].get_text().find(u"促销优惠单张订单仅享受1次") > -1:
+            return "no"
         return lis[0].get_text()
-        
+
+    def getStock(self):
+        self.itemhtml = self.getItemHtml()
+        ss = SoupStrainer("div","buying",style="padding-bottom: 0.75em;")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        if soup.get_text().find(u"由亚马逊直接销售和发货") > -1:
+            return 1
+        return 0
 
 
 class Dangdang(B2c):
@@ -352,6 +364,22 @@ class Dangdang(B2c):
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
         img = soup.img["wsrc"]
         return img
+
+    def getPrice(self):
+        price = None
+        html = self.getItemHtml()
+
+        #取抢购价
+        ss = SoupStrainer("div" , "show_info")
+        soup = BeautifulSoup(html,parse_only=ss,from_encoding=self.from_encoding)
+        promos = soup.find_all("div","event")
+        if promos and len(promos) > 0:
+            for p in promos:
+                if p.find("span","icon_bg").get_text().strip() == u"抢 购": 
+                    price = float(self.comp_price.search(p.find("i",id="promo_price").get_text()).group(1)) if p.find("i",id="promo_price") else None
+        if price:
+            return price
+        return float(self.comp_price.search(soup.find("span",id="salePriceTag").get_text()).group(1))
     
 
     def getPromo(self):
@@ -373,7 +401,21 @@ class Dangdang(B2c):
                     return promo_txt if promo_txt.strip()<>"" else "no"
         return "no"
 
+    def getStock(self):
+        html = self.getItemHtml()
+        ss = SoupStrainer("div" , "show_info")
+        soup = BeautifulSoup(html,parse_only=ss,from_encoding=self.from_encoding)
+        if soup.find("a",id="sign_no_stock"):
+            return 0
+        return 1
 
+    def isZiyin(self):
+        html = self.getItemHtml()
+        ss = SoupStrainer("div" , "show_info")
+        soup = BeautifulSoup(html,parse_only=ss,from_encoding=self.from_encoding)
+        if soup.find("div","legend l_dang"):
+            return True
+        return False
 
 
 class Tmall(B2c):
@@ -440,6 +482,8 @@ class Tmall(B2c):
             get_logger("general").debug("tmall price: " + traceback.format_exc())
         if not data:
             return None
+        if not data["defaultModel"]["itemPriceResultDO"]["priceInfo"].has_key("def"):
+            return 0
         data_def = data["defaultModel"]["itemPriceResultDO"]["priceInfo"]["def"]
         price = float(data_def["price"])
         if data_def.has_key("promotionList") and data_def["promotionList"]:

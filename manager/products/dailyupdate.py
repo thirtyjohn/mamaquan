@@ -29,23 +29,30 @@ def updatePrm(prm):
 
     price = b2c_item.getPrice()
     promo = b2c_item.getPromo()
+    stock = b2c_item.getStock()
 
-    if price is None or promo is None: ##获取参数出错
+    if price is None or promo is None or stock is None: ##获取参数出错
         get_logger("general").debug("get price or promo wrong: price = "+str(price)+",promo = "+str(promo) + "market = "+prm.market+",itemid="+prm.itemid)
         return
-
+    """
+    定义了规则，如果没有促销，则返回no，如果没价格，则返回0
+    """
     if promo == "no":
         promo = None
-    if price == prm.price and promo == prm.promo:##无变化
+    if price == 0:
+        price = prm.price
+        stock = 0
+
+    if price == prm.price and promo == prm.promo and stock == prm.stock:##无变化
         return
 
-    dbconn.insert("pricelog",market=prm.market,itemid=prm.itemid,price=price,promo=promo,wdate=datetime.now())
+    dbconn.insert("pricelog",market=prm.market,itemid=prm.itemid,price=price,promo=promo,stock=stock,wdate=datetime.now())
 
-    dbconn.update("formalprmatch",where="market=$market and itemid=$itemid",vars=dict(market=prm.market,itemid=prm.itemid),price=price,utime=datetime.now(),syn=0,promo=promo)
+    dbconn.update("formalprmatch",where="market=$market and itemid=$itemid",vars=dict(market=prm.market,itemid=prm.itemid),price=price,utime=datetime.now(),syn=0,promo=promo,stock=stock)
 
 
 def getMinPrice(prid):
-    return web.listget(dbconn.query("select * from formalprmatch where prid = $prid and price is not null order by price limit 1",vars=dict(prid=prid)),0,None)
+    return web.listget(dbconn.query("select * from formalprmatch where prid = $prid and price is not null and stock=1 order by price limit 1",vars=dict(prid=prid)),0,None)
 
 
 def startupdate(prtype,brands=None,market=None,hours=None):
@@ -59,10 +66,11 @@ def startupdate(prtype,brands=None,market=None,hours=None):
                 updatePrm(prm)
             minprm = getMinPrice(pr.ID)
             if not minprm:
+                dbconn.update("formalproduct",where="id=$prid",vars=dict(prid=pr.ID),stock=0)
                 continue
-            if pr.market == minprm.market and pr.price == minprm.price and pr.promo == minprm.promo: ##无变化不更新
+            if pr.market == minprm.market and pr.price == minprm.price and pr.promo == minprm.promo and pr.stock == minprm.stock: ##无变化不更新
                 continue
-            dbconn.update("formalproduct",where="id=$prid",vars=dict(prid=pr.ID),market=minprm.market,price=minprm.price,promo=minprm.promo,utime=datetime.now(),syn=0)
+            dbconn.update("formalproduct",where="id=$prid",vars=dict(prid=pr.ID),market=minprm.market,price=minprm.price,promo=minprm.promo,stock=minprm.stock,utime=datetime.now(),syn=0)
         except:
             get_logger("general").debug(traceback.format_exc())
 

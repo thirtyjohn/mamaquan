@@ -124,14 +124,14 @@ def synsp():
 def synpr():
     res = dbconn.query("select * from formalproduct where syn = 0")
     for r in res:
-        syndbconn.update("product",where = "id=$prid",vars=dict(prid=r.ID),price=r.price, market=r.market, promo=r.promo )
-        serverdbconn.update("product",where = "id=$prid",vars=dict(prid=r.ID),price=r.price, market=r.market, promo=r.promo )
+        syndbconn.update("product",where = "id=$prid",vars=dict(prid=r.ID),price=r.price, market=r.market, promo=r.promo, stock=r.stock )
+        serverdbconn.update("product",where = "id=$prid",vars=dict(prid=r.ID),price=r.price, market=r.market, promo=r.promo, stock=r.stock )
         dbconn.update("formalproduct",where="id=$prid", vars=dict(prid=r.ID),syn=1)
 
     res = dbconn.query("select * from formalprmatch where syn = 0")
     for r in res:
-        syndbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo, utime=r.utime )
-        serverdbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo, utime=r.utime )
+        syndbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo, stock=r.stock, utime=r.utime )
+        serverdbconn.update("prmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market),price=r.price, market=r.market, promo=r.promo, stock=r.stock, utime=r.utime )
         dbconn.update("formalprmatch",where = "prid=$prid and market=$market and itemid=$itemid",vars=dict(prid=r.prid,itemid=r.itemid,market=r.market), syn=1)
 
 
