@@ -41,7 +41,6 @@ def updatePrm(prm):
         promo = None
     if price == 0:
         price = prm.price
-        stock = 0
 
     if price == prm.price and promo == prm.promo and stock == prm.stock:##无变化
         return

@@ -93,7 +93,7 @@ class Jd(B2c):
     def __init__(self,itemid=None,itemhtml=None,listhtml=None):
         B2c.__init__(self,itemid=None,itemhtml=None,listhtml=None)
         self.market = "jd"
-        self.comp_Price = re.compile("\"p\":\"([0-9.]+)\"")
+        self.comp_Price = re.compile("\"p\":\"([0-9.-]+)\"")
         self.comp_itemid = re.compile("/(\d+).html")
         self.from_encoding = "gbk"
 
@@ -119,6 +119,8 @@ class Jd(B2c):
             get_logger("general").debug("jd price: "+html)
             return None
         price = float(m.group(1))
+        if price < 0:
+            return 0
         return price
 
     def getimg(self):
@@ -173,6 +175,11 @@ class Jd(B2c):
             return u"满"+str(needMondey)+u"减"+str(reward)
         else:
             return "no"
+    
+    def getStock(self):
+        if self.getPrice() == 0:
+            return 0
+        return 1
 
 
 
@@ -500,7 +507,11 @@ class Tmall(B2c):
 
     def getPromo(self):
         return "no"
-
+    
+    def getStock(self):
+        if self.getPrice() == 0:
+            return 0
+        return 1
 
 
 
