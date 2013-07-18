@@ -1,7 +1,7 @@
 #coding:utf8
 
 from manager.shoppings import pickitem
-from manager.danpings import pickdp
+from manager.danpings import pickdp,dpcheck
 from apscheduler.scheduler import Scheduler
 from helpers.loggers import get_logger
 from manager import syndb
@@ -44,6 +44,10 @@ sched.add_cron_job(startupdate, minute=47, args=['maorongwanju'])
 单品更新，每小时爬一次
 """
 sched.add_cron_job(pickdp.startupdate,minute=7,args=['smzdm'])
+"""
+单品检查，每10分钟检查一次
+"""
+sched.add_cron_job(dpcheck.main,minute="*/10")
 
 """
 产品更新，每8小时爬一次，分8批
@@ -51,6 +55,9 @@ sched.add_cron_job(pickdp.startupdate,minute=7,args=['smzdm'])
 sched.add_cron_job(dailyupdate.startupdate,hour="0,8,16",args=['naifen'] ,kwargs={"brands":["wyeth","abbott","dumex","meiji"],"hours":1})
 
 
+"""
+db更新，每分钟更新一次
+"""
 sched.add_cron_job(syndb.main, second=1)
 
 sched.start()

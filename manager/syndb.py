@@ -40,6 +40,12 @@ def syndp():
         )
         dbconn.update("formaldanping",where="id=$dpid",vars=dict(dpid=r.ID),syn=1)
 
+    res = dbconn.query("select * from formaldanping where syn=2")
+    for r in res:
+        syndbconn.update("danping",where="id=$dpid",vars=dict(dpid=r.ID),stock=r.stock)
+        serverdbconn.update("danping",where="id=$dpid",vars=dict(dpid=r.ID),stock=r.stock)
+        dbconn.update("formaldanping",where="id=$dpid",vars=dict(dpid=r.ID),syn=1)
+
 
 def syndpmatch():
     res = dbconn.query("select * from danpingmatch where syn=0")

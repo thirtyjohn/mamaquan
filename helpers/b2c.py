@@ -299,6 +299,8 @@ class Zcn(B2c):
         self.itemhtml = self.getItemHtml()
         ss = SoupStrainer("span" , id="actualPriceValue")
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        if not soup.find("b"):
+            return 0
         price_txt = soup.find("b").string
         return float(self.comp_price.search(price_txt).group(1).replace(",",""))
     
