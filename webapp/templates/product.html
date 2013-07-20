@@ -2,8 +2,8 @@
 <%inherit file="browse.html"/>
 
 <%
-    from webapp.settings import static_tp
-    from helpers.utils import getMarketName
+    from webapp.settings import static_tp,static_leibie
+    from helpers.utils import getMarketName,clipText
     from helpers.cpslinks import getCpslink
 %>
 
@@ -14,7 +14,7 @@
                 <li><a href="/mulu">妈妈目录</a><span class="gt">&gt;</span></li>
             </%doc>
             <li><a href="/${tp}">${static_tp[tp]["title"]}</a><span class="gt">&gt;</span></li>
-            <li>${pr.name}</li>
+            <li><a href="/${tp}/s?q=b:${pr.brand}">${static_leibie[tp][0][3][pr.brand]}</a></li>
         </ul> 
     </div>
     
@@ -23,7 +23,7 @@
     <div id="pr_detail">
         <div id="pr_detail_left">
             <div class="pr_img"><img src="${pr.img}"/></div>
-            <div style="float:left;">
+            <div style="float:left;width:240px;">
                 <ul>
                     <li>品牌：${pr.brand}</li>
                     <li>系列：${pr.series}</li>
@@ -34,15 +34,18 @@
             </div>
         </div>
         <div id="pr_detail_right">
-            <div>${pr.price}</div>
-            <div class="jjtz" >降价通知</div>
+            <span style="font-size:16px;" class="c6">￥${pr.price}</span>
+            <div style="" class="jjtz" >[ 降价通知 ]</div>
         </div>
     </div>
 
     <div id="pr_items">
     <h4 class="m_title">在以下商家购买</h4>
         <div id="b2c_detail">
-            <h5>官方自营（可信）</h5>
+            <h5 style="width:510px;">
+                <span style="color:#666;">官方自营（可信）</span>
+                <div style="float:right"><span class="red_small_t">最低</span><span class="price" style="margin-left:5px;font-size:16px;vertical-align: middle;">￥${pr.price}</span></div>
+            </h5>
             <table>
                     <tr>
                          <th style="width:140px;"></th>
@@ -53,10 +56,17 @@
                     <tr>
                         <td><h3>${getMarketName(pritem.market)}</h3></td>
                         <td>
-                            <h4 class="price">￥${pritem.price}</h4>
-                            <h6>可叠加优惠：满400减60</h6>
+                            <h4>
+                            <span class="price" style="font-size:14px;">￥${pritem.price}</span>
+                            % if pritem.stock == 0:
+                                <span class="c6" style="margin-left:10px;">目前无货</span>
+                            % endif
+                            </h4>
+                            % if pritem.promo:
+                            <h6>优惠：${pritem.promo}</h6>
+                            % endif
                         </td>
-                        <td><div class="buy_link"><a href="${getCpslink(pritem)}">前往购买</a></div></td>
+                        <td><div class="buy_link"><a rel="nofollow" target="_blank" href="${getCpslink(pritem)}">前往购买</a></div></td>
                     </tr>
                 %endfor
             </table>

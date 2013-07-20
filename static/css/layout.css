@@ -22,7 +22,7 @@ a:hover{color:#996600;text-decoration:underline;}
 .clear{overflow:hidden;zoom:1;}
 .blue_link{color:#3366FF;}
 .gt{font-size:10px;color:#666;margin:0 5px;}
-.buy_link a{background-color:#e57c6c; color:#fff;display:block;padding:5px 10px;}
+.buy_link a{background-color:#e57c6c; color:#fff;padding:7px 10px;}
 
 #header{position:fixed;top:0px;width:100%;overflow:hidden;zoom:1;background:url("/static/img/testbg.png") repeat-x scroll left top white;}
 #logo{width:100px;float:left;margin:10px 0 0 20px;}
@@ -96,7 +96,7 @@ a:hover{color:#996600;text-decoration:underline;}
 #pr_detail{overflow:hidden;zoom:1;}
 #pr_detail li{color:#666;line-height:1.6;}
 #pr_detail_left {float:left;}
-#pr_detail_right {padding-left:20px;overflow:hidden;zoom:1;}
+#pr_detail_right {float:left;}
 .pr_img{float:left;padding-right:20px;}
 .pr_img img{width:180px;height:180px;}
 
@@ -104,8 +104,8 @@ a:hover{color:#996600;text-decoration:underline;}
 
 
 #b2c_detail{overflow:hidden;zoom:1;}
-#b2c_detail h3{font-size:14px;}
-#b2c_detail h5{margin-top:20px;color:#996600;}
+#b2c_detail h3{font-size:14px;margin-left:5px;}
+#b2c_detail h5{margin-top:20px;background-color:#F4F5ED;padding:10px 5px;}
 #b2c_detail table{margin-top:5px;}
 #b2c_detail td{padding-bottom:20px;}
 #b2c_detail h6{margin-top:5px;color:#555;}
@@ -116,7 +116,7 @@ a:hover{color:#996600;text-decoration:underline;}
 .pr_other_list h6{color:#666;}
 #pr_other img{width:85px;height:85px;float:left;margin-right:10px;}
 
-.jjtz{margin-left:20px;padding:5px 10px;background-color:#e57c6c;color:#fff;width:60px;}
+.jjtz{color:#abc;}
 
 
 #footer{width:960px;margin:0 auto;overflow:hidden;zoom:1;}

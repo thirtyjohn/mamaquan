@@ -2,7 +2,7 @@
 <%inherit file="browse.html"/>
 
 <%
-    from helpers.utils import secondtodatetxt,getMarketName
+    from helpers.utils import secondtodatetxt,getMarketName,clipText
     from webapp.settings import itemclass_name
 %>
 
@@ -31,19 +31,21 @@
         %>
         <div style="overflow:hidden;margin-top:10px;">
             <h3 class="c6 cb" style="margin-bottom:5px;">实时比价</h3>
-            <div style="float:left; width:445px;margin-right:5px;">
-                <div class="index_mulu_img"><img src="${pr.img}" /></div>
+            <div>
+            <div class="index_mulu_img"><a href="/naifen/${pr.ID}" alt="${pr.name}" rel="nofollow"><img src="${pr.img}" /></a></div>
+            <div> 
                 <div style="margin-bottom:10px;"><a style="color:#996600;font-size:14px;" href="/naifen/${pr.ID}">${pr.name}</a></div>
-                <div><span class="red_small_t">最低</span><span class="price" style="font-size:16px;vertical-align: middle;margin-left:5px;font-weight:bold;">￥${pr.price}</span></div>
+                <div style="float:left; width:320px;margin-right:5px;">
+                    <div><span class="red_small_t">最低</span><span class="price" style="font-size:16px;vertical-align: middle;margin-left:5px;font-weight:bold;">￥${pr.price}</span></div>
                 % if pr.promo:
-                <div style="margin-top:5px;"><span class="small_t">可叠加：</span>
-                <span class="c6">${pr.promo}</span>
-                </div>
-                % endif
-                <div style="margin-top:20px;"><span class="c6">${getMarketName(pr.market)}</span></div>
-            </div>
+                    <div style="margin-top:5px;"><span class="small_t">可叠加：</span>
+                    <a href="/naifen/${pr.ID}" rel="nofollow" class="c6">${clipText(pr.promo,20)}</a>
+                    </div>
+                    % endif
+                    <div style="margin-top:20px;"><span class="c6">${getMarketName(pr.market)}</span></div>
+                    </div>
             <div style="overflow:hidden;zoom:1;">
-                <h5 class="c6">3家官网、12家网络卖家提供报价</h5>
+                <h5 class="c6"></h5>
                 <ul style="overflow:hidden;zoom:1;">
                     % for prm in prmatch:
                     <li style="margin-top:5px;overflow:hidden;zoom:1;">
@@ -52,6 +54,8 @@
                     </li>
                     % endfor
                 </ul>
+            </div>
+            </div> 
             </div>
         </div>
     </div>

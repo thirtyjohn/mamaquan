@@ -110,3 +110,9 @@ def resetAdsl():
     urllib2.urlopen(req,data=urllib.urlencode(data))
 
 
+
+def clipText(txt,num):
+    if len(txt) < num:
+        return txt
+    return txt[0:num]+u"..."
+

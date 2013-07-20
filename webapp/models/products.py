@@ -47,7 +47,7 @@ def getpr(tp,prid):
                     vars=dict(prid=prid)),0,None)
 
 def getpritems(prid):
-    return dbconn.query("select * from prmatch where prid = $prid ",vars=dict(prid=prid))
+    return dbconn.query("select * from prmatch where prid = $prid  order by price ",vars=dict(prid=prid))
 
 def getotherprs(pr):
     sql = "select * from product p join "+static_tp[pr.prtype]["tablename"]+" q on p.id = q.id where p.id <> $prid "
@@ -59,8 +59,8 @@ def getotherprs(pr):
 
 
 def getindexpr():
-    pr = web.listget(dbconn.query("select * from product p join naifen q on p.id = q.id where p.id = 100157"),0,None)
-    prmatch = dbconn.query("select * from prmatch where prid = $prid",vars=dict(prid=pr.ID))
+    pr = web.listget(dbconn.query("select * from product p join naifen q on p.id = q.id where p.id = 100094"),0,None)
+    prmatch = dbconn.query("select * from prmatch where prid = $prid and stock=1 order by price",vars=dict(prid=pr.ID))
     return (pr,prmatch)
 
 
