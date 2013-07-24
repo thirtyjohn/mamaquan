@@ -80,6 +80,10 @@
             dpmatchlist = dptuple[1]
         %>
         <div class="index_dp ${" index_last_row" if count_dp%5 == 0 else ""}">
+            % if dp.stock == 0:
+            <div class="qgl_triangle"></div>
+            <div class="qgl_text">抢光啦</div>
+            % endif
             <div class="index_dp_img">
                 <a target="_blank" href="${dp.url}"><img src=${dp.image} /></a>
             </div>
@@ -121,6 +125,10 @@
         count_img = count_img + 1
     %>
         <div class="index_sp${" index_last_row" if count_img%3==0 else ""}" data-id="${item.ID}">
+            % if item.stock == 0:
+            <div class="qgl_triangle"></div>
+            <div class="qgl_text">过期啦</div>
+            % endif
            <div class="index_sp_img"> 
             <img src="${item.img}" />
            </div>

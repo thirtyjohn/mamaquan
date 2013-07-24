@@ -117,5 +117,7 @@ a:hover{color:#996600;text-decoration:underline;}
 
 .jjtz{color:#abc;}
 
+.qgl_triangle{width: 0;height: 0;border-top:60px solid #ccc; border-right: 60px solid transparent; position: absolute;}
+.qgl_text{position: absolute;margin:1px 0 0 3px;color:#fff;font-weight:bold;}
 
 #footer{width:960px;margin:0 auto;overflow:hidden;zoom:1;}

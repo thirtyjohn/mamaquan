@@ -1,6 +1,6 @@
 #coding:utf-8
 from webapp.settings import render,static_leibie,static_tp
-import web,json,urllib
+import web,json,urllib,time
 from webapp.models import shoppings,products,danpings
 from helpers.utils import _xsseccape
 
@@ -8,13 +8,23 @@ from helpers.utils import _xsseccape
 class index:
     def GET(self):
         product = products.getindexpr()
+
         itemlist = list()
         res = shoppings.getindexsps()
         for r in res:
+            r.stock = 1
+            if r.promoteTimeLimit:
+                timeleft = time.mktime(r.wdate.timetuple()) + r.promoteTimeLimit - time.time()
+            if timeleft > 0:
+                r.promoteTimeLimit = int(timeleft)
+            else:
+                r.promoteTimeLimit = None
+                r.stock = 0
             itemlist.append(r)
+
         dplist = list()
         res = danpings.getindexdps()
-        for r in res:
+        for r in res: 
             dplist.append(r)
         """
         for r in res:
