@@ -105,9 +105,7 @@ class productsearch:
         解压q中的信息，形成qdict
         """
         data = web.input()
-        data_q = None
         if data.has_key("q"):
-            data_q = data["q"]
             qs = data["q"].split(",")
         for q in qs:
             nv = q.split(u":") if len(q.split(":"))==2 else None
@@ -205,8 +203,9 @@ class productsearch:
             if len(vlist) > 0:
                 lblist.append((dq[tp][lb[0]],lb[1],vlist))
 
-        
-        return render.products(prlist=prlist,lblist=lblist,tp=tp,data_q=data_q)
+        seotitle = static_leibie[tp][0][3][qdict["brand"]] if qdict.has_key("brand") else ""
+ 
+        return render.products(prlist=prlist,lblist=lblist,tp=tp,seotitle=seotitle)
 
 class product:
     def GET(self,tp,prid):

@@ -1,6 +1,5 @@
 #coding:utf8
 import re,time,urllib2,urllib
-from mechanize import Browser
 from settings import url_market,exchange_rate,market_name
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")

@@ -8,7 +8,7 @@ def getprs(tp,qdict):
         condis.append(k+"='"+v+"'")
     sql = "select * from product p join "+static_tp[tp]["tablename"] + " q on p.id = q.id "
     if len(condis) > 0:
-        sql = sql + " where " + " and ".join(condis)
+        sql = sql + " where stock = 1 and " + " and ".join(condis)
     res = dbconn.query(sql)
     return res
 

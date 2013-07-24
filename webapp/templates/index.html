@@ -5,10 +5,8 @@
     from helpers.utils import secondtodatetxt,getMarketName,clipText
     from webapp.settings import itemclass_name
 %>
-
-
+<%block name="title">居品网-专注母婴比价</%block>
 <div id="content">
-    <a name="mulu"/>
     <div id="index_mmml" style="margin-top:20px;overflow:hidden;zoom:1;"> 
     <div class="index_b_title">
         <img style="width:28px;height:28px;" src="/static/img/testicon.png" /><span style="vertical-align: super;margin-left:5px;" class="b_title">实用目录</span><span style="margin-left:10px;vertical-align: super;" class="c6">实时跟踪最低价</span>
@@ -18,7 +16,7 @@
     <div id="index_mulu">
         <div style="overflow:hidden;zoom:1;border-bottom:1px solid #ddd;padding-bottom:10px;">
         <span style="float:left;line-height: 30px;" class="c6 cb">奶粉品牌</span>
-        <ul class="index_mulu_lb">
+        <ul style="float:left;margin-left:10px;" class="mulu_filter">
             <li><a href="/naifen/s?q=b:dumex">Dumex/多美滋</a></li>
             <li><a href="/naifen/s?q=b:wyeth">Wyeth/惠氏</a></li>
             <li><a href="/naifen/s?q=b:abbott">Abbott/雅培</a></li>
@@ -67,7 +65,6 @@
 
     </div>
     
-    <a name="danpin"/>
     <div id="index_czdp" style="margin-top:30px;overflow:hidden;zoom:1;">
     <div class="index_b_title">
         <img style="width:28px;height:28px;" src="/static/img/testicon.png" /><span class="b_title" style="vertical-align: super;margin-left:5px;">超值单品</span><span style="margin-left:10px;vertical-align: super;" class="c6">汇集每日劲爆单品</span>
@@ -105,7 +102,6 @@
     </div>
     </div>
     
-    <a name="shihui"/>
     <div id="index_mmt" style="margin-top:30px;overflow:hidden;zoom:1;">
     <div class="index_b_title">
         <img style="width:28px;height:28px;" src="/static/img/testicon.png" /><span class="b_title" style="vertical-align: super;margin-left:5px;">实惠淘</span><span style="margin-left:10px;vertical-align: super;" class="c6">每天精选特惠优质商品</span>
