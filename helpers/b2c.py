@@ -30,6 +30,10 @@ def getItemUrl(itemid,market):
     b.itemid = itemid
     return b.getItemUrl()
 
+def getItemid(url,market):
+    b = factory(market)
+    return b.getItemidFromUrl(url)
+
 
 class B2c:
     def __init__(self,itemid=None,itemhtml=None,listhtml=None):

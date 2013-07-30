@@ -38,12 +38,16 @@ a:hover{color:#996600;text-decoration:underline;}
 
 #index_dp_list{margin-top:5px;}
 .index_dp{float:left;width:158px;background-color:#F4F5ED;margin-right:5px;padding:15px;}
+.index_dp:hover{cursor:pointer;background-color:#f7f8f0;}
 .index_dp_img{overflow:hidden;zoom:1;border:1px solid #E5E5E5;padding:5px;background-color:#fff;width:149px;height:149px;}
 .index_dp_img img{width:149px;vertical-align:middle;}
 .index_dp dl{margin-top:5px;overflow:hidden;zoom:1;color:#666;}
 .index_dp dt{float:left;}
 .index_dp dd{float:right;}
 .index_dp h5{color:#996600;}
+.json_dp{overflow:hidden;zoom:1;padding:40px;width:520px;}
+.json_dp_match dt{float:left;width:80px;}
+.json_dp_match dd{overflow:hidden;zoom:1;}
 
 .index_sp_list{margin-top:15px;}
 .index_sp_list_title{margin-bottom:5px;font-size:16px;}

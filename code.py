@@ -7,6 +7,7 @@ import web
 urls = (
     "/","webapp.controllers.browse.index",
     "/shopping/(\d+)","webapp.controllers.browse.shoppingitem",
+    "/danpin/(\d+)","webapp.controllers.browse.danpingitem",
     "/shopping/(\d+)/delete","webapp.controllers.action.delitem",
     "/mulu","webapp.controllers.browse.mulu",
     "/(naifen|niaobu|wanju|baojian)","webapp.controllers.browse.productsearch",

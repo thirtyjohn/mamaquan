@@ -79,13 +79,13 @@
             dp = dptuple[0]
             dpmatchlist = dptuple[1]
         %>
-        <div class="index_dp ${" index_last_row" if count_dp%5 == 0 else ""}">
+        <div class="index_dp ${" index_last_row" if count_dp%5 == 0 else ""}" data-id="${dp.ID}">
             % if dp.stock == 0:
             <div class="qgl_triangle"></div>
             <div class="qgl_text">抢光啦</div>
             % endif
             <div class="index_dp_img">
-                <a target="_blank" href="${dp.url}"><img src=${dp.image} /></a>
+               <img src=${dp.image} />
             </div>
             <h5 style="margin:5px 0;">${dp.name}</h5>
             <div class="clear">
@@ -95,8 +95,8 @@
             <div class="clear" style="border-top:1px solid #DDD;margin-top:5px; ">
                 % for dpmatch in dpmatchlist:
                 <dl>
-                    <dt><a target="_blank" href="${dpmatch.url}" class="c6">${getMarketName(dpmatch.market)}</a></dt>
-                    <dd>￥${int(dpmatch.price)}</dd> 
+                    <dt><a target="_blank" rel="nofollow" href="${dpmatch.url}" class="c6">${getMarketName(dpmatch.market)}</a></dt>
+                    <dd><a target="_blank" rel="nofollow" href="${dpmatch.url}" class="c6">￥${int(dpmatch.price)}</a></dd> 
                 </dl>
                 % endfor
             </div>

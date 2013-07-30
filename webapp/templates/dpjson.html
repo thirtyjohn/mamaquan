@@ -1,20 +1,39 @@
 ## -*- coding: utf-8 -*-
-
-
-## -*- coding: utf-8 -*-
-
+<%
+    from helpers.utils import getMarketName
+    from helpers.cpslinks import getCpslink
+%>
 <div class="json_dp">
     <div class="json_dp_item">
-        <div style="float:left;margin-right:20px;">
-            <img style="width:180px;height:180px;" src="${dp.bigimg}" />
-        </div>
         <div style="overflow:hidden;zoom:1;margin-bottom:20px;">
-            <h2 style="font-size:14px; margin-bottom:10px;">${sp.name}</h2>
-            <h3 style="color:#666;margin-bottom:40px;">卖家：${sp.sellername}</h3>
-            <h4 style="font-size:20px;margin-bottom:10px;">￥${sp.price}</h4>
-            <a style="text-decoration:none;display:block;background-color:#e57c6c;padding:10px 20px;color:#fff;font-size:16px;font-weight:bold;width:80px;" href="http://item.taobao.com/item.htm?id=${sp.itemid}" target="_blank">去淘宝购买</a>
+            <div style="float:left;margin-right:20px;">
+                <img style="width:180px;height:180px;" src="${dp.image}" />
+            </div>
+            <div style="overflow:hidden;zoom:1;">
+                <h2 style="font-size:14px; margin-bottom:20px;">${dp.name}</h2>
+                <div style="overflow:hidden;zoom:1;">
+                    <div style="float:left; margin-right:15px;">
+                        <h4 style="font-size:20px;" class="price">￥${dp.price}</h4>
+                        <h5 class="c6">${getMarketName(dp.market)}</h5>
+                    </div>
+                    <div style="overflow:hidden;zoom:1;">
+                        <a style="text-decoration:none;display:block;background-color:#e57c6c;padding:10px 20px;color:#fff;font-size:16px;font-weight:bold;width:64px;" href="${getCpslink(dp)}" rel="nofollow" target="_blank">前往购买</a>
+                    </div>
+                </div>
+
+                <div style="overflow:hidden;zoom:1;margin-top:30px;" class="json_dp_match">
+                    % for dpm in dpmatchs:
+                        <dl>
+                            <dt><a rel="nofollow" target="_blank" href="${dpm.url}" class="c6">${getMarketName(dpm.market)}</a></dt>
+                            <dd><a rel="nofollow" target="_blank" href="${dpm.url}" class="c6">￥${dpm.price}</a></dd>
+                        </dl>
+                    % endfor
+                </div>
+            </div>
         </div>
-        
+        <div style="text-indent:26px;line-height:1.6;">
+            ${dp.desp}
+        </div>
 
     </div>
 </div>

@@ -64,8 +64,9 @@ class danpingitem:
         dpid = int(name)
         data = web.input()
         dp = danpings.getdp(dpid)
+        dpmatchs = danpings.getdpmatch(dpid)
         if data.has_key("type") and data["type"] == "json":
-            return json.dumps({"html":render.spjson(dp=dp)})
+            return json.dumps({"html":render.dpjson(dp=dp,dpmatchs=dpmatchs)})
 
 
 

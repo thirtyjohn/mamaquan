@@ -29,3 +29,6 @@ def getindexdps():
 
 def getdp(dpid):
     return web.listget(dbconn.query("select * from danping where id = $dpid",vars=dict(dpid=dpid)),0,None)
+
+def getdpmatch(dpid):
+    return dbconn.query("select * from danpingmatch where dpid = $dpid",vars=dict(dpid=dpid))
