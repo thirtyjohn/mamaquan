@@ -24,7 +24,7 @@ a:hover{color:#996600;text-decoration:underline;}
 .gt{font-size:10px;color:#666;margin:0 5px;}
 .buy_link a{background-color:#e57c6c; color:#fff;padding:7px 10px;}
 
-#header{position:fixed;top:0px;width:100%;overflow:hidden;zoom:1;background:url("/static/img/testbg.png") repeat-x scroll left top white;}
+#header{position:fixed;top:0px;width:100%;overflow:hidden;zoom:1;background:url("/static/img/testbg.png") repeat-x scroll left top white;z-index:101;}
 #logo{width:100px;float:left;margin:10px 0 0 20px;}
 #logo h1 a{font-size:22px;font-weight:bold;color:#FFF;}
 #logo span{font-size:13px;color:#666;}
