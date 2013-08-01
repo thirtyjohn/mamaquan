@@ -46,7 +46,7 @@ $(function(){
         $.scrollTo('#index_mmml', 500, {offset: {top:-60, left:0}} );
     }
     else if(window.location.hash=="#danpin"){
-        $.scrollTo('#index_mmt', 500, {offset: {top:-60, left:0}} );
+        $.scrollTo('#index_czdp', 500, {offset: {top:-60, left:0}} );
     }
     else if(window.location.hash=="#shihui"){
         $.scrollTo('#index_mmt', 500, {offset: {top:-60, left:0}} );
