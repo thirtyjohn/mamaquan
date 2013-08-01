@@ -1,5 +1,5 @@
 $(function(){
-
+     
     $(".index_sp").click(function(){ 
         $item = $(this)
         $itemid = $item.attr("data-id") 
@@ -33,16 +33,23 @@ $(function(){
     })
 
     $("#nav_index_mmml").click(function(e){
-        e.preventDefault()
         $.scrollTo('#index_mmml', 500, {offset: {top:-60, left:0}} );    
     })
     $("#nav_index_czdp").click(function(e){
-        e.preventDefault()
         $.scrollTo('#index_czdp', 500, {offset: {top:-60, left:0}} );    
     })
     $("#nav_index_mmt").click(function(e){
-        e.preventDefault()
         $.scrollTo('#index_mmt', 500, {offset: {top:-60, left:0}} );    
     })
+
+    if(window.location.hash=="#mulu"){
+        $.scrollTo('#index_mmml', 500, {offset: {top:-60, left:0}} );
+    }
+    else if(window.location.hash=="#danpin"){
+        $.scrollTo('#index_mmt', 500, {offset: {top:-60, left:0}} );
+    }
+    else if(window.location.hash=="#shihui"){
+        $.scrollTo('#index_mmt', 500, {offset: {top:-60, left:0}} );
+    }
 
 })
