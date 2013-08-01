@@ -87,7 +87,7 @@ def testmatch(brand=None,market=None):
     for r in res:
         for nf in nf_list:
             if isSameNf(nf,r):
-                dbconn.insert("prmatch",prid=r.ID,itemid=nf.itemid,market=market)
+                dbconn.insert("formalprmatch",prid=r.ID,itemid=nf.itemid,market=market)
 
 
 """
@@ -121,7 +121,7 @@ def getExtra(brand,market):
 
         select * from naifenitem
         where brand = $brand and market = $market and (matchlater is null or matchlater <> 1)
-        and itemid not in (select itemid from prmatch where market = $market)
+        and itemid not in (select itemid from formalprmatch where market = $market)
         
                 """,vars=dict(brand=brand,market=market)
     )

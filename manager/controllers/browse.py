@@ -55,7 +55,7 @@ class mmredict:
         data = web.input()
         naifenid = data.naifenid
         r = web.listget(dbconn.query("""
-            select n.itemid,n.market from prmatch m
+            select n.itemid,n.market from formalprmatch m
             join naifenitem n
             on m.itemid = n.itemid and m.market = n.market
             where m.naifenid = $naifenid
