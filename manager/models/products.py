@@ -93,7 +93,7 @@ def getNfitemNotProcessed(market=None,brand=None):
 批量插入预产品库,建立对应关系
 """
 def batchInsertPreNf(market=None,brand=None):
-    ##dbconn.query("insert into prenaifen (name,duration,weight,spec,brand,series,sellto,age,duan,pack,place,price,img) select name,duration,weight,spec,brand,series,sellto,age,duan,pack,place,price,img from naifenitem where brand = $brand and market = $market",vars=dict(brand=brand,market=market))
+    dbconn.query("insert into prenaifen (name,duration,weight,spec,brand,series,sellto,age,duan,pack,place,price,img) select name,duration,weight,spec,brand,series,sellto,age,duan,pack,place,price,img from naifenitem where brand = $brand and market = $market",vars=dict(brand=brand,market=market))
     res = dbconn.query(u"select * from prenaifen where brand = $brand",vars=dict(brand=brand))
     for r in res:
         res1  = dbconn.query(u"select * from naifenitem where name = $name and market=$market",vars=dict(name=r.name,market=market))
