@@ -105,7 +105,7 @@ def batchInsertPreNf(market=None,brand=None):
 
 
 def getNfitemNotMatch(brand=None,market=None):
-    return dbconn.query(u"select * from naifenitem where brand = $brand and market = $market and itemid not in (select itemid from prmatch where market=$market)",vars=dict(brand=brand,market=market))
+    return dbconn.query(u"select * from naifenitem where brand = $brand and market = $market and itemid not in (select itemid from formalprmatch where market=$market)",vars=dict(brand=brand,market=market))
 
 def getPreNf(brand=None):
     return dbconn.query(u"select * from prenaifen where brand = $brand",vars=dict(brand=brand))
@@ -122,7 +122,7 @@ def insertPreNf(itemid,market):
 
 
 def insertmap(itemid,prid,market):
-    dbconn.insert("prmatch",itemid=itemid,prid=prid,market=market)
+    dbconn.insert("formalprmatch",itemid=itemid,prid=prid,market=market)
 
 
 
