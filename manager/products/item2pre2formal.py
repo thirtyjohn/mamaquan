@@ -24,7 +24,8 @@ def getlistandinsert(brand=None,market=None):
             for nf in nflist:
                 nf.market = market
                 nf.brand = brand
-                products.insertNfitem(nf)
+                if not products.hasNfitem(nf):
+                    products.insertNfitem(nf)
 
             nextpage = nextpage+1 if b2c_list.nextPage() else None
         else:

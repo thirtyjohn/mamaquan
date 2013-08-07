@@ -78,6 +78,8 @@ def getNfProperty(nvlist):
             nf.place = value.strip()
     return nf
 
+def hasNfitem(nf):
+    return web.listget(dbconn.query("select * from naifenitem where itemid=$itemid and market=$market",vars=dict(itemid=nf.itemid,market=nf.market)),0,None)
 
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
