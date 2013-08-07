@@ -98,7 +98,7 @@ def batchInsertPreNf(market=None,brand=None):
     for r in res:
         res1  = dbconn.query(u"select * from naifenitem where name = $name and market=$market",vars=dict(name=r.name,market=market))
         item = web.listget(res1,0,None)
-        dbconn.insert("prmatch",prid=r.ID,itemid=item.itemid,market=market)
+        dbconn.insert("formalprmatch",prid=r.ID,itemid=item.itemid,market=market)
 
 
 def getNfitemNotMatch(brand=None,market=None):
