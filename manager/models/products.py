@@ -45,7 +45,7 @@ class Naifen(Item):
 def getNfProperty(nvlist):
     nf = Naifen()
     for name,value in nvlist:
-        print name,value
+        ##print name,value
         if name.find(u"厂名") > -1:
             pass
         elif name.find(u"厂址") > -1:
