@@ -194,6 +194,7 @@ class Zcn(B2c):
         self.comp_itemid = re.compile(u"/dp/(\w+)")
         self.comp_price = re.compile(u"([0-9.,]+)")
         self.from_encoding = "utf8"
+        self.comp_page = re.compile(u"(\d+)-(\d+).+?(\d+)")
 
     def getlist(self):
 
@@ -207,7 +208,14 @@ class Zcn(B2c):
             return item
 
         htmls = self.listhtml.split("&&&")
-
+        for d in htmls:
+            try:
+                data = json.loads(d)
+            except:
+                continue
+            if data.has_key("center"):
+                atf_txt = data["center"]["data"]["value"]
+        """
         atf_txt,btf_txt = None,None 
         for d in htmls:
             try:
@@ -222,6 +230,7 @@ class Zcn(B2c):
                 break
             ##if data.has_key("results-atf-next"):
                 ##atf_next_txt = data["results-atf-next"]["data"]["value"]
+        """
 
                 
         itemlist = list()
@@ -238,6 +247,7 @@ class Zcn(B2c):
                     continue
                 item = getitem(atf)
                 itemlist.append(item)
+        """
         if btf_txt: 
             soup = BeautifulSoup(btf_txt,from_encoding=self.from_encoding)
             div_btfResults = soup.find("div",id="btfResults")
@@ -253,6 +263,7 @@ class Zcn(B2c):
                     continue
                 item = getitem(btf)
                 itemlist.append(item)
+        """
 
         return itemlist
 
@@ -283,7 +294,35 @@ class Zcn(B2c):
     def nextPage(self):
         htmls = self.listhtml.split("&&&")
 
-        pagination = None
+        centerhtml = None
+
+        for d in htmls:
+            try:
+                data = json.loads(d)
+            except:
+                continue
+            if data.has_key("center"):
+                centerhtml = data["center"]["data"]["value"]
+        
+
+        soup = BeautifulSoup(centerhtml,self.from_encoding)
+        pagehtml = soup.find("h2",id="resultCount")
+        if not pagehtml:
+            print "pagehtml not found"
+            return False
+        pagetxt = pagehtml.span.get_text().strip()
+        ##1-24条， 共26条
+        m = self.comp_page.search(pagetxt)
+        if not m:
+            print "pagehtml not found"
+            return False
+        if int(m.group(2)) == int(m.group(3)):
+            return False
+        return True
+
+
+
+        """
         for d in htmls:
             try:
                 data = json.loads(d)
@@ -294,10 +333,12 @@ class Zcn(B2c):
             if  pagination:
                 break
 
+
         soup = BeautifulSoup(pagination,from_encoding="utf8")
         if soup.find("span","pagnRA"):
             return True
         return False
+        """
 
     def getPrice(self):
         self.itemhtml = self.getItemHtml()
