@@ -207,7 +207,10 @@ class Zcn(B2c):
             item.img = txt.find("div","image imageContainer").img["src"]
             return item
 
+        
         htmls = self.listhtml.split("&&&")
+
+        atf_txt,btf_txt = None,None 
         for d in htmls:
             try:
                 data = json.loads(d)
@@ -215,22 +218,12 @@ class Zcn(B2c):
                 continue
             if data.has_key("center"):
                 atf_txt = data["center"]["data"]["value"]
-        """
-        atf_txt,btf_txt = None,None 
-        for d in htmls:
-            try:
-                data = json.loads(d)
-            except:
-                continue
-            if data.has_key("results-atf"):
-                atf_txt = data["results-atf"]["data"]["value"]
-            if data.has_key("results-btf"):
-                btf_txt = data["results-btf"]["data"]["value"] 
+            if data.has_key("centerBelow"):
+                btf_txt = data["centerBelow"]["data"]["value"] 
             if atf_txt and btf_txt:
                 break
             ##if data.has_key("results-atf-next"):
                 ##atf_next_txt = data["results-atf-next"]["data"]["value"]
-        """
 
                 
         itemlist = list()
@@ -247,23 +240,20 @@ class Zcn(B2c):
                     continue
                 item = getitem(atf)
                 itemlist.append(item)
-        """
+
         if btf_txt: 
             soup = BeautifulSoup(btf_txt,from_encoding=self.from_encoding)
             div_btfResults = soup.find("div",id="btfResults")
             ##btfResults = soup.find_all("div","rsltGrid prod celwidget")
             for btf in div_btfResults.children:
-                item = getitem(btf)
-                itemlist.append(item)
-                if not isinstance(atf,bs4.element.Tag):
+                if not isinstance(btf,bs4.element.Tag):
                     continue
-                if atf.name <> "div":
+                if btf.name <> "div":
                     continue
-                if not atf.find("h3","newaps"):
+                if not btf.find("h3","newaps"):
                     continue
                 item = getitem(btf)
                 itemlist.append(item)
-        """
 
         return itemlist
 
@@ -305,7 +295,7 @@ class Zcn(B2c):
                 centerhtml = data["center"]["data"]["value"]
         
 
-        soup = BeautifulSoup(centerhtml,self.from_encoding)
+        soup = BeautifulSoup(centerhtml,from_encoding=self.from_encoding)
         pagehtml = soup.find("h2",id="resultCount")
         if not pagehtml:
             print "pagehtml not found"
@@ -316,6 +306,8 @@ class Zcn(B2c):
         if not m:
             print "pagehtml not found"
             return False
+        print m.group(2)
+        print m.group(3)
         if int(m.group(2)) == int(m.group(3)):
             return False
         return True
