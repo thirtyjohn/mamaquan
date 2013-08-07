@@ -244,16 +244,17 @@ class Zcn(B2c):
         if btf_txt: 
             soup = BeautifulSoup(btf_txt,from_encoding=self.from_encoding)
             div_btfResults = soup.find("div",id="btfResults")
+            if div_btfResults:
             ##btfResults = soup.find_all("div","rsltGrid prod celwidget")
-            for btf in div_btfResults.children:
-                if not isinstance(btf,bs4.element.Tag):
-                    continue
-                if btf.name <> "div":
-                    continue
-                if not btf.find("h3","newaps"):
-                    continue
-                item = getitem(btf)
-                itemlist.append(item)
+                for btf in div_btfResults.children:
+                    if not isinstance(btf,bs4.element.Tag):
+                        continue
+                    if btf.name <> "div":
+                        continue
+                    if not btf.find("h3","newaps"):
+                        continue
+                    item = getitem(btf)
+                    itemlist.append(item)
 
         return itemlist
 
