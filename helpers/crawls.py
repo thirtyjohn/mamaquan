@@ -10,13 +10,11 @@ failurecount = 0
 
 MAX_FAILCOUNT = 20
 
-md5 = hashlib.md5()
 def getFilepath(url):
-    print url
+    md5 = hashlib.md5()
     md5.update(url)      
     filename =  md5.hexdigest()
     filepath = crawl_cache_dir + "/" + filename[0:2] + "/" + filename
-    print filepath
     return filepath 
 
 
