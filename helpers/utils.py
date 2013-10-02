@@ -1,5 +1,5 @@
 #coding:utf8
-import re,time,urllib2,urllib
+import re,time,urllib2,urllib,types
 from settings import url_market,exchange_rate,market_name
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
@@ -114,4 +114,14 @@ def clipText(txt,num):
     if len(txt) < num:
         return txt
     return txt[0:num]+u"..."
+
+class TJORM:
+    def __init__(self):
+        self._tablename = None
+    def insert(self,dbconn):
+        colnamevalue = dict()
+        colnames = filter(lambda aname: not aname.startswith('_') and not isinstance(getattr(self,aname),types.NoneType) and not isinstance(getattr(self,aname),types.MethodType),dir(self))
+        for colname in colnames:
+            colnamevalue.update({colname:getattr(self,colname)})
+        dbconn.insert(self._tablename,**colnamevalue)
 
