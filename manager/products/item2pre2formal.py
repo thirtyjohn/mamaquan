@@ -50,9 +50,28 @@ def updatenafens(brand=None,market=None):
         nfitem = products.getNfProperty(nvlist)
         nfitem.update(nf.itemid,market)
 
+"""
+调整系列名称
+"""
+def updateSeries(brand=None):
+    series = [u"冠军宝贝",u"金爱+",u"爱+",u"金装贝因美"]
+    nfs = products.getNfitemNotProcessed(brand=brand)
+    for nf in nfs:
+        if nf.series:
+            newseries = getSeries(nf.series,series)
+            if newseries:
+                print nf.series + ":" + newseries
+                #update(nf)
+            else:
+                print nf.series
+        ##if newseries: update(nf) else:print id
 
-
-
+def getSeries(oldname,serieslist):
+        serieslist = sorted(serieslist,key= lambda x: len(x) ,revers=True)
+        for sname in serieslist:
+            if oldname.find(sname) > -1:
+                return sname
+    
 """
 以某渠道作为样本进入预产品库，同时建立对应关系
 """
