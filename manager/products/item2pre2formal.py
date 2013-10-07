@@ -55,19 +55,19 @@ def updatenafens(brand=None,market=None):
 """
 def updateSeries(brand=None):
     series = [u"冠军宝贝",u"金爱+",u"爱+",u"金装贝因美"]
+    series = sorted(series,key= lambda x: len(x) ,reverse=True)
     nfs = products.getNfitemNotProcessed(brand=brand)
     for nf in nfs:
         if nf.series:
             newseries = getSeries(nf.series,series)
             if newseries:
                 print nf.series + ":" + newseries
-                #update(nf)
+                products.updateNfitem(nf.ID,series=newseries)
             else:
                 print nf.series
         ##if newseries: update(nf) else:print id
 
 def getSeries(oldname,serieslist):
-        serieslist = sorted(serieslist,key= lambda x: len(x) ,revers=True)
         for sname in serieslist:
             if oldname.find(sname) > -1:
                 return sname

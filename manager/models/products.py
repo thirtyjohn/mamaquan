@@ -78,6 +78,10 @@ def getNfProperty(nvlist):
             nf.place = value.strip()
     return nf
 
+def updateNfitem(nfid,**kwargs):
+    dbconn.update("naifenitem",where="id=$nfid",vars=dict(nfid=nfid),**kwargs)
+
+
 def hasNfitem(nf):
     return web.listget(dbconn.query("select * from naifenitem where itemid=$itemid and market=$market",vars=dict(itemid=nf.itemid,market=nf.market)),0,None)
 
@@ -89,7 +93,7 @@ def getHost(brand=None,market=None,page=None):
     return r.url + str(page)
 
 def getNfitemNotProcessed(market=None,brand=None):
-    return dbconn.query("select * from naifenitem where processed is null and market = $market and brand = $brand",vars=dict(market=market,brand=brand))
+    return dbconn.query("select * from naifenitem where processed is null "+ ("and market = $market" if market else "") + (" and brand = $brand" if brand else ""),vars=dict(market=market,brand=brand))
 
 """
 批量插入预产品库,建立对应关系
