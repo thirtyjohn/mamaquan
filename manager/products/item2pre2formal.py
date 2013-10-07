@@ -62,7 +62,8 @@ def updateSeries(brand=None):
             newseries = getSeries(nf.series,series)
             if newseries:
                 print nf.series + ":" + newseries
-                products.updateNfitem(nf.ID,series=newseries)
+                if not nf.series == newseries:
+                    products.updateNfitem(nf.ID,series=newseries)
             else:
                 print nf.series
         ##if newseries: update(nf) else:print id
