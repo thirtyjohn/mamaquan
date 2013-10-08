@@ -25,6 +25,7 @@ def startupdate():
     ##market = u"tmall"
     ##yangben(brand=brand,market=market)
     ##market = 'zcn'
+    ##updatenafens(brand=brand,market=market)
     ##testmatch(brand=brand,market=market)
 
     ##http://127.0.0.1:8080/match
