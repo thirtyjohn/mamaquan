@@ -1,5 +1,6 @@
 #coding:utf8
 import re
+from settings import serieslist
 from manager.settings import dbconn
 from helpers.utils import analyname,analyname_duan,analyname_series,analyname_weight,comp_weight
 from helpers.b2c import factory
@@ -39,22 +40,28 @@ def updatenafens(brand=None,market=None):
     if not market:
         return
     b2c_test = factory(market)
-    if not hasattr(b2c_test,"getProperty"):
-        return
-    nfs = products.getNfitemNotProcessed(market=market,brand=brand)
-    for nf in nfs:
-        b2c_item = factory(market)
-        b2c_item.itemid = nf.itemid
-        b2c_item.itemhtml = b2c_item.getItemHtml()
-        nvlist = b2c_item.getProperty()
-        nfitem = products.getNfProperty(nvlist)
-        nfitem.update(nf.itemid,market)
+    if hasattr(b2c_test,"getProperty"):
+        nfs = products.getNfitemNotProcessed(market=market,brand=brand)
+        for nf in nfs:
+            b2c_item = factory(market)
+            b2c_item.itemid = nf.itemid
+            b2c_item.itemhtml = b2c_item.getItemHtml()
+            nvlist = b2c_item.getProperty()
+            nfitem = products.getNfProperty(nvlist)
+            nfitem.update(nf.itemid,market)
+    else:
+        ##通过名称提取信息
+        nfs = products.getNfitemNotProcessed(market=market,brand=brand)
+        for nf in nfs:
+            duan,series,weight = analyname(nf.name,brand=brand)
+            products.updateNfitem(nf.ID,series=series,duan=duan,weight=weight)
+
 
 """
-调整系列名称
+根据系列名称调整系列名称
 """
 def updateSeries(brand=None):
-    series = [u"冠军宝贝",u"金爱+",u"爱+",u"金装贝因美"]
+    series = serieslist[brand]
     series = sorted(series,key= lambda x: len(x) ,reverse=True)
     nfs = products.getNfitemNotProcessed(brand=brand)
     for nf in nfs:
@@ -92,7 +99,14 @@ def isSameNf(nf,product):
     ##print analyname(product.name)
     ##print "nf======"
     ##print analyname(nf.name)
-    if analyname(product.name) == analyname(nf.name) and  price_diff < 1.2:
+    hasvalue = 0
+    if nf.series:
+        hasvalue += 1
+    if nf.duan:
+        hasvalue += 1
+    if nf.weight:
+        hasvalue += 1
+    if nf.series == product.series and nf.duan == product.duan and nf.weight ==product.weight and hasvalue > 1 and  price_diff < 1.2:
         return True
     return False
 

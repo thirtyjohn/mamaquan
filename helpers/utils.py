@@ -1,11 +1,10 @@
 #coding:utf8
 import re,time,urllib2,urllib,types
-from settings import url_market,exchange_rate,market_name
+from settings import url_market,exchange_rate,market_name,serieslist
 
 comp_duan = re.compile(u"([0-9一二三四]+)(段|阶段)")
 comp_weight = re.compile(u"(\d+)[g|克]")
 comp_quantity = re.compile(u"[*x](\d+)")
-serieslist = [u'启赋',u'幼儿乐',u'膳儿加',u'爱儿素',u'爱儿加',u'爱儿乐',u'健儿乐',u'学儿乐',u'爱儿复',u'小安素',u'喜康力',u'亲护',u'喜康宝',u'菁智',u'喜康素',u'舒心美',u'优阶',u'优衡多营养']
 
 
 def analyname_duan(name):
@@ -26,12 +25,11 @@ def analyname_duan(name):
     return duan
 
 
-def analyname_series(name):
-    series = None
-    for s in serieslist:
+def analyname_series(name,brand=None):
+    series_list = sorted(serieslist[brand],key= lambda x: len(x) ,reverse=True)
+    for s in series_list:
         if name.find(s) > -1:
-            series = s
-    return series
+            return s
 
 
 def analyname_weight(name):
@@ -48,11 +46,11 @@ def analyname_weight(name):
 """
 名称匹配的主要逻辑
 """
-def analyname(name):
+def analyname(name,brand=None):
     
     duan = analyname_duan(name)
 
-    series = analyname_series(name)
+    series = analyname_series(name,brand=brand)
 
     weight = analyname_weight(name)         
 
