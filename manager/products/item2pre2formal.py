@@ -2,7 +2,7 @@
 import re
 from settings import serieslist
 from manager.settings import dbconn
-from helpers.utils import analyname,analyname_duan,analyname_series,analyname_weight,comp_weight
+from helpers.utils import objtojson,analyname,analyname_duan,analyname_series,analyname_weight,comp_weight
 from helpers.b2c import factory
 from manager.models import products
 
@@ -25,9 +25,10 @@ def getlistandinsert(brand=None,market=None):
             for nf in nflist:
                 nf.market = market
                 nf.brand = brand
-                if not products.hasNfitem(nf):
-                    products.insertNfitem(nf)
-
+                ##if not products.hasNfitem(nf):
+                    ##products.insertNfitem(nf)
+                if not products.hasSemiData("naifen",{"itemid":nf.itemid}):
+                    products.insertSemiData("naifen",nf)
             nextpage = nextpage+1 if b2c_list.nextPage() else None
         else:
             break
@@ -58,7 +59,7 @@ def updatenafens(brand=None,market=None):
 
 
 """
-根据系列名称调整系列名称
+根据系列名称、段数调整系列名称、段数
 """
 def updateSeries(brand=None):
     series = serieslist[brand]
@@ -76,10 +77,10 @@ def updateSeries(brand=None):
         ##if newseries: update(nf) else:print id
 
 def getSeries(oldname,serieslist):
-        for sname in serieslist:
-            if oldname.find(sname) > -1:
-                return sname
-    
+    for sname in serieslist:
+        if oldname.find(sname) > -1:
+            return sname    
+
 """
 以某渠道作为样本进入预产品库，同时建立对应关系
 """
@@ -106,6 +107,7 @@ def isSameNf(nf,product):
         hasvalue += 1
     if nf.weight:
         hasvalue += 1
+    print nf.ID + ":" +product.ID
     if nf.series == product.series and nf.duan == product.duan and nf.weight ==product.weight and hasvalue > 1 and  price_diff < 1.2:
         return True
     return False

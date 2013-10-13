@@ -1,5 +1,5 @@
 #coding:utf8
-from manager.settings import dbconn
+from manager.settings import dbconn,mongoconn
 from datetime import datetime
 import web
 from helpers.b2c import Item
@@ -84,6 +84,13 @@ def updateNfitem(nfid,**kwargs):
 
 def hasNfitem(nf):
     return web.listget(dbconn.query("select * from naifenitem where itemid=$itemid and market=$market",vars=dict(itemid=nf.itemid,market=nf.market)),0,None)
+
+
+def insertSemiData(tablename,data):
+    mongoconn.insert(tablename,data)
+
+def hasSemiData(tablename,where=None):
+    return mongoconn.query_one(tablename,where=where) if where else mongoconn.query_one()
 
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
