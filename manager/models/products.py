@@ -4,6 +4,10 @@ from datetime import datetime
 import web
 from helpers.b2c import Item
 
+class semistatus:
+    JUST_INSERT = 0
+    JUST_MORE = 1
+
 
 """
 奶粉属性封装
@@ -86,11 +90,17 @@ def hasNfitem(nf):
     return web.listget(dbconn.query("select * from naifenitem where itemid=$itemid and market=$market",vars=dict(itemid=nf.itemid,market=nf.market)),0,None)
 
 
-def insertSemiData(tablename,data):
-    mongoconn.insert(tablename,data)
+def insert_semi_item(data):
+    return mongoconn.insert("semiitem",data)
 
-def hasSemiData(tablename,where=None):
-    return mongoconn.query_one(tablename,where=where) if where else mongoconn.query_one()
+def has_semi_item(**kwargs):
+    return mongoconn.query_one("semiitem",where=kwargs) if kwargs else mongoconn.query_one()
+
+def get_semi_item(**kwargs):
+    return mongoconn.query("semiitem",where=kwargs) if kwargs else mongoconn.query()
+
+def update_semi_item(mid,nvdict):
+    return mongoconn.update("semiitem",{"_id":mid},nvdict) 
 
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)

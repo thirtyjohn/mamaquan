@@ -4,14 +4,24 @@ from helpers.crawls import getUrl
 import re,urllib,json,bs4,traceback
 from helpers.loggers import get_logger
 
-class Item:
+class Item(dict):
     def __init__(self):
+        dict.__init__(self)
         self.itemid = None
         self.name = None
         self.market = None 
         self.img = None
         self.price = None
         self.currency = None
+        self.status = 0
+    def __setattr__(self,n,v):
+        self[n] = v
+    def __getattr__(self,n):
+        try:
+            return self[n]
+        except KeyError, k:
+            raise AttributeError, k
+
 
 def factory(market):
     b2c = B2c()
@@ -475,18 +485,19 @@ class Tmall(B2c):
         self.from_encoding = "gbk"
 
     def getProperty(self):
+        self.itemhtml = self.getItemHtml()
         ss = SoupStrainer("ul",id="J_AttrUL")
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
 
         lis = soup.find_all("li")
-        nvlist = list()
+        nvdict = dict()
         for li in lis:
             if li.string.find(u"：") > -1:
                 name,value = li.string.split(u"：")
             else:
                 name,value = li.string.split(u":")
-            nvlist.append((name,value))
-        return nvlist
+            nvdict.update({name:value})
+        return nvdict
 
     def getlist(self):
         ss = SoupStrainer("div",id="J_ShopSearchResult")
