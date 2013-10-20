@@ -94,13 +94,20 @@ def insert_semi_item(data):
     return mongoconn.insert("semiitem",data)
 
 def has_semi_item(**kwargs):
-    return mongoconn.query_one("semiitem",where=kwargs) if kwargs else mongoconn.query_one()
+    return mongoconn.query_one("semiitem",where=kwargs) 
 
 def get_semi_item(**kwargs):
-    return mongoconn.query("semiitem",where=kwargs) if kwargs else mongoconn.query()
+    return mongoconn.query("semiitem",where=kwargs) 
 
 def update_semi_item(mid,nvdict):
-    return mongoconn.update("semiitem",{"_id":mid},nvdict) 
+    return mongoconn.update("semiitem",{"_id":mid},nvdict)
+
+
+def insert_item(item):
+    return mongoconn.insert("item",item)
+
+def get_item(**kwargs):
+    return mongoconn.query("item",where=kwargs) 
 
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
