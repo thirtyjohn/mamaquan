@@ -1,8 +1,8 @@
 #coding:utf8
 from helpers.b2c import factory
 from manager.models import products
-from manager.models.products import semistatus
-from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key
+from manager.models.products import semistatus,Product
+from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,gen_name_rule,img_market_rule
 
 """
     获取item列表插入semiitem，插入关键信息
@@ -17,19 +17,18 @@ from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key
         currency
     --
 """
-def get_list_to_insert_semiitem(brand=None,market=None):
-    b2c_list = factory(market)
+def get_list_to_insert_semiitem(**kwargs):
+    b2c_list = factory(kwargs["market"])
     nextpage = 1
     while nextpage:
-        url = products.getHost(brand=brand,market=market,page=nextpage)
+        url = products.getHost(brand=kwargs["品牌"],market=kwargs["market"],page=nextpage)
         print url
         b2c_list.listurl = url
         b2c_list.listhtml = b2c_list.getListHtml()
         itemlist = b2c_list.getlist()
         for item in itemlist:
-            item.market = market
-            item.brand = brand
-            item.cat = "naifen"
+            for k,v in kwargs.items():
+                item[k] = v 
             if not products.has_semi_item(itemid=item.itemid,market=item.market):
                 products.insert_semi_item(item)
         nextpage = nextpage+1 if b2c_list.nextPage() else None
@@ -79,9 +78,71 @@ def match_item_to_product(**kwargs):
     for item in items:
         itemlist.append(item)
     itemlist = classify(itemlist,item_compare)
-    return itemlist
+    """
+        整理出的产品
+            有配对成功的 -> 加入product，加入对应表
+            没有配对成功的 -> 留着尝试与product进行相似配对
+    """
+    c = 0
+    for m in itemlist:
+        if len(m) > 1:
+            pr = gen_product_attr(m)
+            pr.match_ids = []
+            for i in m:
+                pr.match_ids.append(i["_id"])
+            products.insert_product(pr)
+            c += 1
+    print "match:" + str(c) +" , unmatch:"+str(len(itemlist) - c)
 
 
+def gen_product_attr(m):
+    item = m[0]
+    pr = Product()
+    pr.cat = item["cat"]
+    pr.name = u""
+    for key in gen_name_rule(item):
+        if key[0] <> u"$":
+            pr.name += item[key] if item[key] else u""
+        else:
+            pr.name += key[1:]
+    pr.img = min(m,key=lambda x:img_market_rule.index(x["market"]))["img"]
+    pr.price = min(m,key=lambda x:x["price"])["price"]
+    for key in get_attr_val_key(item):
+        pr[key] = item[key]
+    return pr
+
+"""
+启动人工配对,算出相似分，从高到低排序
+"""
+def get_fam_to_match(**kwargs):
+    matched_item_ids = products.get_matched_item_ids(**kwargs)
+    new_kw = kwargs.copy().update({"_id":{"$nin":matched_item_ids}}) if kwargs else {"_id":{"$nin":matched_item_ids}}
+    items_to_match = products.get_item(**new_kw)
+    products_to_match = [ x for x in products.get_product(**kwargs)]
+    res = list()
+    for item in items_to_match:
+        prlist = sorted(products_to_match,key=lambda pr:item_pr_compare(item,pr),reverse=True)
+        res.append((item,prlist))
+    return res
+
+"""
+相似分 = 价格分 + 关键值相同数
+"""
+def item_pr_compare(item,pr):
+    if item["cat"] <> pr["cat"]:
+        return 0
+    price_score = item["price"]/pr["price"] if item["price"] < pr["price"] else pr["price"]/item["price"]
+    key_score = 0
+    for k in get_attr_val_key(item):
+        if item[k] == pr[k]:
+            key_score += 1
+    return price_score + key_score
+
+
+"""
+item 比较方法，两个常数值可以进行配置
+主要比较价格和关键属性相同的个数
+"""
 MAX_DIFF = 1.2
 MIN_EQ = 2
 
@@ -142,12 +203,15 @@ def std_attr_name(semi_item):
 
 def std_attr_val(semi_item):
     for k in get_attr_val_key(semi_item):
+        print k
         if semi_item.has_key(k) and semi_item[k]:
+            print "yes"
             new_v = get_val_from_rule(semi_item,k,semi_item[k])
             if new_v and new_v <> semi_item[k]:
                 semi_item[k] = new_v
         else:
             ##如果缺失，则从名称中获取,否则记None
+            print "no"
             new_v = get_val_from_rule(semi_item,k,semi_item["name"])
             semi_item[k] = new_v
     

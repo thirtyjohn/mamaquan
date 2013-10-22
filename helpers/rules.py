@@ -1,7 +1,8 @@
 #coding:utf8
-from settings import serieslist
+from settings import serieslist,brandlist
 import re
 from helpers.utils import getResultForDigit
+from ordereddict import OrderedDict
 
 def get_name_from_rule(semi_item,name):
     for r in attr_name_rule():
@@ -24,9 +25,10 @@ def get_attr_val_key(semi_item):
 """
 def attr_name_rule():
     rule = [
-        (u"段数", include, [u"段数",u"duan"]),
-        (u"重量", include, u"weight"),
-        (u"系列", include, u"series"),
+        (u"品牌", include, [u"品牌",u"brand"]),
+        (u"段数", include, [u"段数",u"duan",u"阶段"]),
+        (u"重量", include, [u"weight",u"重量"]),
+        (u"系列", include, [u"series",u"系列"]),
     ]
     return rule
 
@@ -37,14 +39,23 @@ def attr_name_rule():
 """
 def attr_val_rule(semi_item):
     rule = {
-        "naifen":{
-            u"段数":(danwei,{"txt":[u"阶段",u"段"],"dw":u"段"}),
-            u"系列":(include,serieslist[semi_item["brand"]] if semi_item.has_key("brand") else None),
-            u"重量":(danwei,{"txt":[u"克",u"g"],"dw":u"g"}),
-        }
+        "naifen":OrderedDict((
+            (u"品牌",(include_kv,brandlist)),
+            (u"段数",(danwei,{"txt":[u"阶段",u"段"],"dw":u"段"})),
+            (u"系列",(include,lambda : serieslist[semi_item[u"品牌"]] if semi_item.has_key(u"品牌") else None)),
+            (u"重量",(danwei,{"txt":[u"克",u"g"],"dw":u"g"})),
+        ))
     }
     return rule[semi_item["cat"]]
 
+
+def gen_name_rule(item):
+    rule = {
+        "naifen":[u"品牌",u"系列",u"段数",u"$奶粉",u"重量"],
+    }
+    return rule[item["cat"]]
+
+img_market_rule = [u"jd",u"zcn",u"tmall",u"amazon"]
 
 """
     文字匹配规则
@@ -54,11 +65,16 @@ def include(sample,data):
     if isinstance(data,unicode):
         if sample.find(data) > -1:
             return data
-    else:
+    elif isinstance(data,list):
         data = sorted(data,key= lambda x: len(x) ,reverse=True)
         for d in data:
             if sample.find(d) > -1:
-                return d 
+                return d
+    else:
+        datas = sorted(data(),key= lambda x: len(x) ,reverse=True)
+        for d in datas:
+            if sample.find(d) > -1:
+                return d
 
 def danwei(name,data):
     q,q_txt = None,None
@@ -75,4 +91,12 @@ def danwei(name,data):
         q = getResultForDigit(q_txt) if q_txt else None 
     return unicode(q) + data["dw"] if q else None
 
+def same(name,data):
+    return name
 
+
+def include_kv(name,data):
+    for k,v in data:
+        for n in v:
+            if name.find(n) > -1:
+                return k

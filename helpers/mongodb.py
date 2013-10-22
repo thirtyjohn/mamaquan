@@ -6,9 +6,9 @@ class mongo:
         self.db = client[dbname]
     def insert(self,tablename,data):
         self.db[tablename].insert(data)
-    def query(self,tablename,where=None):
-        return self.db[tablename].find(where) if where else self.db[tablename].find()
-    def query_one(self,tablename,where=None):
-        return self.db[tablename].find_one(where) if where else self.db[tablename].find_one()
+    def query(self,tablename,where=None,**kwargs):
+        return self.db[tablename].find(where,**kwargs) if where else self.db[tablename].find(**kwargs)
+    def query_one(self,tablename,where=None,**kwargs):
+        return self.db[tablename].find_one(where,**kwargs) if where else self.db[tablename].find_one(**kwargs)
     def update(self,tablename,where,data):
-        self.db[tablename].update(where,{"$set":data})
+        self.db[tablename].update(where,{"$set":data},multi=True)
