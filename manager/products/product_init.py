@@ -17,18 +17,21 @@ from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,
         currency
     --
 """
-def get_list_to_insert_semiitem(**kwargs):
-    b2c_list = factory(kwargs["market"])
+def get_list_to_insert_semiitem(market,cat,**kwargs):
+    b2c_list = factory(market)
     nextpage = 1
     while nextpage:
-        url = products.getHost(brand=kwargs["品牌"],market=kwargs["market"],page=nextpage)
+        url = products.getHost(cat=cat,market=market,page=nextpage,other=kwargs)
         print url
         b2c_list.listurl = url
         b2c_list.listhtml = b2c_list.getListHtml()
         itemlist = b2c_list.getlist()
         for item in itemlist:
-            for k,v in kwargs.items():
-                item[k] = v 
+            item.market = market
+            item.cat = cat
+            if kwargs:
+                for k,v in kwargs.items():
+                    item[k] = v 
             if not products.has_semi_item(itemid=item.itemid,market=item.market):
                 products.insert_semi_item(item)
         nextpage = nextpage+1 if b2c_list.nextPage() else None

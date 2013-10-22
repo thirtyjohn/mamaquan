@@ -9,6 +9,40 @@ class semistatus:
     JUST_MORE = 1
 
 
+
+class Product(dict):
+    def __init__(self):
+        dict.__init__(self)
+        self.name = None
+        self.img = None
+        self.price = None
+    def __setattr__(self,n,v):
+        self[n] = v
+    def __getattr__(self,n):
+        try:
+            return self[n]
+        except KeyError, k:
+            raise AttributeError, k
+
+class Item(dict):
+    def __init__(self):
+        dict.__init__(self)
+        self.itemid = None
+        self.name = None
+        self.market = None 
+        self.img = None
+        self.price = None
+        self.currency = None
+        self.status = 0
+    def __setattr__(self,n,v):
+        self[n] = v
+    def __getattr__(self,n):
+        try:
+            return self[n]
+        except KeyError, k:
+            raise AttributeError, k
+    
+
 """
 奶粉属性封装
 """
@@ -107,14 +141,27 @@ def insert_item(item):
     return mongoconn.insert("item",item)
 
 def get_item(**kwargs):
-    return mongoconn.query("item",where=kwargs) 
+    return mongoconn.query("item",where=kwargs)
+
+def insert_product(pr):
+    return mongoconn.insert("product",pr)
+
+def get_product(**kwargs):
+    return mongoconn.query("product",where=kwargs)
+
+def get_matched_item_ids(**kwargs):
+    matched_item_ids = list()
+    for r in mongoconn.query("product",where=kwargs,fields={"match_ids":1}):
+        matched_item_ids.extend( r["match_ids"] )
+    return matched_item_ids
 
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
 
-def getHost(brand=None,market=None,page=None):
-    r = web.listget(dbconn.query("select url from mmlisturl where brand=$brand and market=$market",vars=dict(brand=brand,market=market)),0,None)
-    return r.url + str(page)
+def getHost(cat=None,market=None,page=None,other=None):
+    r = mongoconn.query("crawl_list_url",where=other.update({"cat":cat,"market":market}) if other else {"cat":cat,"market":market})
+    url = r[0]["url"].replace(u"${page}",unicode(page))
+    return url
 
 def getNfitemNotProcessed(market=None,brand=None):
     return dbconn.query("select * from naifenitem where processed is null "+ ("and market = $market" if market else "") + (" and brand = $brand" if brand else ""),vars=dict(market=market,brand=brand))
