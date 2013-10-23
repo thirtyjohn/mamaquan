@@ -116,7 +116,7 @@ def get_semi_item(**kwargs):
     return mongoconn.query("semiitem",where=kwargs)
 
 def aggregate_semiitem(pipe,**kwargs):
-    return mongoconn.aggregate_semiitem(pipe,**kwargs)
+    return mongoconn.aggregate("semiitem",pipe,**kwargs)
 
 def update_semi_item(mid,nvdict):
     return mongoconn.update("semiitem",{"_id":mid},nvdict)

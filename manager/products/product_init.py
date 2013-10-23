@@ -237,7 +237,7 @@ def std_attr_val(semi_item):
 def aggr_attr(**kwargs):
     attr_dict = dict()
     attr_list = list()
-    for r in  products.get_semiitem(**kwargs):
+    for r in  products.get_semi_item(**kwargs):
         for k in r.keys():
             if attr_dict.has_key(k):
                 attr_dict[k] += 1
@@ -254,6 +254,7 @@ def aggr_attr(**kwargs):
 """
 
 def aggr_val(cat):
+    k_v_list = list()
     def aggr(key,where):
         pipe = [
             { "$match": where },
@@ -263,9 +264,12 @@ def aggr_val(cat):
         return products.aggregate_semiitem(pipe)
 
     for k in get_attr_val_key({"cat":cat}):
+        val_list = list()
         r = aggr(k,{"cat":cat})
         for d in r["result"]:
-             unicode(d["_id"]) + ":" + unicode(d["count"])
+             val_list.append((d["_id"],d["count"]))
+        k_v_list.append((k,val_list))
+    return k_v_list 
 
     
 
