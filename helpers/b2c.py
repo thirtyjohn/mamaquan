@@ -111,6 +111,19 @@ class Jd(B2c):
         self.comp_itemid = re.compile("/(\d+).html")
         self.from_encoding = "gbk"
 
+    def getProperty(self):
+        self.itemhtml = self.getItemHtml()
+        ss = SoupStrainer("ul","detail-list")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        lis = soup.find_all("li")
+        nvdict = dict()
+        for li in lis:
+            ii_text = li.get_text()
+            if ii_text.find(u"：") > -1:
+                name,value = ii_text.split(u"：")
+            nvdict.update({name:value})
+        return nvdict
+
     def getlist(self):
         self.listhtml = self.getListHtml()
         ss = SoupStrainer("ul" , "list-h")
