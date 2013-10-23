@@ -119,7 +119,11 @@ def gen_product_attr(m):
 """
 def get_fam_to_match(**kwargs):
     matched_item_ids = products.get_matched_item_ids(**kwargs)
-    new_kw = kwargs.copy().update({"_id":{"$nin":matched_item_ids}}) if kwargs else {"_id":{"$nin":matched_item_ids}}
+    print kwargs
+    new_kw = {"_id":{"$nin":matched_item_ids}}
+    if kwargs:
+        new_kw.update(kwargs)
+    print new_kw
     items_to_match = products.get_item(**new_kw)
     products_to_match = [ x for x in products.get_product(**kwargs)]
     res = list()
@@ -227,3 +231,44 @@ def std_attr_val(semi_item):
             duan,series,weight = analyname(nf.name,brand=brand)
             products.updateNfitem(nf.ID,series=series,duan=duan,weight=weight)
 """
+
+"""
+获取属性名称汇聚数据，用来确定属性名称使用
+"""
+def aggr_attr(**kwargs):
+    attr_dict = dict()
+    attr_list = list()
+    for r in  products.get_semiitem(**kwargs):
+        for k in r.keys():
+            if attr_dict.has_key(k):
+                attr_dict[k] += 1
+            else:
+                attr_dict[k] = 1
+    for k,v in attr_dict.items():
+        attr_list.append((k,v))
+    return sorted(attr_list,key=lambda x:x[1],reverse=True)
+
+
+
+"""
+获取关键属性值的属性汇总数据
+"""
+
+def aggr_val(cat):
+    def aggr(key,where):
+        pipe = [
+            { "$match": where },
+            { "$group": { "_id": "$"+key , "count":{"$sum":1} } },
+            { "$sort": { "count":-1 } }
+        ]
+        return products.aggregate_semiitem(pipe)
+
+    for k in get_attr_val_key({"cat":cat}):
+        r = aggr(k,{"cat":cat})
+        for d in r["result"]:
+             unicode(d["_id"]) + ":" + unicode(d["count"])
+
+    
+
+
+
