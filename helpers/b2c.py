@@ -119,9 +119,11 @@ class Jd(B2c):
         nvdict = dict()
         for li in lis:
             ii_text = li.get_text()
+            name,value = None,None
             if ii_text.find(u"：") > -1:
                 name,value = ii_text.split(u"：")
-            nvdict.update({name:value})
+            if name and value:
+                nvdict.update({name:value})
         return nvdict
 
     def getlist(self):
