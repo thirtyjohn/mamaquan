@@ -554,6 +554,8 @@ class Tmall(B2c):
 
     
     def nextPage(self):
+        return True
+        """
         m = self.comp_page.search(self.listhtml)
         if m:
             currentpage = int(m.group(1))
@@ -562,6 +564,7 @@ class Tmall(B2c):
                 return currentpage+1
             return None
         return None
+        """
 
     def getPrice(self):
         self.itemhtml = self.getItemHtml() 
