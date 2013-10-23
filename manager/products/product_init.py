@@ -33,6 +33,8 @@ def get_list_to_insert_semiitem(market,cat,**kwargs):
                     item[k] = v 
             if not products.has_semi_item(itemid=item.itemid,market=item.market):
                 products.insert_semi_item(item)
+        if len(itemlist) == 0:
+            break
         nextpage = nextpage+1 if b2c_list.nextPage() else None
 
 """

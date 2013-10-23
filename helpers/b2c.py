@@ -235,7 +235,7 @@ class Zcn(B2c):
             item.img = txt.find("div","image imageContainer").img["src"]
             return item
 
-        
+        self.listhtml = self.getListHtml()
         htmls = self.listhtml.split("&&&")
 
         atf_txt,btf_txt = None,None 
@@ -408,6 +408,7 @@ class Dangdang(B2c):
         return "http://search.dangdang.com/?key=" + urllib.quote(txt.encode("gbk"))
 
     def getlist(self):
+        self.listhtml = self.getListHtml()
         ss = SoupStrainer("div" , "book_shoplist")
         soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         lis = soup.find_all("li")
@@ -498,6 +499,7 @@ class Tmall(B2c):
         B2c.__init__(self,itemid=None,itemhtml=None,listhtml=None)
         self.market = "tmall"
         self.comp_id = re.compile(u"id=(\d+)")
+        self.comp_price = re.compile(u"[0-9.]+")
         self.comp_page = re.compile("<span class=\"page-info\">(\d+)/(\d+)</span>")
         self.comp_initApi = re.compile(u"\"initApi\" : \"(\S+?)\"")
         self.from_encoding = "gbk"
@@ -518,6 +520,7 @@ class Tmall(B2c):
         return nvdict
 
     def getlist(self):
+        """
         ss = SoupStrainer("div",id="J_ShopSearchResult")
         soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         lis = soup.find("ul","shop-list").find_all("li")
@@ -529,6 +532,20 @@ class Tmall(B2c):
             item.name = li.find("div","desc").a.string.strip()
             item.price = int(float(li.find("div","price").strong.string))
             item.img = li.find("div","pic").img["data-ks-lazyload"]
+            itemlist.append(item)
+        """
+        self.listhtml = self.getListHtml()
+        ss = SoupStrainer("div",id="J_ItemList")
+        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
+        lis = soup.find_all("div","product")
+        itemlist = list()
+
+        for li in lis:
+            item = Item()
+            item.itemid = self.comp_id.search(li.find("p","productTitle").a["href"]).group(1)
+            item.name = li.find("p","productTitle").a.string.strip()
+            item.price = float(self.comp_price.search(li.find("p","productPrice").em.string).group())
+            item.img = li.find("div","productImg-wrap").img["data-ks-lazyload"]
             itemlist.append(item)
         return itemlist
 

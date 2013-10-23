@@ -145,6 +145,8 @@ def insertNfitem(nf):
 
 def getHost(cat=None,market=None,page=None,other=None):
     r = mongoconn.query("crawl_list_url",where=other.update({"cat":cat,"market":market}) if other else {"cat":cat,"market":market})
+    if market == "tmall":
+        page = (page-1)*60
     url = r[0]["url"].replace(u"${page}",unicode(page))
     return url
 
