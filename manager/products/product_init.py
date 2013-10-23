@@ -24,7 +24,6 @@ def get_list_to_insert_semiitem(market,cat,**kwargs):
         url = products.getHost(cat=cat,market=market,page=nextpage,other=kwargs)
         print url
         b2c_list.listurl = url
-        b2c_list.listhtml = b2c_list.getListHtml()
         itemlist = b2c_list.getlist()
         for item in itemlist:
             item.market = market

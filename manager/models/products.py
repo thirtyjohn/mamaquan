@@ -23,24 +23,6 @@ class Product(dict):
             return self[n]
         except KeyError, k:
             raise AttributeError, k
-
-class Item(dict):
-    def __init__(self):
-        dict.__init__(self)
-        self.itemid = None
-        self.name = None
-        self.market = None 
-        self.img = None
-        self.price = None
-        self.currency = None
-        self.status = 0
-    def __setattr__(self,n,v):
-        self[n] = v
-    def __getattr__(self,n):
-        try:
-            return self[n]
-        except KeyError, k:
-            raise AttributeError, k
     
 
 """

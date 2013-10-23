@@ -112,7 +112,9 @@ class Jd(B2c):
         self.from_encoding = "gbk"
 
     def getlist(self):
-        ss = SoupStrainer("ul" , "list-h clearfix")
+        if not self.listhtml:
+            self.listhtml = self.getListHtml()
+        ss = SoupStrainer("ul" , "list-h")
         soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         lis = soup.find_all("li")
         itemlist = list()
@@ -121,7 +123,8 @@ class Jd(B2c):
             item.market = self.market
             item.itemid = self.comp_itemid.search(li.find("div","p-name").a["href"]).group(1)
             item.name = li.find("div","p-name").a.get_text().strip()
-            item.img = li.find("div","p-img").img["data-lazyload"]
+            img = li.find("div","p-img").a.img 
+            item.img = img["src"] if img.has_key("src") else img["data-lazyload"]
             itemlist.append(item)
         return itemlist
 
@@ -169,7 +172,7 @@ class Jd(B2c):
         return None
 
     def nextPage(self):
-        ss = SoupStrainer("div" , id="bottom_pager")
+        ss = SoupStrainer("div","pagin pagin-m")
         soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         if soup.find("span","next-disabled"):
             return False
