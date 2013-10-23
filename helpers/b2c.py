@@ -112,8 +112,7 @@ class Jd(B2c):
         self.from_encoding = "gbk"
 
     def getlist(self):
-        if not self.listhtml:
-            self.listhtml = self.getListHtml()
+        self.listhtml = self.getListHtml()
         ss = SoupStrainer("ul" , "list-h")
         soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         lis = soup.find_all("li")
@@ -172,8 +171,7 @@ class Jd(B2c):
         return None
 
     def nextPage(self):
-        if not self.listhtml:
-            self.listhtml = self.getListHtml()
+        self.listhtml = self.getListHtml()
         ss = SoupStrainer("div","pagin pagin-m")
         soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
         if soup.find("span","next-disabled"):
