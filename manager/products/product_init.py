@@ -46,7 +46,7 @@ def get_more_info_to_update_semiitem(**kwargs):
         b2c_test = factory(item["market"])
         if hasattr(b2c_test,"getProperty"):
             b2c_item = factory(item["market"])
-            b2c_item.itemid = item.itemid
+            b2c_item.itemid = item["itemid"]
             nvdict = b2c_item.getProperty()
             nvdict.update({"status":semistatus.JUST_MORE})
             ##nfitem = products.getNfProperty(nvlist)
