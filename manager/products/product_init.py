@@ -17,9 +17,9 @@ from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,
         currency
     --
 """
-def get_list_to_insert_semiitem(market,cat,**kwargs):
+def get_list_to_insert_semiitem(market,cat,page=None,**kwargs):
     b2c_list = factory(market)
-    nextpage = 1
+    nextpage = page if page else 1
     while nextpage:
         url = products.getHost(cat=cat,market=market,page=nextpage,other=kwargs)
         print url
