@@ -27,7 +27,11 @@ def getUrl(url,header=None,maxcachetime=None):
         else:
             return open(filepath,"r").read()
     resp = crawl(url,header=header)
-    html = resp.read() if resp else None
+    html = None
+    try:
+        html = resp.read() if resp else None
+    except Exception,e:
+        get_logger("crawl").debug(str(e) +":"+url)
     if html:
         open(filepath,"w").write(html)
     return html
