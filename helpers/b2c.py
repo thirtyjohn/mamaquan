@@ -506,6 +506,8 @@ class Tmall(B2c):
 
     def getProperty(self):
         self.itemhtml = self.getItemHtml()
+        if not self.itemhtml:
+            return None
         ss = SoupStrainer("ul",id="J_AttrUL")
         soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
 
