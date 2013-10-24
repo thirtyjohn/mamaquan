@@ -1,9 +1,50 @@
 #coding:utf-8
+import web,json
+from manager.settings import render
+from manager.products.product_init import get_fam_to_match,aggr_attr,aggr_val
+
+class match:
+    def POST(self):
+        data = web.input()
+        item_fams = None
+        if data.has_key("json") and data["json"]:
+            print data["json"]
+            d = json.loads(data["json"])
+            print d
+            item_fams = get_fam_to_match(**d)
+        return render.match(item_fams=item_fams)
+
+    def GET(self):
+        return render.match(item_fams=None)
+
+class aggr:
+    def POST(self):
+        data = web.input()
+        cond = None
+        if data.has_key("json") and data["json"]:
+            cond = json.loads(data["json"])
+        else:
+            return None
+        
+        if data.aggr == "attr":
+            aggrlist = aggr_attr(**cond)
+        elif data.aggr == "val":
+            aggrlist = aggr_val("naifen",**cond)
+    
+        return render.aggr(aggrlist=aggrlist,aggr_type=data.aggr)
+
+    def GET(self):
+        return render.aggr()
+        
+
+
+"""
 from manager.settings import dbconn,render
 from manager.products.item2pre2formal import getExtra,getjiaoyan,getqueshi
 from manager.models.products import insertmap,insertPreNf,deallater
 import web
 from helpers.b2c import factory,getItemUrl
+
 
 class index:
     def GET(self):
@@ -22,6 +63,8 @@ class index:
         print len(productlist)
         productlist = sorted(productlist,key=lambda product:product["gooditem"].generalscore ,reverse=True)
         return render.index(productlist=productlist)
+
+
 
 
 
@@ -54,12 +97,11 @@ class mmredict:
     def GET(self):
         data = web.input()
         naifenid = data.naifenid
-        r = web.listget(dbconn.query("""
-            select n.itemid,n.market from formalprmatch m
+        r = web.listget(dbconn.query("select n.itemid,n.market from formalprmatch m
             join naifenitem n
             on m.itemid = n.itemid and m.market = n.market
             where m.naifenid = $naifenid
-        """,vars=dict(naifenid=naifenid)),0,None)
+        ",vars=dict(naifenid=naifenid)),0,None)
         if r:
             return web.seeother(getItemUrl(r.itemid,r.market))
         
@@ -87,7 +129,7 @@ class editnaifen:
         nf = web.listget(dbconn.query("select * from formalnaifen where id = $naifenid",vars=dict(naifenid=naifenid)),0,None)
         return render.editnaifen(nf=nf)
     
-    def POST(self):
+  " def POST(self):
         data = web.input()
         naifenid = int(data["id"])
         tag = data["tag"] if data["tag"] <> "" or data["tag"] <> "None" else None
@@ -101,14 +143,14 @@ class naifen:
         naifenid = int(name)
         nf = web.listget(dbconn.query("select * from formalnaifen where id = $naifenid",vars=dict(naifenid=naifenid)),0,None)
         
-        nfs = dbconn.query("""
+        nfs = dbconn.query("
                 select n.price,n.market,n.itemid from prmatch m
                 join formalnaifen f
                 on f.id = m.naifenid
                 join naifenitem n
                 on m.itemid = n.itemid and m.market = n.market
                 where f.id= $naifenid
-        """,vars=dict(naifenid=naifenid))
+        ",vars=dict(naifenid=naifenid))
         return render.naifen(nf=nf,nfs=nfs)
 
-
+"""

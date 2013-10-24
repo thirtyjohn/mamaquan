@@ -257,7 +257,7 @@ def aggr_attr(**kwargs):
 获取关键属性值的属性汇总数据
 """
 
-def aggr_val(cat):
+def aggr_val(cat,**kwargs):
     k_v_list = list()
     def aggr(key,where):
         pipe = [
@@ -269,7 +269,10 @@ def aggr_val(cat):
 
     for k in get_attr_val_key({"cat":cat}):
         val_list = list()
-        r = aggr(k,{"cat":cat})
+        cond = {"cat":cat}
+        if kwargs:
+            cond.update(kwargs)
+        r = aggr(k,cond)
         for d in r["result"]:
              val_list.append((d["_id"],d["count"]))
         k_v_list.append((k,val_list))

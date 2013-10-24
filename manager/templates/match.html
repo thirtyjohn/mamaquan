@@ -1,0 +1,40 @@
+## -*- coding: utf-8 -*-
+<%inherit file="base.html"/>
+<div id="cond">
+    <form action="/match" method="post">
+        <input name="json" type="text">
+        <input type="submit">
+    </form>
+</div>
+<%
+    from helpers.rules import get_attr_val_key
+    
+%>
+<div>
+%if item_fams:
+    <%
+        keys = get_attr_val_key(item_fams[0][0])
+    %>
+    % for item,famlist in item_fams:
+        <dl>
+            <dt>${item["name"]}</dt>
+            <dd>${item["price"]}</dd>
+            <dd>${item["img"]}</dd>
+            <dd>${item["market"]}</dd>
+            % for k in keys:
+                <dd>${item[k]}</dd>
+            % endfor
+        </dl>
+        % for fam in famlist:
+            <dl>
+                <dt>${fam["name"]}</dt>
+                <dd>${fam["price"]}</dd>
+                <dd>${fam["img"]}</dd> 
+                % for k in keys:
+                    <dd>${fam[k]}</dd>
+                % endfor
+            </dl>
+        % endfor
+    % endfor
+%endif
+</div>

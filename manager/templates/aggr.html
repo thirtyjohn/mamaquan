@@ -1,0 +1,40 @@
+## -*- coding: utf-8 -*-
+<%inherit file="base.html"/>
+<div id="cond">
+    <form action="/aggr" method="post">
+        <input name="json" type="text">
+        <select name = "aggr">
+            <option value="attr">attr</option>
+            <option value="val">val</option>
+        </select>
+        <input type="submit">
+    </form>
+</div>
+<%
+    from helpers.rules import get_attr_val_key
+    
+%>
+<div>
+%if aggrlist and aggr_type=="attr":
+    % for name,count in aggrlist:
+    <dl>
+        <dt>${name}</dt>
+        <dd>${count}</dd>
+    </dl>
+    % endfor
+%endif
+
+%if aggrlist and aggr_type=="val":
+    % for k,n_c in aggrlist:
+    <div>
+        <h1>${k}</h1>
+        % for n,c in n_c:
+        <dl>
+            <dt>${n}</dt>
+            <dd>${c}</dd>
+        </dl>
+        % endfor
+    </div>
+    % endfor
+%endif
+</div>
