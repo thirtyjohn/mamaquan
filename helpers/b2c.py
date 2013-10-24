@@ -512,11 +512,22 @@ class Tmall(B2c):
         lis = soup.find_all("li")
         nvdict = dict()
         for li in lis:
+            name,value = None,None
             if li.string.find(u"：") > -1:
-                name,value = li.string.split(u"：")
-            else:
-                name,value = li.string.split(u":")
-            nvdict.update({name:value})
+                i = li.string.find(u"：")
+                name,value = li.string[:i].strip(),li.string[i+1:].strip()
+            elif li.string.find(u":") > -1:
+                i = li.string.find(u":")
+                name,value = li.string[:i].strip(),li.string[i+1:].strip()
+            if name and value:
+                nvdict.update({name:value})
+
+        ss = SoupStrainer("a","sn-simple-logo-shop")
+        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        try:
+            nvdict.update({"maijia":soup.a.string})
+        except:
+            pass
         return nvdict
 
     def getlist(self):
