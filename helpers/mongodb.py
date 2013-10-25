@@ -12,5 +12,7 @@ class mongo:
         return self.db[tablename].find_one(where,**kwargs) if where else self.db[tablename].find_one(**kwargs)
     def update(self,tablename,where,data):
         return self.db[tablename].update(where,{"$set":data},multi=True)
+    def append(self,tablename,where,data):
+        return self.db[tablename].update(where,{"$push":data})
     def aggregate(self,tablename,pipeline):
         return self.db[tablename].aggregate(pipeline)

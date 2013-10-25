@@ -74,15 +74,38 @@ def update_attr_to_item(**kwargs):
         products.insert_item(semi_item)
 
 
+"""
+导入新商品后，先启动
+1.与产品库自动配对。
+2.商品内部配对
+3.人工配对
+"""
+def match_with_product(**kwargs):
+    matched_item_ids = products.get_matched_item_ids(**kwargs)
+    new_kw = {"_id":{"$nin":matched_item_ids}} if matched_item_ids and len(matched_item_ids) > 0 else {}
+    if kwargs:
+        new_kw.update(kwargs)
+    items_to_match = products.get_item(**new_kw)
+    print "item to match:" + str(items_to_match.count())
+    products_to_match = [ x for x in products.get_product(**kwargs)]
+    matched = 0
+    for item in items_to_match:
+        for pr in products_to_match:
+            if item_compare(item,pr):
+                matched += 1
+                products.add_pr_match(pr=pr,item=item)
+    print "item matched:" + str(matched)
 
 """
     进行匹配尝试，整理出产品
 """
 def match_item_to_product(**kwargs):
-    itemlist = list()
-    items = products.get_item(**kwargs)
-    for item in items:
-        itemlist.append(item)
+    matched_item_ids = products.get_matched_item_ids(**kwargs)
+    new_kw = {"_id":{"$nin":matched_item_ids}} if matched_item_ids and len(matched_item_ids) > 0 else {}
+    if kwargs:
+        new_kw.update(kwargs)
+    items_to_match = products.get_item(**new_kw)
+    itemlist = [ x for x in items_to_match ]
     itemlist = classify(itemlist,item_compare)
     """
         整理出的产品
@@ -102,31 +125,46 @@ def match_item_to_product(**kwargs):
 
 
 def gen_product_attr(m):
-    item = m[0]
-    pr = Product()
-    pr.cat = item["cat"]
-    pr.name = u""
-    for key in gen_name_rule(item):
-        if key[0] <> u"$":
-            pr.name += item[key] if item[key] else u""
-        else:
-            pr.name += key[1:]
-    pr.img = min(m,key=lambda x:img_market_rule.index(x["market"]))["img"]
-    pr.price = min(m,key=lambda x:x["price"])["price"]
-    for key in get_attr_val_key(item):
-        pr[key] = item[key]
-    return pr
+    if isinstance(m,list):
+        item = m[0]
+        pr = Product()
+        pr.cat = item["cat"]
+        pr.name = u""
+        for key in gen_name_rule(item):
+            if key[0] <> u"$":
+                pr.name += item[key] if item[key] else u""
+            else:
+                pr.name += key[1:]
+        pr.img = min(m,key=lambda x:img_market_rule.index(x["market"]))["img"]
+        pr.price = min(m,key=lambda x:x["price"])["price"]
+        for key in get_attr_val_key(item):
+            pr[key] = item[key]
+        return pr
+    else:
+        item = m
+        pr = Product()
+        pr.cat = item["cat"]
+        pr.name = u""
+        for key in gen_name_rule(item):
+            if key[0] <> u"$":
+                pr.name += item[key] if item[key] else u""
+            else:
+                pr.name += key[1:]
+        pr.img = item["img"]
+        pr.price = item["price"]
+        for key in get_attr_val_key(item):
+            pr[key] = item[key]
+        return pr
+
 
 """
 启动人工配对,算出相似分，从高到低排序
 """
 def get_fam_to_match(**kwargs):
     matched_item_ids = products.get_matched_item_ids(**kwargs)
-    print kwargs
     new_kw = {"_id":{"$nin":matched_item_ids}}
     if kwargs:
         new_kw.update(kwargs)
-    print new_kw
     items_to_match = products.get_item(**new_kw)
     products_to_match = [ x for x in products.get_product(**kwargs)]
     res = list()

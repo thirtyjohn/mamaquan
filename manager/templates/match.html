@@ -1,9 +1,11 @@
 ## -*- coding: utf-8 -*-
 <%inherit file="base.html"/>
-<div id="cond">
-    <form action="/match" method="post">
-        <input name="json" type="text">
-        <input type="submit">
+<div>
+    <form class="form-inline" role="form" action="/match" method="post">
+        <div class="form-group"> 
+            <input id="input_json" class="form-control" name="json" type="text" />
+        </div>
+        <button class="btn btn-default" type="submit" >提交</button>
     </form>
 </div>
 <%
@@ -16,25 +18,37 @@
         keys = get_attr_val_key(item_fams[0][0])
     %>
     % for item,famlist in item_fams:
-        <dl>
-            <dt>${item["name"]}</dt>
-            <dd>${item["price"]}</dd>
-            <dd>${item["img"]}</dd>
-            <dd>${item["market"]}</dd>
-            % for k in keys:
-                <dd>${item[k]}</dd>
-            % endfor
-        </dl>
-        % for fam in famlist:
-            <dl>
-                <dt>${fam["name"]}</dt>
-                <dd>${fam["price"]}</dd>
-                <dd>${fam["img"]}</dd> 
-                % for k in keys:
-                    <dd>${fam[k]}</dd>
-                % endfor
-            </dl>
-        % endfor
+        <div class="panel panel-info">
+            <div class="panel-heading">${item["name"]}</div>
+            <div class="panel-body table-responsive">
+                <table class="table">
+                    <tr>
+                    <td>
+                        % if item["img"]:
+                        <img class="img-thumbnail" width="60" src="${item["img"]}"/>
+                        % endif
+                    </td>
+                    <td>${item["price"]}</td>
+                    <td>${item["market"]}</td>
+                    % for k in keys:
+                        <td>${item[k]}</td>
+                    % endfor
+                    <td><button type="button" data-id="${item["_id"]}" class="btn btn-default add">添加</button></td>
+                    </tr>
+                    % for fam in famlist:
+                    <tr>
+                        <td>${fam["name"]}</td>
+                        <td>${fam["price"]}</td>
+                        <td><a target="_blank" href="${fam["img"]}">显示图片</a></td>
+                        % for k in keys:
+                            <td>${fam[k]}</td>
+                        % endfor
+                        <td><button type="button" data-id="${fam["_id"]}" class="btn btn-default match">配对</button></td>
+                    </tr>
+                    % endfor
+                </table> 
+            </div>
+        </div> 
     % endfor
 %endif
 </div>

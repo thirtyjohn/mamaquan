@@ -1,7 +1,9 @@
 #coding:utf-8
 import web,json
 from manager.settings import render
-from manager.products.product_init import get_fam_to_match,aggr_attr,aggr_val
+from manager.products.product_init import get_fam_to_match,aggr_attr,aggr_val,gen_product_attr
+from manager.models import products
+from bson.objectid import ObjectId
 
 class match:
     def POST(self):
@@ -16,6 +18,20 @@ class match:
 
     def GET(self):
         return render.match(item_fams=None)
+
+class matchdata:
+    def POST(self):
+        data = web.input()
+        if data.action == "match":
+            item = products.get_item( _id=ObjectId(data.item) )[0]
+            pr = products.get_product( _id=ObjectId(data.pr) )[0]
+            products.add_pr_match(item=item,pr=pr)
+        elif data.action == "add":
+            item = products.get_item( _id=ObjectId(data.item) )[0]
+            pr = gen_product_attr(item)
+            pr.match_ids = [item["_id"]] 
+            products.insert_product(pr)
+        return json.dumps({u"html":u"ok"}) 
 
 class aggr:
     def POST(self):

@@ -6,6 +6,7 @@ import web
 
 urls = (
     "/match","manager.controllers.browse.match",
+    "/matchdata","manager.controllers.browse.matchdata",
     "/aggr","manager.controllers.browse.aggr",
     "/mmredict","manager.controllers.browse.mmredict",
     "/jiaoyan","manager.controllers.browse.check",

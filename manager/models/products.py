@@ -140,6 +140,11 @@ def get_matched_item_ids(**kwargs):
         matched_item_ids.extend( r["match_ids"] )
     return matched_item_ids
 
+def add_pr_match(pr=None,item=None):
+    if not pr or not item:
+        return
+    mongoconn.append("product",{"_id":pr["_id"]},{"match_ids":item["_id"]})
+
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
 
