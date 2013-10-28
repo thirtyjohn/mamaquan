@@ -35,5 +35,9 @@ $(function(){
 		})
     })
 
+    $(".key_name").click(function(){
+        $(this).next("table").toggle()    
+    })
+
 })
 

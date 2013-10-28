@@ -2,7 +2,7 @@
 from helpers.b2c import factory
 from manager.models import products
 from manager.models.products import semistatus,Product
-from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,gen_name_rule,img_market_rule
+from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,gen_name_rule,img_market_rule,get_attr_name_key,get_attr_val_other_key,get_val_other_from_rule
 
 """
     获取item列表插入semiitem，插入关键信息
@@ -59,6 +59,23 @@ def get_more_info_to_update_semiitem(**kwargs):
 
 
 """
+通过迭代的更新不断完善rules
+"""
+def std_attr_name_to_item_temp(**kwargs):
+    semi_items = products.get_semi_item(status={"$lte":semistatus.JUST_MORE},**kwargs)
+    for semi_item in semi_items:
+        std_attr_name(semi_item)
+        semi_item.pop("_id")
+        products.insert_item_temp(semi_item)
+
+def std_attr_val_to_item_temp(**kwargs):
+    temp_items = products.get_temp_item(**kwargs)
+    for temp_item in temp_items:
+        std_attr_val(temp_item)
+        mid = temp_item.pop("_id")
+        products.update_item_temp(mid,temp_item)
+
+"""
     标准化属性信息（根据规则表）
     1. 标准化属性名称
     2. 标准化属性值
@@ -70,9 +87,13 @@ def update_attr_to_item(**kwargs):
     for semi_item in semi_items:
         std_attr_name(semi_item)
         std_attr_val(semi_item)
+        for k in get_attr_val_key(semi_item):
+            ##如果缺失，则从名称中获取,否则记None
+            if not semi_item.has_key(k) or not semi_item[k]:
+                new_v = get_val_from_rule(semi_item,k,semi_item["name"])
+                semi_item[k] = new_v
         semi_item.pop("_id")
         products.insert_item(semi_item)
-
 
 """
 导入新商品后，先启动
@@ -161,12 +182,15 @@ def gen_product_attr(m):
 启动人工配对,算出相似分，从高到低排序
 """
 def get_fam_to_match(**kwargs):
-    matched_item_ids = products.get_matched_item_ids(**kwargs)
+    new_kwargs = kwargs.copy()
+    if new_kwargs.has_key("market"):
+        del new_kwargs["market"]
+    matched_item_ids = products.get_matched_item_ids(**new_kwargs)
     new_kw = {"_id":{"$nin":matched_item_ids}}
     if kwargs:
         new_kw.update(kwargs)
     items_to_match = products.get_item(**new_kw)
-    products_to_match = [ x for x in products.get_product(**kwargs)]
+    products_to_match = [ x for x in products.get_product(**new_kwargs)]
     res = list()
     for item in items_to_match:
         prlist = sorted(products_to_match,key=lambda pr:item_pr_compare(item,pr),reverse=True)
@@ -246,22 +270,25 @@ def std_attr_name(semi_item):
     for k in semi_item.keys():
         new_k = get_name_from_rule(semi_item,k)
         if new_k and new_k <> k:
-            semi_item[new_k] = semi_item.pop(k)
+            if semi_item.has_key(new_k) and semi_item[new_k]:
+                semi_item[new_k] = semi_item[new_k] + "$" + semi_item.pop(k)
+            else:
+                semi_item[new_k] = semi_item.pop(k)
 
 
 def std_attr_val(semi_item):
     for k in get_attr_val_key(semi_item):
-        print k
         if semi_item.has_key(k) and semi_item[k]:
-            print "yes"
             new_v = get_val_from_rule(semi_item,k,semi_item[k])
             if new_v and new_v <> semi_item[k]:
                 semi_item[k] = new_v
-        else:
-            ##如果缺失，则从名称中获取,否则记None
-            print "no"
-            new_v = get_val_from_rule(semi_item,k,semi_item["name"])
-            semi_item[k] = new_v
+
+    for k in get_attr_val_other_key(semi_item):
+        if semi_item.has_key(k) and semi_item[k]:
+            new_v = get_val_other_from_rule(semi_item,k,semi_item[k])
+            if new_v and new_v <> semi_item[k]:
+                semi_item[k] = new_v
+        
     
 
 """
@@ -295,7 +322,7 @@ def aggr_attr(**kwargs):
 获取关键属性值的属性汇总数据
 """
 
-def aggr_val(cat,**kwargs):
+def aggr_val(**kwargs):
     k_v_list = list()
     def aggr(key,where):
         pipe = [
@@ -303,14 +330,11 @@ def aggr_val(cat,**kwargs):
             { "$group": { "_id": "$"+key , "count":{"$sum":1} } },
             { "$sort": { "count":-1 } }
         ]
-        return products.aggregate_semiitem(pipe)
+        return products.aggregate_item_temp(pipe)
 
-    for k in get_attr_val_key({"cat":cat}):
+    for k in get_attr_name_key(kwargs):
         val_list = list()
-        cond = {"cat":cat}
-        if kwargs:
-            cond.update(kwargs)
-        r = aggr(k,cond)
+        r = aggr(k,kwargs)
         for d in r["result"]:
              val_list.append((d["_id"],d["count"]))
         k_v_list.append((k,val_list))

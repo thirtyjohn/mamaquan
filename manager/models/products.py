@@ -115,8 +115,8 @@ def has_semi_item(**kwargs):
 def get_semi_item(**kwargs):
     return mongoconn.query("semiitem",where=kwargs)
 
-def aggregate_semiitem(pipe,**kwargs):
-    return mongoconn.aggregate("semiitem",pipe,**kwargs)
+def aggregate_item_temp(pipe,**kwargs):
+    return mongoconn.aggregate("item_temp",pipe,**kwargs)
 
 def update_semi_item(mid,nvdict):
     return mongoconn.update("semiitem",{"_id":mid},nvdict)
@@ -144,6 +144,16 @@ def add_pr_match(pr=None,item=None):
     if not pr or not item:
         return
     mongoconn.append("product",{"_id":pr["_id"]},{"match_ids":item["_id"]})
+
+
+def insert_item_temp(semiitem):
+    return mongoconn.insert("item_temp",semiitem)
+
+def get_temp_item(**kwargs):
+    return mongoconn.query("item_temp",where=kwargs)
+
+def update_item_temp(mid,nvdict):
+    return mongoconn.update("item_temp",{"_id":mid},nvdict)
 
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
