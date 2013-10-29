@@ -10,9 +10,7 @@ class match:
         data = web.input()
         item_fams = None
         if data.has_key("json") and data["json"]:
-            print data["json"]
             d = json.loads(data["json"])
-            print d
             item_fams = get_fam_to_match(**d)
         return render.match(item_fams=item_fams)
 
@@ -45,9 +43,9 @@ class aggr:
         if data.aggr == "attr":
             aggrlist = aggr_attr(**cond)
         elif data.aggr == "val":
-            aggrlist = aggr_val("naifen",**cond)
+            aggrlist = aggr_val(data.table,**cond)
     
-        return render.aggr(aggrlist=aggrlist,aggr_type=data.aggr)
+        return render.aggr(aggrlist=aggrlist,aggr_type=data.aggr,json=data["json"] if data.has_key("json") else "")
 
     def GET(self):
         return render.aggr()

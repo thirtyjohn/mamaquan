@@ -82,7 +82,7 @@ def std_attr_val_to_item_temp(**kwargs):
     3. 如果确实关键属性，根据名称进行增补
 """
 
-def update_attr_to_item(**kwargs):
+def update_attr_to_item(limit=None,**kwargs):
     semi_items = products.get_semi_item(status={"$lte":semistatus.JUST_MORE},**kwargs)
     for semi_item in semi_items:
         std_attr_name(semi_item)
@@ -93,7 +93,11 @@ def update_attr_to_item(**kwargs):
                 new_v = get_val_from_rule(semi_item,k,semi_item["name"])
                 semi_item[k] = new_v
         semi_item.pop("_id")
-        products.insert_item(semi_item)
+
+        if limit and not limit(semi_item):
+            continue
+        if not products.has_item(itemid=semi_item["itemid"],market=semi_item["market"]):
+            products.insert_item(semi_item)
 
 """
 导入新商品后，先启动
@@ -322,7 +326,7 @@ def aggr_attr(**kwargs):
 获取关键属性值的属性汇总数据
 """
 
-def aggr_val(**kwargs):
+def aggr_val(table,**kwargs):
     k_v_list = list()
     def aggr(key,where):
         pipe = [
@@ -330,7 +334,7 @@ def aggr_val(**kwargs):
             { "$group": { "_id": "$"+key , "count":{"$sum":1} } },
             { "$sort": { "count":-1 } }
         ]
-        return products.aggregate_item_temp(pipe)
+        return products.aggregate(table,pipe)
 
     for k in get_attr_name_key(kwargs):
         val_list = list()

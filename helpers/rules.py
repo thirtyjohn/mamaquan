@@ -41,7 +41,6 @@ def attr_name_rule(semiitem):
             (u"系列", include, [u"系列"]),
             (u"包装", include, [u"包装"]),
             (u"产地", include, [u"产地"]),
-            (u"毛重", include, [u"毛重"]),
             (u"类型", include, [u"类型"]),
             (u"适用年龄", include, [u"年龄"]),
         ]
@@ -71,11 +70,10 @@ def attr_val_rule(semi_item):
 def attr_val_other_rule(semi_item):
     rule = {
         "naifen":OrderedDict((
-            (u"包装",(same,None)),
-            (u"产地",(same,None)),
-            (u"毛重",(same,None)),
-            (u"类型",(same,None)),
-            (u"适用年龄",(same,None)),
+            (u"包装",(include,[u"罐装",u"盒装",u"桶装",u"袋装",u"箱装"])),
+            (u"产地",(first_out,[u"中国",u"新西兰",u"荷兰",u"澳洲",u"韩国",u"德国",u"美国",u"法国",u"丹麦",u"新加坡",u"瑞士",u"爱尔兰",u"澳大利亚",u"西班牙",u"英国",u"阿根廷",u"奥地利",u"台湾",u"马来西亚",u"进口",u"国产"])),
+            (u"类型",(first_out,[u"防过敏配方",u"偏食配方",u"腹泻配方",u"早产儿"])),
+            (u"适用年龄",(replace_txt,[("-","~")])),
         ))
     }
     return rule[semi_item["cat"]]
@@ -135,3 +133,14 @@ def include_kv(name,data):
         for n in v:
             if name.find(n) > -1:
                 return k
+
+
+def first_out(name,data):
+    for d in data:
+        if name.find(d) > -1:
+            return d
+
+def replace_txt(name,data):
+    for d in data: 
+        name = name.replace(d[0],d[1])
+    return name

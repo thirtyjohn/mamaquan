@@ -118,6 +118,9 @@ def get_semi_item(**kwargs):
 def aggregate_item_temp(pipe,**kwargs):
     return mongoconn.aggregate("item_temp",pipe,**kwargs)
 
+def aggregate(table,pipe,**kwargs):
+    return mongoconn.aggregate(table,pipe,**kwargs)
+
 def update_semi_item(mid,nvdict):
     return mongoconn.update("semiitem",{"_id":mid},nvdict)
 
@@ -127,6 +130,9 @@ def insert_item(item):
 
 def get_item(**kwargs):
     return mongoconn.query("item",where=kwargs)
+
+def has_item(**kwargs):
+    return mongoconn.query("item",where=kwargs).count() > 0
 
 def insert_product(pr):
     return mongoconn.insert("product",pr)
