@@ -81,7 +81,7 @@ def attr_val_other_rule(semi_item):
 
 def gen_name_rule(item):
     rule = {
-        "naifen":[u"品牌",u"系列",u"段数",u"$奶粉",u"重量"],
+        "naifen":[u"品牌",u"系列",u"阶段",u"$奶粉",u"重量"],
     }
     return rule[item["cat"]]
 

@@ -207,6 +207,8 @@ def get_fam_to_match(**kwargs):
 def item_pr_compare(item,pr):
     if item["cat"] <> pr["cat"]:
         return 0
+    if not item["price"] or not pr["price"]:
+        return 0
     price_score = item["price"]/pr["price"] if item["price"] < pr["price"] else pr["price"]/item["price"]
     key_score = 0
     for k in get_attr_val_key(item):
@@ -224,6 +226,8 @@ MIN_EQ = 2
 
 def item_compare(a,b):
     if a["cat"] <> b["cat"]:
+        return False
+    if not a["price"] or not b["price"]:
         return False
     price_diff = a["price"]/b["price"] if a["price"] > b["price"] else b["price"]/a["price"]
     if price_diff > MAX_DIFF:
@@ -335,8 +339,9 @@ def aggr_val(table,**kwargs):
             { "$sort": { "count":-1 } }
         ]
         return products.aggregate(table,pipe)
-
-    for k in get_attr_name_key(kwargs):
+    keys = get_attr_name_key(kwargs)
+    keys.append("market")
+    for k in keys:
         val_list = list()
         r = aggr(k,kwargs)
         for d in r["result"]:

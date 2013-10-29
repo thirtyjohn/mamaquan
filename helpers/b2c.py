@@ -124,6 +124,7 @@ class Jd(B2c):
                 name,value = ii_text.split(u"：")
             if name and value:
                 nvdict.update({name:value})
+        nvdict.update({"price":self.getPrice()})
         return nvdict
 
     def getlist(self):
@@ -151,7 +152,7 @@ class Jd(B2c):
             return None
         price = float(m.group(1))
         if price < 0:
-            return 0
+            return None
         return price
 
     def getimg(self):
