@@ -5,7 +5,7 @@ from helpers.utils import getResultForDigit
 from ordereddict import OrderedDict
 
 def get_name_from_rule(semi_item,name):
-    for r in attr_name_rule():
+    for r in attr_name_rule(semi_item):
         if r[1](name,r[2]):
             return r[0]
 
@@ -13,24 +13,40 @@ def get_val_from_rule(semi_item,k,v):
     d = attr_val_rule(semi_item) 
     return d[k][0](v,d[k][1])
 
+def get_val_other_from_rule(semi_item,k,v):
+    d = attr_val_other_rule(semi_item) 
+    return d[k][0](v,d[k][1])
+
 
 def get_attr_val_key(semi_item):
     return attr_val_rule(semi_item).keys()
 
+def get_attr_name_key(semi_item):
+    return [ x[0] for x in  attr_name_rule(semi_item)]
 
+
+def get_attr_val_other_key(semi_item):
+    return attr_val_other_rule(semi_item).keys()
 
 """
     attr_name 规则
 
 """
-def attr_name_rule():
-    rule = [
-        (u"品牌", include, [u"品牌",u"brand"]),
-        (u"段数", include, [u"段数",u"duan",u"阶段"]),
-        (u"重量", include, [u"weight",u"重量"]),
-        (u"系列", include, [u"series",u"系列"]),
-    ]
-    return rule
+def attr_name_rule(semiitem):
+    rule = {
+        "naifen":[
+            (u"品牌", include, [u"品牌"]),
+            (u"阶段", include, [u"段数",u"阶段"]),
+            (u"重量", include, [u"重量"]),
+            (u"系列", include, [u"系列"]),
+            (u"包装", include, [u"包装"]),
+            (u"产地", include, [u"产地"]),
+            (u"毛重", include, [u"毛重"]),
+            (u"类型", include, [u"类型"]),
+            (u"适用年龄", include, [u"年龄"]),
+        ]
+    }
+    return rule[semiitem["cat"]]
 
 
 """
@@ -41,9 +57,25 @@ def attr_val_rule(semi_item):
     rule = {
         "naifen":OrderedDict((
             (u"品牌",(include_kv,brandlist)),
-            (u"段数",(danwei,{"txt":[u"阶段",u"段"],"dw":u"段"})),
-            (u"系列",(include,lambda : serieslist[semi_item[u"品牌"]] if semi_item.has_key(u"品牌") else None)),
+            (u"阶段",(danwei,{"txt":[u"阶段",u"段"],"dw":u"段"})),
+            (u"系列",(include,lambda : serieslist[semi_item[u"品牌"]] if semi_item.has_key(u"品牌") and serieslist.has_key(semi_item[u"品牌"]) else None)),
             (u"重量",(danwei,{"txt":[u"克",u"g"],"dw":u"g"})),
+        ))
+    }
+    return rule[semi_item["cat"]]
+
+
+"""
+    附加属性规则
+"""
+def attr_val_other_rule(semi_item):
+    rule = {
+        "naifen":OrderedDict((
+            (u"包装",(same,None)),
+            (u"产地",(same,None)),
+            (u"毛重",(same,None)),
+            (u"类型",(same,None)),
+            (u"适用年龄",(same,None)),
         ))
     }
     return rule[semi_item["cat"]]
@@ -71,7 +103,10 @@ def include(sample,data):
             if sample.find(d) > -1:
                 return d
     else:
-        datas = sorted(data(),key= lambda x: len(x) ,reverse=True)
+        datas = data()
+        if not datas:
+            return None
+        datas = sorted(datas,key= lambda x: len(x) ,reverse=True)
         for d in datas:
             if sample.find(d) > -1:
                 return d
