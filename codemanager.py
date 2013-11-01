@@ -8,6 +8,9 @@ urls = (
     "/match","manager.controllers.browse.match",
     "/matchdata","manager.controllers.browse.matchdata",
     "/aggr","manager.controllers.browse.aggr",
+    "/view","manager.controllers.browse.viewdata",
+    "/data","manager.controllers.browse.data",
+    "/verify","manager.controllers.browse.verifydata",
     "/mmredict","manager.controllers.browse.mmredict",
     "/jiaoyan","manager.controllers.browse.check",
     "/editnaifen","manager.controllers.browse.editnaifen",
@@ -16,7 +19,6 @@ urls = (
 )
 
 app = web.application(urls,globals())
-
         
 if __name__ == "__main__":
     app.run()

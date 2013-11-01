@@ -28,6 +28,18 @@ def get_attr_name_key(semi_item):
 def get_attr_val_other_key(semi_item):
     return attr_val_other_rule(semi_item).keys()
 
+
+def get_unit_key(product):
+    return unit_rule(product)
+
+def get_unit_from_rule(product):
+    unit_key = unit_rule(product)
+    if product.has_key(unit_key) and product[unit_key]:
+        m = re.search(u"(\d+)",product[unit_key])
+        return int(m.group(1)) if m else 1
+    return 1
+
+
 """
     attr_name 规则
 
@@ -79,13 +91,34 @@ def attr_val_other_rule(semi_item):
     return rule[semi_item["cat"]]
 
 
+"""
+    产品单位
+"""
+def unit_rule(product):
+    rule = {
+        "naifen":u"重量"
+    }
+    
+    return rule[product["cat"]]
+
+"""
+    产品名称生成规则
+"""
 def gen_name_rule(item):
     rule = {
         "naifen":[u"品牌",u"系列",u"阶段",u"$奶粉",u"重量"],
     }
     return rule[item["cat"]]
 
+"""
+    产品图片选择规则
+"""
 img_market_rule = [u"jd",u"zcn",u"tmall",u"amazon"]
+
+
+
+
+
 
 """
     文字匹配规则

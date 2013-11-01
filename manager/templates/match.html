@@ -10,6 +10,7 @@
 </div>
 <%
     from helpers.rules import get_attr_val_key
+    from helpers.b2c import getItemUrl
     
 %>
 <div>
@@ -17,15 +18,16 @@
     <%
         keys = get_attr_val_key(item_fams[0][0])
     %>
+    <p>剩余:${len(item_fams)} </p>
     % for item,famlist in item_fams:
         <div class="panel panel-info">
-            <div class="panel-heading">${item["name"]}</div>
+            <div class="panel-heading"><a target="_blank"  style="color:#000;text-decoration:none;" href="${getItemUrl(item["itemid"],item["market"])}">${item["name"]} </a></div>
             <div class="panel-body table-responsive">
                 <table class="table">
                     <tr>
                     <td>
                         % if item["img"]:
-                        <img class="img-thumbnail" width="60" src="${item["img"]}"/>
+                        <a target="_blank" href="${item["img"]}"><img class="img-thumbnail" width="60" src="${item["img"]}"/></a>
                         % endif
                     </td>
                     <td>${item["price"]}</td>

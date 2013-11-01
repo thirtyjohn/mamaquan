@@ -2,7 +2,8 @@
 from helpers.b2c import factory
 from manager.models import products
 from manager.models.products import semistatus,Product
-from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,gen_name_rule,img_market_rule,get_attr_name_key,get_attr_val_other_key,get_val_other_from_rule
+from helpers.rules import get_name_from_rule,get_val_from_rule,get_attr_val_key,gen_name_rule,img_market_rule,get_attr_name_key,get_attr_val_other_key,get_val_other_from_rule,get_unit_from_rule,get_unit_key
+from bson.objectid import ObjectId
 
 """
     获取item列表插入semiitem，插入关键信息
@@ -201,6 +202,102 @@ def get_fam_to_match(**kwargs):
         res.append((item,prlist))
     return res
 
+
+"""
+产品校验，校验出：
+同类型，同品牌
+单位价格形似，但属性有差别。
+单位价格不同，但属性相同。
+"""
+def verify_product(**kwargs):
+    prs = [ x for x in products.get_product(**kwargs) ]
+    verify_res = dict()
+    for pr in prs:
+        verify_res.update({pr["_id"]:[]})
+    l = len(prs)
+    for i in range(0,l): 
+        for j in range(i+1,l):
+            res = verify(prs[i],prs[j])
+            if res:
+                verify_res[prs[i]["_id"]].append((prs[j]["_id"],res))
+                verify_res[prs[j]["_id"]].append((prs[i]["_id"],res))
+    return verify_res
+
+
+def verify(i,j):
+    keys = get_attr_val_key(i)
+    keys.remove(get_unit_key(i))
+
+    def fam(x,y):
+        z =  x/y if x > y else y/x
+        print "fam:" + str(z)
+        return z < 1.1
+
+    def same(x,y):
+        z =  x/y if x > y else y/x
+        print "same:" + str(z)
+        return z < 1.1
+
+    def same_key_except_unit(x,y):
+        for k in keys:
+            if x[k] <> y[k]:
+                print "not same product"
+                return False
+        return True
+
+    if fam(i["price"]*1.0/get_unit_from_rule(i) , j["price"]*1.0/get_unit_from_rule(j)):
+        diff_c = 0 
+        for k in keys:
+            if not i[k] == j[k]:
+                diff_c += 1
+        if diff_c*1.0/len(keys) > 0 and diff_c*1.0/len(keys) < 0.4:
+            return "fam price, not same attr"
+
+    if same_key_except_unit(i,j) and not same(i["price"]*1.0/get_unit_from_rule(i),j["price"]*1.0/get_unit_from_rule(j)):
+        return "same attr, not same price" 
+
+"""
+    验证匹配的正确性
+"""
+def verify_product_match(**kwargs):
+    prs = products.get_product(**kwargs)
+    verify_list = list()
+    for pr in prs:
+        items = [ products.get_item(_id=ObjectId(itemid))[0] for itemid in pr["match_ids"] ]
+        if len(items) < 2:
+            continue
+        verify_res = dict()
+        for item in items:
+            verify_res.update({item["_id"]:[]})
+        for i in range(0,len(items)):
+            for j in range(i+1,len(items)):
+                res = verify_match(items[i],items[j])
+                if res:
+                    verify_res[items[i]["_id"]].extend(res)
+                    verify_res[items[j]["_id"]].extend(res)
+        verify_list.append((pr,verify_res))
+    return verify_list
+
+                
+
+"""
+    考虑关键值，附加值是否相同，不考虑None的情况
+"""
+MAX_VERIFY_DIFF = 1.2
+def verify_match(i,j):
+    verify_res = []
+    price_diff = i["price"]*1.0/j["price"] if i["price"] > j["price"] else j["price"]*1.0/i["price"]
+    if price_diff > MAX_VERIFY_DIFF:
+        verify_res.append("price")
+    keys = get_attr_val_key(i)
+    other_keys = get_attr_val_other_key(j)
+    for k in keys+other_keys:
+        if i.has_key(k) and j.has_key(k) and i[k] and j[k] and i[k] <> j[k]:
+            verify_res.append(k)
+    if len(verify_res) > 0:
+        return verify_res
+    return None
+
 """
 相似分 = 价格分 + 关键值相同数
 """
@@ -208,8 +305,9 @@ def item_pr_compare(item,pr):
     if item["cat"] <> pr["cat"]:
         return 0
     if not item["price"] or not pr["price"]:
-        return 0
-    price_score = item["price"]/pr["price"] if item["price"] < pr["price"] else pr["price"]/item["price"]
+        price_score = 0
+    else:
+        price_score = item["price"]*1.0/pr["price"] if item["price"] < pr["price"] else pr["price"]*1.0/item["price"]
     key_score = 0
     for k in get_attr_val_key(item):
         if item[k] == pr[k]:
@@ -229,17 +327,17 @@ def item_compare(a,b):
         return False
     if not a["price"] or not b["price"]:
         return False
-    price_diff = a["price"]/b["price"] if a["price"] > b["price"] else b["price"]/a["price"]
+    price_diff = a["price"]*1.0/b["price"] if a["price"] > b["price"] else b["price"]*1.0/a["price"]
     if price_diff > MAX_DIFF:
         return False
     keys = get_attr_val_key(a)
-    eq_count = len(keys)
+    none_count = 0
     for k in keys:
         if a[k] <> b[k]:
             return False
         if a[k] is None:
-            eq_count -= 1
-    return eq_count > MIN_EQ
+            none_count += 1
+    return none_count < MIN_EQ 
 
 
 

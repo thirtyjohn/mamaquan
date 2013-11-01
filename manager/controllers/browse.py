@@ -1,9 +1,10 @@
 #coding:utf-8
 import web,json
 from manager.settings import render
-from manager.products.product_init import get_fam_to_match,aggr_attr,aggr_val,gen_product_attr
+from manager.products.product_init import get_fam_to_match,aggr_attr,aggr_val,gen_product_attr,verify_product,verify_product_match
 from manager.models import products
 from bson.objectid import ObjectId
+from manager.settings import mongoconn
 
 class match:
     def POST(self):
@@ -49,7 +50,59 @@ class aggr:
 
     def GET(self):
         return render.aggr()
-        
+
+
+class verifydata:
+    def GET(self):
+        return render.verify()
+
+    def POST(self):
+        data = web.input()
+        cond = None
+        if data.has_key("json") and data["json"]:
+            cond = json.loads(data["json"])
+        else:
+            return None
+        verify_type = data["type"]
+        if verify_type == "product":
+            verify_res = verify_product(**cond)
+            verify_list = list()
+            for k,v in verify_res.items():
+                verify_list.append((k,v))
+            verify_list = sorted(verify_list, key=lambda x:len(x[1]) ,reverse=True)
+            verify_copy = list()
+            for i in range(0,len(verify_list)):
+                pr = products.get_product(_id=ObjectId(verify_list[i][0]))[0]
+                cps = []
+                for j in range(0, len(verify_list[i][1])):
+                    cps.append( (products.get_product(_id=ObjectId(verify_list[i][1][j][0]))[0],verify_list[i][1][j][1]))
+                verify_copy.append((pr,cps))
+        else:
+            verify_copy = verify_product_match(**cond)
+        return render.verify(verify_list=verify_copy,json=data["json"] if data.has_key("json") else "",verify_type=verify_type)
+ 
+
+class viewdata:
+    def POST(self):
+        data = web.input()
+        rows = None
+        if data.has_key("json") and data["json"]:
+            cond = json.loads(data["json"])
+            tablename = cond.pop("table") 
+            if cond.has_key("_id"):
+                cond["_id"] = ObjectId(cond["_id"])
+            rows = mongoconn.query(tablename,cond)
+        return render.viewdata(rowsd=rows,json=data["json"] if data.has_key("json") else "")
+
+    def GET(self):
+        return render.viewdata(rowsd=None)
+
+
+class data:
+    def GET(self):
+        data = web.input()
+        item = mongoconn.query_one(data["table"],{"_id":ObjectId(data["dataid"])})
+        return json.dumps({"html":render.data(item=item)})
 
 
 """
