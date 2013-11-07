@@ -20,23 +20,26 @@ from bson.objectid import ObjectId
 """
 def get_list_to_insert_semiitem(market,cat,page=None,**kwargs):
     b2c_list = factory(market)
-    nextpage = page if page else 1
-    while nextpage:
-        url = products.getHost(cat=cat,market=market,page=nextpage,other=kwargs)
-        print url
-        b2c_list.listurl = url
-        itemlist = b2c_list.getlist()
-        for item in itemlist:
-            item.market = market
-            item.cat = cat
-            if kwargs:
-                for k,v in kwargs.items():
-                    item[k] = v 
-            if not products.has_semi_item(itemid=item.itemid,market=item.market):
-                products.insert_semi_item(item)
-        if len(itemlist) == 0:
+    url_pattens = products.getHosts(market=market,cat=cat,other=kwargs)
+    for url_patten in url_pattens:
+        nextpage = page if page else 1
+        while nextpage:
+            url = products.getHost(url_patten,page=nextpage)
+            print url
             break
-        nextpage = nextpage+1 if b2c_list.nextPage() else None
+            b2c_list.listurl = url
+            itemlist = b2c_list.getlist()
+            for item in itemlist:
+                item.market = market
+                item.cat = cat
+                if kwargs:
+                    for k,v in kwargs.items():
+                        item[k] = v 
+                if not products.has_semi_item(itemid=item.itemid,market=item.market):
+                    products.insert_semi_item(item)
+            if len(itemlist) == 0:
+                break
+            nextpage = nextpage+1 if b2c_list.nextPage() else None
 
 """
     完善关键信息，增加属性信息
@@ -302,6 +305,8 @@ def verify_match(i,j):
 相似分 = 价格分 + 关键值相同数
 """
 def item_pr_compare(item,pr):
+    if not item_filter(item):
+        return 0
     if item["cat"] <> pr["cat"]:
         return 0
     if not item["price"] or not pr["price"]:
@@ -323,6 +328,8 @@ MAX_DIFF = 1.2
 MIN_EQ = 2
 
 def item_compare(a,b):
+    if not item_filter(a) or not item_filter(b):
+        return False
     if a["cat"] <> b["cat"]:
         return False
     if not a["price"] or not b["price"]:
@@ -339,7 +346,14 @@ def item_compare(a,b):
             none_count += 1
     return none_count < MIN_EQ 
 
-
+def item_filter(item):
+    if item["market"] == "tmall":
+        if item.has_key("maijia") and item["maijia"] in maijialist:
+            return True
+    elif item["market"] == "jd":
+        if not item.has_key(u"店铺"):
+            return True
+    return False
 
 """
     列表分类算法

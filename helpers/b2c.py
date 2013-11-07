@@ -548,19 +548,32 @@ class Tmall(B2c):
             item.img = li.find("div","pic").img["data-ks-lazyload"]
             itemlist.append(item)
         """
-        self.listhtml = self.getListHtml()
-        ss = SoupStrainer("div",id="J_ItemList")
-        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
-        lis = soup.find_all("div","product")
         itemlist = list()
+        self.listhtml = self.getListHtml()
+        if self.listhtml.find("J_ItemList") > -1:
+            ss = SoupStrainer("div",id="J_ItemList")
+            soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
+            lis = soup.find_all("div","product") 
+            for li in lis:
+                item = Item()
+                item.itemid = self.comp_id.search(li.find("p","productTitle").a["href"]).group(1)
+                item.name = li.find("p","productTitle").a.string.strip()
+                item.price = float(self.comp_price.search(li.find("p","productPrice").em.string).group())
+                item.img = li.find("div","productImg-wrap").img["data-ks-lazyload"]
+                itemlist.append(item)
 
-        for li in lis:
-            item = Item()
-            item.itemid = self.comp_id.search(li.find("p","productTitle").a["href"]).group(1)
-            item.name = li.find("p","productTitle").a.string.strip()
-            item.price = float(self.comp_price.search(li.find("p","productPrice").em.string).group())
-            item.img = li.find("div","productImg-wrap").img["data-ks-lazyload"]
-            itemlist.append(item)
+        elif self.listhtml.find("J_TItems") > -1:
+            ss = SoupStrainer("div","J_TItems")
+            soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
+            lis = soup.find_all("dl","item")
+            for li in lis:
+                item = Item()
+                item.itemid = self.comp_id.search(li.find("dd","detail").a["href"]).group(1)
+                item.name = li.find("dd","detail").a.string.strip()
+                item.price = float(self.comp_price.search(li.find("span","c-price").string).group())
+                item.img = li.find("dt","photo").img["data-ks-lazyload"]
+                itemlist.append(item)
+        
         return itemlist
 
     def getItemUrl(self):

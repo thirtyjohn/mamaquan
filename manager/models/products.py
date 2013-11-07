@@ -164,11 +164,17 @@ def update_item_temp(mid,nvdict):
 def insertNfitem(nf):
     dbconn.insert("naifenitem",itemid=nf.itemid,name=nf.name,price=nf.price,img=nf.img,market=nf.market,brand=nf.brand)
 
-def getHost(cat=None,market=None,page=None,other=None):
+def getHosts(cat=None,market=None,other=None):
+    urls = list()
     r = mongoconn.query("crawl_list_url",where=other.update({"cat":cat,"market":market}) if other else {"cat":cat,"market":market})
-    if market == "tmall":
-        page = (page-1)*60
-    url = r[0]["url"].replace(u"${page}",unicode(page))
+    if isinstance(r[0]["url"],list):
+        urls.extend(r[0]["url"])
+    else:
+        urls.append(r[0]["url"])
+    return urls
+
+def getHost(url_patten,page=None): 
+    url = url_patten.replace(u"${page}",unicode(page))
     return url
 
 def getNfitemNotProcessed(market=None,brand=None):
