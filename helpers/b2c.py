@@ -581,17 +581,12 @@ class Tmall(B2c):
 
     
     def nextPage(self):
-        return True
-        """
-        m = self.comp_page.search(self.listhtml)
-        if m:
-            currentpage = int(m.group(1))
-            allpage = int(m.group(2))
-            if currentpage < allpage:
-                return currentpage+1
-            return None
-        return None
-        """
+        self.listhtml = self.getListHtml()
+        ss = SoupStrainer("p","ui-page-s")
+        soup = BeautifulSoup(self.listhtml,parse_only=ss,from_encoding=self.from_encoding)
+        if soup.find("a","ui-page-s-next"):
+            return True
+        return False
 
     def getPrice(self):
         self.itemhtml = self.getItemHtml() 
