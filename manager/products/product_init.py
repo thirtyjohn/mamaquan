@@ -60,7 +60,6 @@ def get_more_info_to_update_semiitem(**kwargs):
             products.update_semi_item(item["_id"],updict)
 
 
-
 """
 通过迭代的更新不断完善rules
 """
@@ -83,9 +82,25 @@ def std_attr_val_to_item_temp(**kwargs):
     1. 标准化属性名称
     2. 标准化属性值
     3. 如果确实关键属性，根据名称进行增补
+
+    4. 可以设置过滤方法，将符合条件的才进入item
+       默认过滤方法是要属性值数大于一半
 """
 
+def default_filter_def(semi_item):
+    s = 0
+    keys = get_attr_val_key(semi_item)
+    for k in keys:
+        if semi_item.has_key(k) and semi_item[k]:
+            s += 1
+    if s*1.0/len(keys) > 0.5:
+        return True
+    return False
+
 def update_attr_to_item(limit=None,**kwargs):
+    
+    filters = [default_filter_def]
+
     semi_items = products.get_semi_item(status={"$lte":semistatus.JUST_MORE},**kwargs)
     for semi_item in semi_items:
         std_attr_name(semi_item)
@@ -96,9 +111,17 @@ def update_attr_to_item(limit=None,**kwargs):
                 new_v = get_val_from_rule(semi_item,k,semi_item["name"])
                 semi_item[k] = new_v
         semi_item.pop("_id")
-
-        if limit and not limit(semi_item):
+        
+        filter_through = True
+        if limit:
+            filters.extend(limit)
+        for filter_def in filters:
+            if not filter_def(semi_item):
+                filter_through = False
+                break
+        if not filter_through:
             continue
+
         if not products.has_item(itemid=semi_item["itemid"],market=semi_item["market"]):
             products.insert_item(semi_item)
 

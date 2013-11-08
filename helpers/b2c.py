@@ -503,6 +503,7 @@ class Tmall(B2c):
         self.comp_price = re.compile(u"[0-9.]+")
         self.comp_page = re.compile("<span class=\"page-info\">(\d+)/(\d+)</span>")
         self.comp_initApi = re.compile(u"\"initApi\" : \"(\S+?)\"")
+        self.comp_html_json = re.compile('"itemDO"\s*:\s*{(.|\n)+?}')
         self.from_encoding = "gbk"
 
     def getProperty(self):
@@ -524,13 +525,23 @@ class Tmall(B2c):
                 name,value = li.string[:i].strip(),li.string[i+1:].strip()
             if name and value:
                 nvdict.update({name:value})
-
-        ss = SoupStrainer("a","sn-simple-logo-shop")
-        soup = BeautifulSoup(self.itemhtml,parse_only=ss,from_encoding=self.from_encoding)
+        """
+        添加卖家、分类等信息，从页面中的json对象获取
+        """
         try:
-            nvdict.update({"maijia":soup.a.string})
+            m = self.comp_html_json.search(self.itemhtml)
+            if m:
+                json_txt = m.group()
+                json_txt ="{"+json_txt+"}"
+                json_txt = re.sub(r"\s","",json_txt)
+                json_txt = json_txt.replace("'",'"')
+                json_data = json.loads(json_txt)
+                nvdict.update({"taobao_class":json_data["itemDO"]["categoryId"]})
+                nvdict.update({"maijia":urllib.unquote(str(json_data["itemDO"]["sellerNickName"]))})
         except:
-            pass
+            get_logger("general").debug("tmall html_json: " + str(self.itemid))
+            get_logger("general").debug("tmall html_json: " + traceback.format_exc())
+
         return nvdict
 
     def getlist(self):
